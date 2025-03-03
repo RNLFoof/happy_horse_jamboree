@@ -1,0 +1,37 @@
+SMODS.Back{
+    name = "Psychostasia Deck",
+    key = "mig_psychostasia",
+    pos = {x = 0, y = 3},
+    config = {psychostasia = true},
+    loc_txt = {
+        name = "Psychostasia Deck",
+        text ={
+            "{C:attention}+5{} Joker slots",
+            "{C:green}Uncommon{}, {C:red}Rare{}, and {C:purple}Legendary{} Jokers",
+            "cost {C:green}2{}, {C:red}3{}, and {C:purple}4{} Joker slots"
+        },
+    },
+    loc_vars=function(self) 
+        return {
+            vars={}
+        }
+    end,
+    apply = function()
+        
+        G.E_MANAGER:add_event(Event({
+            func = function()
+                -- SMODS.Joker:take_ownership('joker', -- object key (class prefix not required)
+                --     { -- table of properties to change from the existing object
+                --     cost = 5,
+                --     calculate = function(self, card, context)
+                --         -- more on this later
+                --     end
+                --     },
+                --     false -- silent | suppresses mod badge
+                -- )
+                -- return true
+            end
+        }))
+    end
+}
+
