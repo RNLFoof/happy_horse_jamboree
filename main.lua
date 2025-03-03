@@ -20,15 +20,7 @@ SMODS.Back{
         
         G.E_MANAGER:add_event(Event({
             func = function()
-                -- SMODS.Joker:take_ownership('joker', -- object key (class prefix not required)
-                --     { -- table of properties to change from the existing object
-                --     cost = 5,
-                --     calculate = function(self, card, context)
-                --         -- more on this later
-                --     end
-                --     },
-                --     false -- silent | suppresses mod badge
-                -- )
+                G.GAME.starting_params.psychostasia = true
                 return true
             end
         }))
@@ -37,10 +29,12 @@ SMODS.Back{
 
 local ref = Card.add_to_deck
 function Card:add_to_deck() 
-    if not self.added_to_deck then
-        if self.ability and self.ability.set == 'Joker' then
-            if not G.OVERLAY_MENU then
-                G.jokers.config.card_limit = G.jokers.config.card_limit - (self.config.center.rarity - 1)
+    if G.GAME.starting_params.psychostasia then
+        if not self.added_to_deck then
+            if self.ability and self.ability.set == 'Joker' then
+                if not G.OVERLAY_MENU then
+                    G.jokers.config.card_limit = G.jokers.config.card_limit - (self.config.center.rarity - 1)
+                end
             end
         end
     end
@@ -49,10 +43,12 @@ end
 
 local ref = Card.remove_from_deck
 function Card:remove_from_deck() 
-    if self.added_to_deck then
-        if self.ability and self.ability.set == 'Joker' then
-            if not G.OVERLAY_MENU then
-                G.jokers.config.card_limit = G.jokers.config.card_limit + (self.config.center.rarity - 1)
+    if G.GAME.starting_params.psychostasia then
+        if self.added_to_deck then
+            if self.ability and self.ability.set == 'Joker' then
+                if not G.OVERLAY_MENU then
+                    G.jokers.config.card_limit = G.jokers.config.card_limit + (self.config.center.rarity - 1)
+                end
             end
         end
     end
