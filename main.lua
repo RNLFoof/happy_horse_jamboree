@@ -2,7 +2,7 @@ SMODS.Back{
     name = "Psychostasia Deck",
     key = "mig_psychostasia",
     pos = {x = 0, y = 3},
-    config = {psychostasia = true},
+    config = {psychostasia = true, joker_slot = 5},
     loc_txt = {
         name = "Psychostasia Deck",
         text ={
@@ -29,9 +29,33 @@ SMODS.Back{
                 --     },
                 --     false -- silent | suppresses mod badge
                 -- )
-                -- return true
+                return true
             end
         }))
     end
 }
 
+local ref = Card.add_to_deck
+function Card:add_to_deck() 
+    if not self.added_to_deck then
+        if self.ability and self.ability.set == 'Joker' then
+            if not G.OVERLAY_MENU then
+                G.jokers.config.card_limit = G.jokers.config.card_limit - (self.config.center.rarity - 1)
+            end
+        end
+    end
+    return ref(self)
+end
+
+local ref = Card.remove_from_deck
+function Card:remove_from_deck() 
+    if self.added_to_deck then
+        if self.ability and self.ability.set == 'Joker' then
+            if not G.OVERLAY_MENU then
+                G.jokers.config.card_limit = G.jokers.config.card_limit + (self.config.center.rarity - 1)
+            end
+        end
+    end
+
+    return ref(self)
+end
