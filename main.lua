@@ -36,7 +36,16 @@ function Card:init(X, Y, W, H, card, center, params)
         func = function()
             if G.GAME.starting_params.mig_psychostasia then
                 if self.ability and self.ability.set == 'Joker' then
-                    self.T.w = self.T.w * 0.5 * (self.config.center.rarity)
+                    new_scale = self.config.center.rarity * 0.5
+                    if self.config.center.rarity <= 2 then
+                        self.T.w = self.T.w * new_scale
+                        self.T.h = self.T.h * new_scale
+                    else
+                        self.T.h = G.CARD_W * new_scale
+                        self.T.w = self.T.h * G.CARD_W / G.CARD_H 
+                    end
+                    self.VT.w = self.T.w
+                    self.VT.h = self.T.h
                 end
             end
             return true
@@ -96,6 +105,11 @@ function CardArea:align_cards()
             width_of_this_card = card.config.center.rarity*0.5*self.card_w --
             if not card.states.drag.is then 
                 card.T.r = 0.1*(-ecc/2 - 0.5 + psychostasia_k)/(ecc)+ (G.SETTINGS.reduced_motion and 0 or 1)*0.02*math.sin(2*G.TIMERS.REAL+card.T.x)
+
+                if card.config.center.rarity == 3 then
+                    card.T.r = card.T.r + math.pi / 2
+                end
+
                 if ecc > 2 or (ecc > 1 and self == G.consumeables) or (ecc > 1 and self.config.spread) then
                     card.T.x = 
                         -- The card area's own X
@@ -111,7 +125,8 @@ function CardArea:align_cards()
                 card.T.y = self.T.y + self.T.h/2 - card.T.h/2 - highlight_height+ (G.SETTINGS.reduced_motion and 0 or 1)*0.03*math.sin(0.666*G.TIMERS.REAL+card.T.x)
                 card.T.x = card.T.x + card.shadow_parrallax.x/30
             end
+
             previous_psychostasia_k = psychostasia_k
         end
     end
-end
+end   
