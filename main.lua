@@ -1,7 +1,15 @@
+mig_psychostasia_atlas = SMODS.Atlas {
+    key = "mig_psychostasia_atlas",
+    path = "psychostasia_deck.png",
+    px = 71,
+    py = 95,
+}
+
 SMODS.Back{
     name = "Psychostasia Deck",
     key = "mig_psychostasia",
-    pos = {x = 0, y = 3},
+    atlas = "mig_psychostasia_atlas",
+    pos = {x = 0, y = 0},
     config = {mig_psychostasia = true, joker_slot = 5},
     loc_txt = {
         name = "Psychostasia Deck",
