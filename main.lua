@@ -5,7 +5,7 @@ mig_psychostasia_atlas = SMODS.Atlas {
     py = 95,
 }
 
-SMODS.Back{
+mig_psychostasia = SMODS.Back{
     name = "Psychostasia Deck",
     key = "mig_psychostasia",
     atlas = "mig_psychostasia_atlas",
@@ -19,21 +19,68 @@ SMODS.Back{
             "cost {C:green}2{}, {C:red}3{}, and {C:purple}4{} Joker slots"
         },
     },
-    loc_vars=function(self) 
+
+    loc_vars = function(self) 
         return {
             vars={}
         }
     end,
+
     apply = function()
-        
         G.E_MANAGER:add_event(Event({
             func = function()
                 G.GAME.starting_params.mig_psychostasia = true
                 return true
             end
         }))
-    end
+    end,
+
+    -- calculate = function(self, card, context)
+    --     if then
+    --         G.GAME.blind:debuff_card(card)
+    --     end
+    -- end,
 }
+
+function psychostasia_enabled()
+    return G.GAME.starting_params.mig_psychostasia
+end
+
+function big_guy(card)
+    return psychostasia_enabled() and card.config.center.rarity and card.config.center.rarity >= 3
+end
+
+-- debuffed_hand 
+
+-- alert_no_space but with a different message. that's it 
+function alert_too_heavy(card, area)
+    G.CONTROLLER.locks.no_space = true
+    attention_text({
+        scale = 0.9, text = "Too heavy!", hold = 0.9, align = 'cm',
+        cover = area, cover_padding = 0.1, cover_colour = adjust_alpha(G.C.BLACK, 0.7)
+    })
+    card:juice_up(0.3, 0.2)
+    for i = 1, #area.cards do
+      area.cards[i]:juice_up(0.15)
+    end
+    G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.06*G.SETTINGS.GAMESPEED, blockable = false, blocking = false, func = function()
+      play_sound('tarot2', 0.76, 0.4);return true end}))
+      play_sound('tarot2', 1, 0.4)
+  
+      G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.5*G.SETTINGS.GAMESPEED, blockable = false, blocking = false,
+      func = function()
+        G.CONTROLLER.locks.no_space = nil
+      return true end}))
+  end
+
+local ref = G.FUNCS.check_for_buy_space
+G.FUNCS.check_for_buy_space = function(card)
+    if G.GAME.starting_params.mig_psychostasia and card.ability.set == 'Joker' and #G.jokers.cards + card.config.center.rarity > G.jokers.config.card_limit then 
+        alert_too_heavy(card, G.jokers)
+        return false
+    end
+    return ref(card)
+end
 
 local ref = Card.init
 function Card:init(X, Y, W, H, card, center, params) 
@@ -45,7 +92,7 @@ function Card:init(X, Y, W, H, card, center, params)
             if G.GAME.starting_params.mig_psychostasia then
                 if self.ability and self.ability.set == 'Joker' then
                     new_scale = self.config.center.rarity * 0.5
-                    if self.config.center.rarity <= 2 then
+                    if not big_guy(self) then
                         self.T.w = self.T.w * new_scale
                         self.T.h = self.T.h * new_scale
                     else
@@ -78,7 +125,7 @@ end
 
 local ref = Card.remove_from_deck
 function Card:remove_from_deck() 
-    if G.GAME.starting_params.mig_psychostasia then
+    if psychostasia_enabled() then
 
         if self.added_to_deck then
             if self.ability and self.ability.set == 'Joker' then
@@ -96,11 +143,18 @@ local ref = CardArea.align_cards
 function CardArea:align_cards()
     ref(self)
 
-    -- Aligns jokers while taking their size into account. Based on the actual joker alignment code 
-    if self.config.type == 'joker' and G.GAME.starting_params.mig_psychostasia then
+    if not psychostasia_enabled() then
+        return
+    end
+    assert(G.GAME.starting_params.mig_psychostasia)
+    
+    -- Aligns jokers while taking their size into account. Based on the actual joker alignment code
+    -- Checks for rarity because the consumable area is also type joker 
+    if self.config.type == 'joker' and #self.cards > 0 and self.cards[1].config.center.rarity then
         psychostasia_k = 0
         effective_card_count = 0
         for _, card in ipairs(self.cards) do
+            card.VT.r = card.VT.r + math.pi / 2
             effective_card_count = effective_card_count + card.config.center.rarity
         end
         ecc = effective_card_count
@@ -113,10 +167,6 @@ function CardArea:align_cards()
             width_of_this_card = card.config.center.rarity*0.5*self.card_w --
             if not card.states.drag.is then 
                 card.T.r = 0.1*(-ecc/2 - 0.5 + psychostasia_k)/(ecc)+ (G.SETTINGS.reduced_motion and 0 or 1)*0.02*math.sin(2*G.TIMERS.REAL+card.T.x)
-
-                if card.config.center.rarity == 3 then
-                    card.T.r = card.T.r + math.pi / 2
-                end
 
                 if ecc > 2 or (ecc > 1 and self == G.consumeables) or (ecc > 1 and self.config.spread) then
                     card.T.x = 
@@ -135,6 +185,17 @@ function CardArea:align_cards()
             end
 
             previous_psychostasia_k = psychostasia_k
+        end
+    end
+    
+    -- Make the big guys turn sideways
+    for k, card in ipairs(self.cards) do
+        -- It's a little scuffed, but it assumes that, if the card is roughly straight up (within an 8th of a rotation), then it needs to be sideways instead
+        -- This means the rest of the code can do whatever to it and it'll be accounted for
+        -- at the cost of this obviously being jank as hell 
+        if big_guy(card) and (math.modf(math.abs(card.T.r), math.pi * 2) < math.pi/4 ) then
+            card.T.r = card.T.r + math.pi / 2
+            card.VT.r = card.T.r
         end
     end
 end   
