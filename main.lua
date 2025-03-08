@@ -50,7 +50,11 @@ function big_guy(card)
     return psychostasia_enabled() and card.config.center.rarity and card.config.center.rarity >= 3
 end
 
--- debuffed_hand 
+function force_notch_bar_update(cardArea)
+    if cardArea == G.jokers and G.jokers.children.area_uibox then
+        G.jokers.children.area_uibox.definition.nodes[2].nodes[6] = nil
+    end
+end
 
 -- alert_no_space but with a different message. that's it 
 function alert_too_heavy(card, area)
@@ -120,7 +124,9 @@ function Card:add_to_deck()
             end
         end
     end
-    return ref(self)
+    ref(self)
+    
+    force_notch_bar_update(self)
 end
 
 local ref = Card.remove_from_deck
@@ -136,7 +142,139 @@ function Card:remove_from_deck()
         end
     end
 
-    return ref(self)
+    ref(self)
+    force_notch_bar_update(self)
+end
+
+-- CardArea
+
+local ref = CardArea.draw
+function CardArea:draw()
+    local notch_side = 0.25
+    local notch_padding = 0.025 / 2 -- I wonder if this could be made to be one pixel regardless of screen size?
+    local notch_emboss=0.1
+    local notch_inactive_emboss_ratio=0.5
+    local notch_r = 0.05
+    local danger_color = G.C.EDITION
+
+    if      self.children
+        and self.children.area_uibox
+        and self.children.area_uibox.definition.nodes 
+        and self.children.area_uibox.definition.nodes[2]
+        and self.children.area_uibox.definition.nodes[2].nodes
+        -- and self.children.area_uibox.children[2]
+        -- and self.children.area_uibox.children[2].children
+    then
+        it_goes_in_here = self.children.area_uibox.definition.nodes[2] --[2].children
+        it = it_goes_in_here.nodes[6]
+    end
+
+    if self == G.jokers and it_goes_in_here and self.children.area_uibox then -- I have NO clue how it_goes_in_here can be set without self.children.area_uibox but here we are
+        if not it then
+            the_actual_bar = {}
+            -- the_actual_bar[#the_actual_bar+1] = {
+            --         n=G.UIT.B,
+            --         config={align="cm", w=notch_padding, h=notch_padding}
+            -- }
+
+            effective_card_limit =get_effective_card_limit()
+            print(effective_card_limit)
+
+            -- Filled notches
+            filled_notch_count = 0
+            for _, card in ipairs(self.cards) do
+                for _=1, card.config.center.rarity do
+                    the_actual_bar[#the_actual_bar+1] = {
+                        n=G.UIT.C, config={minh=notch_side+notch_padding}, nodes={{ -- Needs to be a row in a column because uuhhhhh bad
+                            n=G.UIT.R,
+                            config={
+                                align="cm",
+                                minw=(
+                                    notch_side*card.config.center.rarity
+                                    + notch_padding*(card.config.center.rarity-1)
+                                ) / card.config.center.rarity, 
+                                minh=notch_side,
+                                colour = filled_notch_count<effective_card_limit and G.C.RARITY[card.config.center.rarity] or danger_color, 
+                                emboss=notch_emboss, 
+                                r=notch_r
+                            }
+                        }}
+                    }
+                    filled_notch_count = filled_notch_count + 1
+                end
+                the_actual_bar[#the_actual_bar+1] = {
+                        n=G.UIT.B,
+                        config={w=notch_padding, h=notch_padding}
+                }
+                --if #the_actual_bar >= 2 then break end
+            end
+
+            -- Empty notches
+            for _=#self.cards+1, self.config.card_limit do
+                the_actual_bar[#the_actual_bar+1] = {
+                    n=G.UIT.C, config={minh=notch_side+notch_padding, mninw=notch_side+notch_emboss}, nodes={
+                        --OH MY GOD WHY IS BALATRO'S UI SO BUGGY
+                        -- WHY IS THIS SHIT NECESSARY
+                        -- (without the extra layers, the alignment doesn't work)
+                        {n=G.UIT.R, nodes={{n=G.UIT.C, config={minw=notch_side, minh=notch_side+notch_emboss, align="bm"},nodes={
+
+                            -- {
+                            --         n=G.UIT.R,
+                            --         config={minw=notch_side, minh=notch_emboss*(1-notch_inactive_emboss_ratio), colour=G.C.CLEAR}
+                            -- },
+                            { -- Needs to be a row in a column because uuhhhhh bad
+                                n=G.UIT.R,
+                                config={
+                                    minw=notch_side,
+                                    minh=notch_side+notch_padding,
+                                    colour = G.C.UI.BACKGROUND_INACTIVE, 
+                                    emboss=notch_emboss*notch_inactive_emboss_ratio, 
+                                    r=1,
+                                    --offset={x=0, y=1}
+                                }
+                            },
+                        }}}}
+                    }
+                }
+                the_actual_bar[#the_actual_bar+1] = {
+                        n=G.UIT.B,
+                        config={w=notch_padding, h=notch_padding}
+                }
+            end
+
+            -- Overburdened warning
+            if #self.cards > self.config.card_limit then
+                the_actual_bar[#the_actual_bar+1] = {n=G.UIT.B, config={w = 0.1/2,h=0.1}}
+                the_actual_bar[#the_actual_bar+1] = {n=G.UIT.T, config={text="Overburdened! Jokers won't activate!", scale = 0.3, colour = danger_color}}
+            end
+            
+            it_goes_in_here.nodes[6] = {n=G.UIT.C, config = {colour=G.C.CLEAR}, nodes={{
+                    n=G.UIT.R, config = {colour = G.C.CLEAR, minw=notch_side*1+notch_padding*9, minh=notch_side+notch_padding, align="cm"},
+                    nodes=the_actual_bar
+                }}}
+            self.children.area_uibox = UIBox{definition=self.children.area_uibox.definition, config=self.children.area_uibox.config}
+        end
+        -- it_goes_in_here.mig_psychostasia_bar:draw()
+    end
+    ref(self)
+end
+
+-- local ref = CardArea.update
+-- function CardArea:update(dt)
+--     ref(self, dt)
+--     force_notch_bar_update(self)
+-- end
+
+function get_effective_card_count()
+    effective_card_count = 0
+    for _, card in ipairs(G.jokers.cards) do
+        effective_card_count = effective_card_count + card.config.center.rarity
+    end
+    return effective_card_count
+end
+
+function get_effective_card_limit()
+    return get_effective_card_count() + (G.jokers.config.card_limit-#G.jokers.cards) 
 end
 
 local ref = CardArea.align_cards
@@ -152,12 +290,7 @@ function CardArea:align_cards()
     -- Checks for rarity because the consumable area is also type joker 
     if self.config.type == 'joker' and #self.cards > 0 and self.cards[1].config.center.rarity then
         psychostasia_k = 0
-        effective_card_count = 0
-        for _, card in ipairs(self.cards) do
-            card.VT.r = card.VT.r + math.pi / 2
-            effective_card_count = effective_card_count + card.config.center.rarity
-        end
-        ecc = effective_card_count
+        ecc = get_effective_card_count()
         previous_psychostasia_k = 0 -- Replaces k-1
 
         for k, card in ipairs(self.cards) do
@@ -186,6 +319,16 @@ function CardArea:align_cards()
 
             previous_psychostasia_k = psychostasia_k
         end
+
+        -- Sorting is what lets you change the positions of the cards
+        table.sort(self.cards, function (a, b) return a.T.x + a.T.w/2 < b.T.x + b.T.w/2 end)
+        positions = ""
+        for _,card in ipairs(self.cards) do positions = positions .. (card.ability and card.ability.name or 'idk') end
+        if positions ~= self.mig_previousJokerPositions then
+            print(positions)
+            force_notch_bar_update(G.jokers)
+        end
+        self.mig_previousJokerPositions = positions
     end
     
     -- Make the big guys turn sideways
