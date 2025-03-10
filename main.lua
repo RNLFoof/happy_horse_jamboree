@@ -1,15 +1,14 @@
-mig_psychostasia_atlas = SMODS.Atlas {
-    key = "mig_psychostasia_atlas",
-    path = "psychostasia_deck.png",
-    px = 71,
-    py = 95,
-}
+assert(SMODS.load_file('atlases.lua'))()
+assert(atlas_decks)
+
+mig_psychostasia_atlas = atlas_decks
+print(atlas_decks)
 
 mig_psychostasia = SMODS.Back{
     name = "Psychostasia Deck",
     key = "mig_psychostasia",
-    atlas = "mig_psychostasia_atlas",
-    pos = {x = 0, y = 0},
+    atlas = "atlas_decks",
+    pos = atlas_decks_positions["Psychostasia Deck"],
     config = {mig_psychostasia = true, joker_slot = 5},
     loc_txt = {
         name = "Psychostasia Deck",
