@@ -158,7 +158,7 @@ function CardArea:draw()
     local notch_emboss=0.1
     local notch_inactive_emboss_ratio=0.5
     local notch_r = 0.05
-    local danger_color = G.C.EDITION
+    local danger_color = G.C.MIG_OVERBURDENED
 
     if      self.children
         and self.children.area_uibox
@@ -366,7 +366,7 @@ function Card:calculate_joker(context)
                             text = "Overburdened!",
                             scale = 0.6,
                             hold = 0.65 - 0.2,
-                            backdrop_colour = G.C.RED,
+                            backdrop_colour = G.C.MIG_OVERBURDENED,
                             align = "bm",
                             major = self,
                             offset = {x = 0, y = 0.05*self.T.h}
@@ -382,4 +382,17 @@ function Card:calculate_joker(context)
         return nil
     end
     return output
+end
+
+
+local ref = Game.update
+function Game:update(dt)
+    ref(self, dt)
+    if not G.C.MIG_OVERBURDENED then
+        self.C.MIG_OVERBURDENED = {1,1,1,1}
+    end
+        dif = 1/8
+        G.C.MIG_OVERBURDENED[1] = (1-dif)+dif*(1+math.sin(self.TIMERS.REAL*3))
+        G.C.MIG_OVERBURDENED[2] = (1-3*dif)+dif*(1+math.sin(self.TIMERS.REAL*4.5))
+        G.C.MIG_OVERBURDENED[3] = (1-5*dif)
 end
