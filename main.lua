@@ -15,7 +15,7 @@ mig_psychostasia = SMODS.Back{
         text ={
             "{C:attention}+5{} Joker slots",
             "{C:green}Uncommon{}, {C:red}Rare{}, and {C:purple}Legendary{} Jokers",
-            "cost {C:green}2{}, {C:red}3{}, and {C:purple}4{} Joker slots"
+            "cost {C:green}2{}, {C:red}3{}, and {C:purple}4{} Joker slots",
         },
     },
 
@@ -43,6 +43,10 @@ mig_psychostasia = SMODS.Back{
 
 function psychostasia_enabled()
     return G.GAME.starting_params.mig_psychostasia
+end
+
+function overburdened()
+    return psychostasia_enabled() and #G.jokers.cards > G.jokers.config.card_limit
 end
 
 function big_guy(card)
@@ -242,7 +246,7 @@ function CardArea:draw()
             end
 
             -- Overburdened warning
-            if #self.cards > self.config.card_limit then
+            if overburdened() then
                 the_actual_bar[#the_actual_bar+1] = {n=G.UIT.B, config={w = 0.1/2,h=0.1}}
                 the_actual_bar[#the_actual_bar+1] = {n=G.UIT.T, config={text="Overburdened! Jokers won't activate!", scale = 0.3, colour = danger_color}}
             end
@@ -340,4 +344,42 @@ function CardArea:align_cards()
             card.VT.r = card.T.r
         end
     end
-end   
+end
+
+
+
+local ref = Card.calculate_joker
+function Card:calculate_joker(context)
+    output = ref(self, context)
+
+    -- Shows the overburdened text, but only if the joker would have displayed/done something anyway
+    if self.ability.set == "Joker" and overburdened() then 
+        if output then
+            -- Based on the debuff behavior in card_eval_status_text in common_events
+            G.E_MANAGER:add_event(
+                Event({
+                    trigger = 'before', 
+                    delay = 0.4,
+                    --blocking = true,
+                    func = function()
+                        attention_text({
+                            text = "Overburdened!",
+                            scale = 0.6,
+                            hold = 0.65 - 0.2,
+                            backdrop_colour = G.C.RED,
+                            align = "bm",
+                            major = self,
+                            offset = {x = 0, y = 0.05*self.T.h}
+                        })
+                        play_sound("cancel", 0.8+1*0.2, 1)
+                        self:juice_up(0.6, 0.1)
+                        G.ROOM.jiggle = G.ROOM.jiggle + 0.7
+                        return true
+                    end
+                })
+            )
+        end
+        return nil
+    end
+    return output
+end
