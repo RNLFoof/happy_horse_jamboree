@@ -4,13 +4,13 @@ assert(atlas_decks)
 mig_psychostasia_atlas = atlas_decks
 print(atlas_decks)
 
-mig_psychostasia = SMODS.Back
-    name: "Psychostasia Deck",
-    key: "mig_psychostasia",
-    atlas: "atlas_decks",
-    pos: atlas_decks_positions["Psychostasia Deck"],
-    config: {mig_psychostasia = true, joker_slot = 5},
-    loc_txt: {
+mig_psychostasia = SMODS.Back{
+    name = "Psychostasia Deck",
+    key = "mig_psychostasia",
+    atlas = "atlas_decks",
+    pos = atlas_decks_positions["Psychostasia Deck"],
+    config = {mig_psychostasia = true, joker_slot = 5},
+    loc_txt = {
         name = "Psychostasia Deck",
         text ={
             "{C:attention}+5{} Joker slots",
@@ -19,80 +19,78 @@ mig_psychostasia = SMODS.Back
         },
     },
 
-    loc_vars: => 
+    loc_vars = function(self) 
         return {
             vars={}
         }
+    end,
 
-    apply: ->
-        G.E_MANAGER\add_event(Event
-            func: ->
+    apply = function()
+        G.E_MANAGER:add_event(Event({
+            func = function()
                 G.GAME.starting_params.mig_psychostasia = true
                 return true
-        )
+            end
+        }))
+    end,
 
     -- calculate = function(self, card, context)
     --     if then
     --         G.GAME.blind:debuff_card(card)
     --     end
     -- end,
+}
 
-
-psychostasia_enabled = ->
+function psychostasia_enabled()
     return G.GAME.starting_params.mig_psychostasia
+end
 
-overburdened = ->
+function overburdened()
     return psychostasia_enabled() and #G.jokers.cards > G.jokers.config.card_limit
+end
 
-big_guy = (card) ->
+function big_guy(card)
     return psychostasia_enabled() and card.config.center.rarity and card.config.center.rarity >= 3
+end
 
-force_notch_bar_update = (cardArea) ->
+function force_notch_bar_update(cardArea)
     if cardArea == G.jokers and G.jokers.children.area_uibox then
         G.jokers.children.area_uibox.definition.nodes[2].nodes[6] = nil
+    end
+end
 
 -- alert_no_space but with a different message. that's it 
-alert_too_heavy = (card, area) ->
+function alert_too_heavy(card, area)
     G.CONTROLLER.locks.no_space = true
     attention_text({
         scale = 0.9, text = "Too heavy!", hold = 0.9, align = 'cm',
         cover = area, cover_padding = 0.1, cover_colour = adjust_alpha(G.C.BLACK, 0.7)
     })
-    card\juice_up(0.3, 0.2)
+    card:juice_up(0.3, 0.2)
     for i = 1, #area.cards do
-      area.cards[i]\juice_up(0.15)
-
-    G.E_MANAGER\add_event(Event
-        trigger: 'after',
-        delay: 0.06*G.SETTINGS.GAMESPEED,
-        blockable: false,
-        blocking: false,
-        func: ->
-            play_sound('tarot2', 0.76, 0.4)
-            return true
-    )
-    play_sound('tarot2', 1, 0.4)
+      area.cards[i]:juice_up(0.15)
+    end
+    G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.06*G.SETTINGS.GAMESPEED, blockable = false, blocking = false, func = function()
+      play_sound('tarot2', 0.76, 0.4);return true end}))
+      play_sound('tarot2', 1, 0.4)
   
-    G.E_MANAGER\add_event(Event
-    trigger: 'after',
-    delay: 0.5*G.SETTINGS.GAMESPEED,
-    blockable: false,
-    blocking: false,
-    func: ->
+      G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.5*G.SETTINGS.GAMESPEED, blockable = false, blocking = false,
+      func = function()
         G.CONTROLLER.locks.no_space = nil
-        return true
-    )
-
+      return true end}))
+  end
 
 local ref = G.FUNCS.check_for_buy_space
-G.FUNCS.check_for_buy_space = (card) ->
+G.FUNCS.check_for_buy_space = function(card)
     if G.GAME.starting_params.mig_psychostasia and card.ability.set == 'Joker' and #G.jokers.cards + card.config.center.rarity > G.jokers.config.card_limit then 
         alert_too_heavy(card, G.jokers)
         return false
+    end
     return ref(card)
+end
 
 local ref = Card.init
-Card:init = (X, Y, W, H, card, center, params) ->
+function Card:init(X, Y, W, H, card, center, params) 
     output = ref(self, X, Y, W, H, card, center, params)
 
     -- This seems to trigger before the deck is known when loading. Doing it as an event makes it trigger afterwards.
@@ -156,7 +154,7 @@ end
 local ref = CardArea.draw
 function CardArea:draw()
     local notch_side = 0.25
-    local notch_padding = notch_side /2 -- 0.025 / 1 -- I wonder if this could be made to be one pixel regardless of screen size?
+    local notch_padding = 0.025 / 2 -- I wonder if this could be made to be one pixel regardless of screen size?
     local notch_emboss=0.1
     local notch_inactive_emboss_ratio=0.5
     local notch_r = 0.05
