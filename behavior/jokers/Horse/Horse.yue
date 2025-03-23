@@ -1,0 +1,65 @@
+horse_names = {
+    "Chestnut",
+    "Peanut",
+    "Acorn",
+    "Gertrude"
+}
+bonus_types = {
+    "chips"
+    "mult"
+    "money"
+}
+
+round = (num, numDecimalPlaces) ->
+  mult = 10^(numDecimalPlaces or 0)
+  return math.floor(num * mult + 0.5) / mult
+
+index = 0
+for   bonus_1_index, bonus_1 in ipairs(bonus_types) do
+ for  bonus_2_index, bonus_2 in ipairs([_ for _ in *bonus_types[bonus_1_index,]]) do
+  for _,             bonus_3 in ipairs([_ for _ in *bonus_types[bonus_2_index,]]) do 
+    index += 1
+    bonuses_as_list = {bonus_1, bonus_2, bonus_3}
+    bonuses_for_this_horse = {
+        chips:  round(8  / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "chips"]) -- This *was* 8, 17, 25, and was going to become 10, 15, 25, but a plain 8*n was more consistent and close enough
+        mult:   round(10 / 6 * #[bonus for bonus in *bonuses_as_list when bonus == "mult" ])
+        money:  round(1  / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "money"])
+    }
+    
+    horse_ability_description = {}
+    if bonuses_for_this_horse.chips > 0 then horse_ability_description[] = "{C:chips}+#{ bonuses_for_this_horse.chips}{} chips"
+    if bonuses_for_this_horse.mult  > 0 then horse_ability_description[] = "{C:mult,}+#{ bonuses_for_this_horse.mult }{} Mult"
+    if bonuses_for_this_horse.money > 0 then horse_ability_description[] = "{C:money}+$#{bonuses_for_this_horse.money}{} per round"
+
+    for line in *{
+        "Additional {C:attention}Horses{} may appear, are {C:dark_edition}negative{},"
+        "and have varied abilities"
+
+        -- "{C:attention}Horse Jokers{} may appear multiple times"
+        -- "and have varied abilities"
+        -- "Exactly one existing {C:attention}Horse Joker{}"
+        -- "isn't {C:dark_edition}negative{} at all times"
+    } do
+        horse_ability_description[] = line
+
+    horse_name = "A HORSE (#{index})"
+    print("Added horse", index, bonus_types)
+
+    horse_joker = SMODS.Joker
+        key: "mig_horse_" .. index
+        atlas: "atlas_jokers"
+        pos: atlas_decks_positions["Horse"]
+        rarity: 1
+        cost: 1
+        loc_txt: {
+            name: horse_name,
+            text: horse_ability_description
+        },
+        discovered: true,
+        in_pool: (args) => true, { allow_duplicates: true }
+        -- loc_vars: (info_queue, card) => 
+        --     print(card)
+        --     info_queue[] = {
+        --             name: "Horse?"
+        --             text: {"desc"}
+        --     }
