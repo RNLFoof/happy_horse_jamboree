@@ -2,3 +2,6 @@
 /assets/1x/*
 /assets/2x/*
 /.vs
+/assets/uncombined/horses/*
+!/assets/uncombined/horses/oklch*
+/assets/uncombined/horses/oklch/src/oklch/__pycache__
