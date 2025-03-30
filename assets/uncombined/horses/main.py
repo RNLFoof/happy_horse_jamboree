@@ -14,21 +14,27 @@ from oklch.src.oklch import OKLCH, RGB
 
 debug_mode = False
 
+# These are also used to replace the correct colors? so don't change them :)
 basic_colors: Dict[str, Tuple[int, int, int]] = {
     "red": (255, 0, 0),
-    "orange": (255, 128, 0),
+    "orange": (255, 127, 0),
     "yellow": (255, 255, 0),
     "green": (0, 255, 0),
     "cyan": (0, 255, 255),
     "blue": (0, 0, 255),
+    "purple": (127, 0, 255),
+    "magenta": (255, 0, 255),
 }
 
 parts: Dict[str, Tuple[int, int, int]] = {
-    "lips": basic_colors["red"],
-    "hat_sides": basic_colors["yellow"],
-    "eye": basic_colors["green"],
+    "upper_lip": basic_colors["red"],
+    "lower_lip": basic_colors["yellow"],
+    "hat_top": basic_colors["green"],
     "hat_middle": basic_colors["cyan"],
-    "mane": basic_colors["blue"],
+    "hat_bottom": basic_colors["blue"],
+    "eye": basic_colors["purple"],
+    "tuft": basic_colors["orange"],
+    "mane": basic_colors["magenta"],
 }
 
 bonus_colors: Dict[str, Tuple[int, int, int]] = {
@@ -39,6 +45,7 @@ bonus_colors: Dict[str, Tuple[int, int, int]] = {
 }
 
 def negative_color(rgb):
+    # This part is abouuuut what the actual game does?
     max_value = max(rgb)
     min_value = min(rgb)
     new_rgb = []
@@ -47,23 +54,41 @@ def negative_color(rgb):
             new_rgb.append(band)
         else:
             new_rgb.append(max_value - (band - min_value))
-    return tuple(new_rgb)
+    new_rgb = tuple(new_rgb)
+
+    # Only change the hue, since we're only trying to preserve information conserved by the hue
+    old_oklch = RGB(*rgb).to_OKLCH()
+    try:
+        new_oklch = RGB(*new_rgb).to_OKLCH()
+    except:
+        print("hey")
+    old_oklch.h = new_oklch.h
+    new_rgb = rgb_object_to_tuple(old_oklch.to_RGB())
+
+    return new_rgb
 
 
 def two_color_horse_palette(primary_color, secondary_color):
     return {
-        parts["lips"]: primary_color,
-        parts["hat_sides"]: secondary_color,
-        parts["eye"]: secondary_color,
+        parts["upper_lip"]: primary_color,
+        parts["lower_lip"]: primary_color,
+        parts["hat_top"]: secondary_color,
         parts["hat_middle"]: primary_color,
+        parts["hat_bottom"]: secondary_color,
+        parts["eye"]: secondary_color,
+        parts["tuft"]: secondary_color,
         parts["mane"]: secondary_color,
     }
+
 def three_color_horse_palette(primary_color, secondary_color, tertiary_color):
     return {
-        parts["lips"]: primary_color,
-        parts["hat_sides"]: secondary_color,
-        parts["eye"]: secondary_color,
+        parts["upper_lip"]: primary_color,
+        parts["lower_lip"]: primary_color,
+        parts["hat_top"]: secondary_color,
         parts["hat_middle"]: primary_color,
+        parts["hat_bottom"]: secondary_color,
+        parts["eye"]: secondary_color,
+        parts["tuft"]: tertiary_color,
         parts["mane"]: tertiary_color,
     }
 
@@ -165,7 +190,7 @@ class Hue:
 
     @classmethod
     def color_wheel_progress_to_oklch_hue(cls, color_wheel_progress):
-        return cls.color_wheel_progress_to_oklch(color_wheel_progress).h
+        return cls.color_wheel_progress_to_oklch(color_wheel_progress).h % 360
     @classmethod
     def color_wheel_progress_to_oklch(cls, color_wheel_progress):
         sorted_by_color_wheel = sorted(color_wheel_points, key=lambda x: x["color_wheel_progress"])
@@ -219,6 +244,8 @@ class Hue:
         output = (number/original_cycle) * cycle_of
         if cycle_of > 1:
             output = round(output)
+            output = min(output, cycle_of)
+            output = max(output, 0)
         return output
 
     @classmethod
@@ -324,6 +351,7 @@ class Hue:
         guys = [hue.oklch() for hue in [self, midpoint, goal]]
         for guy_index, guy in enumerate(guys):
             guy.l -= 1/12 * guy_index
+            guy.l = max(0, guy.l)
         guys = [rgb_object_to_tuple(guy.to_RGB()) for guy in guys]
 
         return three_color_horse_palette(*guys)
@@ -523,12 +551,26 @@ def get_colors_for_these_bonuses(bonuses: List[str]):
         return input[0].horse_palette_alongside(input[1:])
 
 
-def color_a_horse(conversions, negative=False):
-    if negative:
-        for key, rgb in conversions.items():
-            conversions[key] = negative_color(rgb)
+def clamp_rgb(rgb):
+    new_rgb = []
+    for band in rgb:
+        band = max(band, 0)
+        band = min(band, 255)
+        new_rgb.append(band)
+        # assert band >= 0
+        # assert band <= 255
+    return tuple(new_rgb)
 
-    horse_image = Image.open("horse.png")
+def color_a_horse(conversions, base_image="horse.png", negative=False):
+    for key, rgb in conversions.items():
+        rgb = clamp_rgb(rgb)
+        if negative:
+            rgb = negative_color(rgb)
+            rgb = clamp_rgb(rgb)
+        conversions[key] = rgb
+
+
+    horse_image = Image.open(base_image)
     horse_image_rgb = horse_image.convert("RGB")
     horse_image_rgb_data = horse_image_rgb.load()
     for x in range(horse_image.width):
@@ -542,11 +584,16 @@ def color_a_horse(conversions, negative=False):
 
     return horse_image_modified
 
+def apply_horse_accessories(horse_image: Image.Image, accessories: List[str], negative=False):
+    for accessory in accessories:
+        accessory_image = Image.open(accessory).convert("RGBA")
+        horse_image.alpha_composite(accessory_image)
 
 @dataclass
 class HorseConfig:
     key: str
     bonuses: List[str]
+    jack: bool
     negative: bool
 
 
@@ -555,20 +602,24 @@ def horse_configs():
     for bonus_1_index, bonus_1 in enumerate(bonus_keys):
         for bonus_2_index, bonus_2 in enumerate(bonus_keys[bonus_1_index:]):
             for bonus_3_index, bonus_3 in enumerate(bonus_keys[bonus_1_index + bonus_2_index:]):
-                for negative in [False, True]:
-                    these_bonuses = [
-                        bonus_1,
-                        bonus_2,
-                        bonus_3,
-                    ]
-                    horse_key = "".join(these_bonuses)
-                    if negative:
-                        horse_key += "neg"
-                    yield HorseConfig(
-                        horse_key,
-                        these_bonuses,
-                        negative,
-                    )
+                for jack in [False, True]:
+                    for negative in [False, True]:
+                        these_bonuses = [
+                            bonus_1,
+                            bonus_2,
+                            bonus_3,
+                        ]
+                        horse_key = "".join(these_bonuses)
+                        if jack:
+                            horse_key += "jack"
+                        if negative:
+                            horse_key += "neg"
+                        yield HorseConfig(
+                            horse_key,
+                            these_bonuses,
+                            jack,
+                            negative,
+                        )
 
 
 def color_many_horses():
@@ -578,7 +629,25 @@ def color_many_horses():
         colors_for_these_bonuses = get_colors_for_these_bonuses(horse_config.bonuses)
         if not colors_for_these_bonuses:
             continue
-        horse = color_a_horse(colors_for_these_bonuses, negative=horse_config.negative)
+        horse = color_a_horse(
+            colors_for_these_bonuses,
+            base_image="horse_jack.png" if horse_config.jack else "horse.png",
+            negative=horse_config.negative
+        )
+
+        accessories_maybe = {
+            "moneymoneymoney": [
+                "accessories/cigar.png",
+                "accessories/sunglasses.png",
+            ],
+            "moneymoneymoneyjack": [
+                "accessories/golden_teeth.png",
+                "accessories/dollar_sign_eyes.png",
+            ]
+        }
+        accessory_key = horse_config.key.replace("neg", "")
+        if accessory_key in accessories_maybe:
+            apply_horse_accessories(horse, accessories_maybe[accessory_key], negative=horse_config.negative)
 
         # Debuggy
         if debug_mode:
