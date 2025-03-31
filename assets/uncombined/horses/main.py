@@ -46,23 +46,42 @@ bonus_colors: Dict[str, Tuple[int, int, int]] = {
 
 def negative_color(rgb):
     # This part is abouuuut what the actual game does?
-    max_value = max(rgb)
-    min_value = min(rgb)
-    new_rgb = []
-    for band in rgb:
-        if band in [max_value, min_value]:
-            new_rgb.append(band)
-        else:
-            new_rgb.append(max_value - (band - min_value))
-    new_rgb = tuple(new_rgb)
+    # max_value = max(rgb)
+    # min_value = min(rgb)
+    # new_rgb = []
+    # green_highest = rgb[2] == max_value
+    #
+    # def invert(band):
+    #     return max_value - (band - min_value)
+    #
+    # r, g, b = rgb
+    # if green_highest:
+    #     rgb = (
+    #         invert(r),
+    #         g,
+    #         invert(b),
+    #     )
+    # else:
+    #     rgb = (
+    #         r,
+    #         invert(g),
+    #         b,
+    #     )
+
+    # for band in rgb:
+    #     if band in [max_value, min_value]:
+    #         new_rgb.append(band)
+    #     else:
+    #         new_rgb.append(max_value - (band - min_value))
+    # new_rgb = tuple(new_rgb)
+    # new_rgb = rgb
 
     # Only change the hue, since we're only trying to preserve information conserved by the hue
     old_oklch = RGB(*rgb).to_OKLCH()
-    try:
-        new_oklch = RGB(*new_rgb).to_OKLCH()
-    except:
-        print("hey")
-    old_oklch.h = new_oklch.h
+
+    color_wheel_progress = Hue.oklch_hue_to_color_wheel_progress(old_oklch.h)
+    new_oklch_hue = Hue.color_wheel_progress_to_oklch_hue(color_wheel_progress, negative_color_wheel)
+    old_oklch.h = new_oklch_hue
     new_rgb = rgb_object_to_tuple(old_oklch.to_RGB())
 
     return new_rgb
@@ -113,6 +132,7 @@ def horse_palette_debug_image(items: List[Tuple[str, "Hue"]]):
         #draw.point(xy_for_layer(0), fill)
 
         draw.point(xy_for_layer(1), Hue(angle / 360).rgb_tuple())
+        draw.point(xy_for_layer(2), Hue(angle / 360).rgb_tuple(color_wheel=negative_color_wheel))
 
         #draw.point(xy_for_layer(2), shoot_me)
         items.sort(key=lambda x: x[0])
@@ -129,44 +149,53 @@ def horse_palette_debug_image(items: List[Tuple[str, "Hue"]]):
                     draw.text(at, text, "black")
                     drawn.append(text)
 
-color_wheel_points = []
-max_points = 12
-color_wheel_image = Image.open("wheel_d.png").convert("RGBA")
-draw = ImageDraw(color_wheel_image)
-for point_index in range(max_points):
-    distance = color_wheel_image.width / 4
-    progress = point_index / max_points
-    angle = progress * 360
-    its_here = cmath.rect(distance, (angle / 360 * pi * 2) - pi)
-    x, y = -its_here.real + color_wheel_image.width / 2, its_here.imag + color_wheel_image.width / 2
-    print(x, y)
-    r,g,b,a = color_wheel_image.getpixel((x, y))
-    if a == 0:
-        continue
-    rgb = r, g, b
-    color_wheel_points.append({
-        "rgb": rgb,
-        "color_wheel_progress": progress,
-        "oklch": RGB(*rgb).to_OKLCH().to_OKLCH(),
-        # "oklch_hue": RGB(*rgb).to_OKLCH().to_OKLCH().h,
-    })
-    draw.text((x,y), str(point_index))
-color_wheel_image.save("color_wheel_debug_image.png")
-# color_wheel_points[-1]["oklch"].h = 360
-# print(color_wheel_points)
 
-color_wheel_points.append({
-    "rgb": color_wheel_points[0]["rgb"],
-    "color_wheel_progress": 1,
-    "oklch": color_wheel_points[0]["oklch"].to_RGB().to_OKLCH(),  #convert back and forth to make a copy
-})
+class ColorWheel:
+    def __init__(self, filename, force_upwards=False):
+        self.points = []
+        max_points = 12
+        color_wheel_image = Image.open(filename).convert("RGBA")
+        draw = ImageDraw(color_wheel_image)
+        for point_index in range(max_points):
+            distance = color_wheel_image.width / 4
+            progress = point_index / max_points
+            angle = progress * 360
+            its_here = cmath.rect(distance, (angle / 360 * pi * 2) - pi)
+            x, y = -its_here.real + color_wheel_image.width / 2, its_here.imag + color_wheel_image.width / 2
+            print(x, y)
+            r,g,b,a = color_wheel_image.getpixel((x, y))
+            if a == 0:
+                continue
+            rgb = r, g, b
+            self.points.append({
+                "rgb": rgb,
+                "color_wheel_progress": progress,
+                "oklch": RGB(*rgb).to_OKLCH().to_OKLCH(),
+                # "oklch_hue": RGB(*rgb).to_OKLCH().to_OKLCH().h,
+            })
+            draw.text((x,y), str(point_index))
+        color_wheel_image.save("color_wheel_debug_image.png")
+        # self.points[-1]["oklch"].h = 360
+        # print(self.points)
 
-previous_h = -10
-for point in color_wheel_points:
-    while point["oklch"].h < previous_h:
-        point["oklch"].h += 360
-    print(point["oklch"].h)
-    previous_h = point["oklch"].h
+        self.points.append({
+            "rgb": self.points[0]["rgb"],
+            "color_wheel_progress": 1,
+            "oklch": self.points[0]["oklch"].to_RGB().to_OKLCH(),  #convert back and forth to make a copy
+        })
+
+        if force_upwards:
+            previous_h = -10
+            for point in self.points:
+                while point["oklch"].h < previous_h:
+                    point["oklch"].h += 360
+                print(point["oklch"].h)
+                previous_h = point["oklch"].h
+
+
+default_color_wheel = ColorWheel("wheel_d.png", force_upwards=True)
+negative_color_wheel = ColorWheel("wheel_neg.png")
+
 class Hue:
     def __init__(self, color_wheel_placement):
         self._color_wheel_placement = color_wheel_placement % 1
@@ -180,8 +209,9 @@ class Hue:
         return self + -other
 
     @classmethod
-    def oklch_hue_to_color_wheel_progress(cls, oklch_hue):
-        sorted_by_oklch_hue = sorted(color_wheel_points, key=lambda x: x["oklch"].h)
+    def oklch_hue_to_color_wheel_progress(cls, oklch_hue, color_wheel=None):
+        color_wheel = color_wheel if color_wheel else default_color_wheel
+        sorted_by_oklch_hue = sorted(color_wheel.points, key=lambda x: x["oklch"].h)
         return numpy.interp(oklch_hue,
                             [x["oklch"].h for x in sorted_by_oklch_hue],
                             [x["color_wheel_progress"] for x in sorted_by_oklch_hue],
@@ -189,11 +219,12 @@ class Hue:
                             )
 
     @classmethod
-    def color_wheel_progress_to_oklch_hue(cls, color_wheel_progress):
-        return cls.color_wheel_progress_to_oklch(color_wheel_progress).h % 360
+    def color_wheel_progress_to_oklch_hue(cls, color_wheel_progress, color_wheel=None):
+        return cls.color_wheel_progress_to_oklch(color_wheel_progress, color_wheel=color_wheel).h % 360
     @classmethod
-    def color_wheel_progress_to_oklch(cls, color_wheel_progress):
-        sorted_by_color_wheel = sorted(color_wheel_points, key=lambda x: x["color_wheel_progress"])
+    def color_wheel_progress_to_oklch(cls, color_wheel_progress, color_wheel=None):
+        color_wheel = color_wheel if color_wheel else default_color_wheel
+        sorted_by_color_wheel = sorted(color_wheel.points, key=lambda x: x["color_wheel_progress"])
 
         #ok let's get VERBOSE'
         return OKLCH(
@@ -227,14 +258,17 @@ class Hue:
     def oklch_hue(self):
         return self.color_wheel_progress_to_oklch_hue(self.color_wheel_progress())
 
-    def oklch(self):
-        return self.color_wheel_progress_to_oklch(self.color_wheel_progress())
+    def oklch(self, color_wheel=None):
+        color_wheel = color_wheel if color_wheel else default_color_wheel
+        return self.color_wheel_progress_to_oklch(self.color_wheel_progress(), color_wheel=color_wheel)
 
-    def rgb_object(self):
-        return self.oklch().to_RGB()
+    def rgb_object(self, color_wheel=None):
+        color_wheel = color_wheel if color_wheel else default_color_wheel
+        return self.oklch(color_wheel=color_wheel).to_RGB()
 
-    def rgb_tuple(self, cycle=255):
-        rgb = rgb_object_to_tuple(self.rgb_object())
+    def rgb_tuple(self, cycle=255, color_wheel=None):
+        color_wheel = color_wheel if color_wheel else default_color_wheel
+        rgb = rgb_object_to_tuple(self.rgb_object(color_wheel=color_wheel))
         rgb = self.list_to_cycle_of(rgb, cycle, 255)
         return rgb
 
@@ -405,11 +439,13 @@ class Hue:
         return three_color_horse_palette(*[hue.rgb_tuple() for hue in the_guys])
 
 
+
+
 for official_color_rgb in [
     (252, 162, 0),  # Yellow
     (0, 156, 255),  # Blue
 ]:
-    color_wheel_points.append({
+    default_color_wheel.points.append({
         "rgb": official_color_rgb,
         "color_wheel_progress": Hue.from_rgb(official_color_rgb).color_wheel_progress(),
         "oklch": RGB(*official_color_rgb).to_OKLCH(),  # convert back and forth to make a copy
