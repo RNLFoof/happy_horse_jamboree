@@ -99,6 +99,7 @@ def two_color_horse_palette(primary_color, secondary_color):
         parts["mane"]: secondary_color,
     }
 
+
 def three_color_horse_palette(primary_color, secondary_color, tertiary_color):
     return {
         parts["upper_lip"]: primary_color,
@@ -110,6 +111,7 @@ def three_color_horse_palette(primary_color, secondary_color, tertiary_color):
         parts["tuft"]: tertiary_color,
         parts["mane"]: tertiary_color,
     }
+
 
 def horse_palette_debug_image(items: List[Tuple[str, "Hue"]]):
     global debug_image
@@ -195,6 +197,7 @@ class ColorWheel:
 
 default_color_wheel = ColorWheel("wheel_d.png", force_upwards=True)
 negative_color_wheel = ColorWheel("wheel_neg.png")
+
 
 class Hue:
     def __init__(self, color_wheel_placement):
@@ -390,7 +393,6 @@ class Hue:
 
         return three_color_horse_palette(*guys)
 
-
     def complementary_horse_palette(self, secondary_hue: "Hue", in_debug_also_list=None):
         if in_debug_also_list is None:
             in_debug_also_list = []
@@ -439,8 +441,6 @@ class Hue:
         return three_color_horse_palette(*[hue.rgb_tuple() for hue in the_guys])
 
 
-
-
 for official_color_rgb in [
     (252, 162, 0),  # Yellow
     (0, 156, 255),  # Blue
@@ -451,6 +451,7 @@ for official_color_rgb in [
         "oklch": RGB(*official_color_rgb).to_OKLCH(),  # convert back and forth to make a copy
     })
 
+
 def rgb_object_to_tuple(rgb):
     return (
         rgb.r,
@@ -458,10 +459,12 @@ def rgb_object_to_tuple(rgb):
         rgb.b,
     )
 
+
 def print_assert(x):
     print(x)
     assert(x != False)
     return x
+
 
 def print_assert_equals(x, y):
     print("Original:", x, "==", y, "?")
@@ -531,6 +534,7 @@ base_red = (253, 95, 85)
 # def hue_to_complex_number(hue):
 #     return cmath.rect(1, (hue/360*pi*2)-pi)
 # return e ** ((hue / 360) * 1j * pi * 2)
+
 
 def hue_distance(a: Union[float, Hue], b: Union[float, Hue]):
     # originally I tried adding the angles before converting to floats, but like, that makes it loop lol

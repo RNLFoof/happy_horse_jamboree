@@ -1,3 +1,4 @@
+required_horse_name_count = 40
 horse_names = {
     "Chestnut"
     "Peanut"
@@ -7,6 +8,11 @@ horse_names = {
     "Crazy Horse"
     "Jimmy"
     "Potatoes"
+    "Lucky"
+
+    "Hemmingway"
+    "Whiskey"
+    "Chipschipschips"
 
     -- Stone fruit
     "Apricot"
@@ -45,21 +51,25 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
         index += 1
         bonuses_as_list = {bonus_1, bonus_2, bonus_3}
         bonuses_for_this_horse = {
-            chips:  round(8  / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "chips"]) -- This *was* 8, 17, 25, and was going to become 10, 15, 25, but a plain 8*n was more consistent and close enough
-            mult:   round(10 / 6 * #[bonus for bonus in *bonuses_as_list when bonus == "mult" ])
-            money:  round(1  / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "money"])
-            luck:   round(1  / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "luck" ])
+            chips:  round(8 / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "chips"]) -- This *was* 8, 17, 25, and was going to become 10, 15, 25, but a plain 8*n was more consistent and close enough
+            mult:   round(4 / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "mult" ])
+            money:  round(1 / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "money"])
+            luck:   round(1 / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "luck" ])
         }
         
-        horse_ability_description = {}
-        if bonuses_for_this_horse.chips > 0 then horse_ability_description[] = "{C:chips}+#{ bonuses_for_this_horse.chips}{} chips"
-        if bonuses_for_this_horse.mult  > 0 then horse_ability_description[] = "{C:mult,}+#{ bonuses_for_this_horse.mult }{} Mult"
-        if bonuses_for_this_horse.money > 0 then horse_ability_description[] = "{C:money}+$#{bonuses_for_this_horse.money}{} per round"
-        if bonuses_for_this_horse.luck  > 0 then horse_ability_description[] = "{C:green}HORSE LUCK X#{bonuses_for_this_horse.luck}{}"
-
+        horse_ability_description = {
+            jack and "Per {C:attention}Jack{} scored:" or "Each {C:blue}Hand{} played:"
+        }
+        scale = "s:0.75"
+        if bonuses_for_this_horse.chips > 0 then horse_ability_description[] = "{#{scale},C:chips}+#{           bonuses_for_this_horse.chips}{#{scale}} chips"
+        if bonuses_for_this_horse.mult  > 0 then horse_ability_description[] = "{#{scale},C:mult}+#{            bonuses_for_this_horse.mult }{#{scale}} Mult"
+        if bonuses_for_this_horse.money > 0 then horse_ability_description[] = "{#{scale},C:attention}#{        bonuses_for_this_horse.money}{#{scale},C:green} #1#/2{#{scale}} chance#{bonuses_for_this_horse.money>1 and 's' or ''} for {#{scale},C:money}$1{}"
+        if bonuses_for_this_horse.luck  > 0 then horse_ability_description[] = "{#{scale},C:green}HORSE LUCK X#{bonuses_for_this_horse.luck }{#{scale}}"
+        
+        scale = "s:0.5"
         for line in *{
-            "Additional {C:attention}Horses{} may appear, are {C:dark_edition}negative{},"
-            "and have varied abilities"
+            "{#{scale},C:inactive}Additional {C:attention,#{scale}}Horses{#{scale},C:inactive} may appear, are {C:dark_edition,#{scale}}negative{#{scale}},"
+            "{#{scale},C:inactive}and have varied abilities"
 
             -- "{C:attention}Horse Jokers{} may appear multiple times"
             -- "and have varied abilities"
@@ -68,7 +78,11 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
         } do
             horse_ability_description[] = line
 
-        horse_name = "A HORSE (#{bonus_1 .. bonus_2 .. bonus_3})"
+        local horse_name
+        if index <= #horse_names
+            horse_name = horse_names[index]
+        else
+            horse_name = "Unnamed Horse (#{index})"
         print("Added horse", index, bonus_types)
 
         jackstr = jack and "jack" or ""
@@ -80,15 +94,96 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
             pos: atlas_horses_positions[key]
             rarity: 1
             cost: 1
+            config: {
+                is_horse: true
+                key: key
+                bonuses: bonuses_for_this_horse
+                jack: jack
+            },
             loc_txt: {
                 name: horse_name,
                 text: horse_ability_description
             },
+            loc_vars: (info_queue, card) => 
+                return vars: {
+                    G.GAME and G.GAME.probabilities.normal or 1
+                }
+                
+
             discovered: true,
             in_pool: (args) => true, { allow_duplicates: true }
+            calculate: (card, context) =>
+                horse = card.ability
+                if (
+                    ((horse.jack == false) and context.before and context.cardarea == G.jokers) or
+                    ((horse.jack == true ) and context.individual and context.cardarea == G.play and context.other_card\get_id() == 11)
+                ) then
+                    money_earned = 0
+                    for _ = 1, horse.bonuses.money
+                        if pseudorandom('horse') < G.GAME.probabilities.normal / 2
+                            money_earned += 1
+                    output = {
+                        -- card: self,
+                        chips: horse.bonuses.chips,
+                        mult: horse.bonuses.mult,
+                        dollars: money_earned,
+                        -- func:
+                        --     G.E_MANAGER\add_event(Event({
+                        --         func: () -> 
+                        --             card\juice_up(0.5, 0.5) if self.config.jack == true
+                        --             return true
+                        --     })) 
+                    }
+                    for key, value in pairs(output)
+                        output[key] = value != 0 and value or nil
+                    return output
             -- loc_vars: (info_queue, card) => 
             --     print(card)
             --     info_queue[] = {
             --             name: "Horse?"
             --             text: {"desc"}
             --     }
+
+ref = Card.set_edition
+wrapper = (self, edition, immediate, silent) -> 
+    ref(self, edition, immediate, silent)
+
+    print(self.config.center)
+    print(self.config.center?.config)
+    if self.config.center?.config?.is_horse != nil then
+        horse_joker = self.config.center
+        the_sprite_is_in_here = self.children.center
+        print(the_sprite_is_in_here)
+        print(edition)
+        print(edition == "e_negative")
+        local change_pos_to
+        if (edition == "e_negative" or edition.negative) then
+            change_pos_to = atlas_horses_positions[horse_joker.config.key .. "neg"]
+            print() -- horse_joker.pos = atlas_horses_positions[horse_joker.config.key]
+        else
+            change_pos_to = atlas_horses_positions[horse_joker.config.key]
+        print(atlas_horses_positions)
+        print(horse_joker.config.key)
+        print(change_pos_to)
+        print(atlas_horses_positions[horse_joker.config.key])
+        change_pos_to = atlas_horses_positions[horse_joker.config.key .. "neg"]
+        if horse_joker.pos != change_pos_to then
+            horse_joker.pos = change_pos_to
+            -- print(the_sprite_is_in_here.sprite_pos)
+            the_sprite_is_in_here\set_sprite_pos(horse_joker.pos)
+            
+
+
+macro lua = (code) -> {
+  :code
+  type: "lua"
+}
+
+-- the raw string leading and ending symbols are auto trimed
+$lua[==[
+function Card:set_edition(edition, immediate, silent)
+    wrapper(self, edition, immediate, silent)
+end
+]==]
+
+nil  -- can't end in a macro. https://github.com/IppClub/YueScript/issues/178
