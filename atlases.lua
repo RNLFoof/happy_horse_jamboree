@@ -117,5 +117,34 @@ atlas_jokers = SMODS.Atlas {
 }
 
 atlas_jokers_positions = {
-    ["Horse"] = {x=0, y=0}
+    ["Dizzy Joker"] = {x=0, y=0},
+    ["Gambler's Fallacy"] = {x=1, y=0},
+    ["Horse"] = {x=2, y=0}
+}
+
+--- PLANETS ---
+
+atlas_planets = SMODS.Atlas {
+    key = "atlas_planets",
+    path = "atlas_planets.png",
+    px = 71,
+    py = 95
+}
+
+atlas_planets_positions = {
+    ["Haumea"] = {x=0, y=0}
+}
+
+--- TAGS ---
+
+atlas_tags = SMODS.Atlas {
+    key = "atlas_tags",
+    path = "atlas_tags.png",
+    px = 34,
+    py = 34
+}
+
+atlas_tags_positions = {
+    ["Happy Horse Jamboree Tag"] = {x=0, y=0},
+    ["HORSE LUCK TAG"] = {x=1, y=0}
 }
