@@ -8,6 +8,8 @@ horse_names = {
     "Crazy Horse"
     "Jimmy"
     "Potatoes"
+    "Cupcake"  -- Keep this on an odd number so that Cupcake and Slayer are a pair :)
+    "Slayer"
     "Lucky"
 
     "Hemmingway"

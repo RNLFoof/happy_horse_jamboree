@@ -8,11 +8,25 @@ local required_horse_name_count = 40;local horse_names = {
 "Crazy Horse", 
 "Jimmy", 
 "Potatoes", 
+"Cupcake", 
+"Slayer", 
 "Lucky", 
 
 "Hemmingway", 
 "Whiskey", 
 "Chipschipschips", 
+"Daisy", 
+"Orchard", 
+"Old Tom", 
+"Sunrise", 
+
+"Sprinkletoes", 
+
+"Angel Face", 
+"Casino", 
+"Grasshopper", 
+"Moscow Mule", 
+"Rusty Nail", 
 
 
 "Apricot", 
