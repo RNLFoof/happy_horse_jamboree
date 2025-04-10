@@ -128,7 +128,12 @@ true, in_pool = function(self, args)return
 true, { allow_duplicates = true }end, calculate = function(self, card, context)local horse = 
 
 card.ability;if (((
-horse.jack == false) and context.before and context.cardarea == G.jokers) or ((horse.jack == true) and context.individual and context.cardarea == G.play and context.other_card:get_id() == 11)) then local money_earned = 
+horse.jack == false) and context.joker_main and context.cardarea == G.jokers) or ((horse.jack == true) and context.individual and context.cardarea == G.play and context.other_card:get_id() == 11)) then local money_earned = 
+
+
+
+
+
 
 
 

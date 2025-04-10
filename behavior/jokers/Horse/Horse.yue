@@ -15,6 +15,18 @@ horse_names = {
     "Hemmingway"
     "Whiskey"
     "Chipschipschips"
+    "Daisy"
+    "Orchard"
+    "Old Tom"
+    "Sunrise"
+
+    "Sprinkletoes"
+
+    "Angel Face"
+    "Casino"
+    "Grasshopper"
+    "Moscow Mule"
+    "Rusty Nail"
 
     -- Stone fruit
     "Apricot"
@@ -117,7 +129,12 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
             calculate: (card, context) =>
                 horse = card.ability
                 if (
-                    ((horse.jack == false) and context.before and context.cardarea == G.jokers) or
+                    -- Chips and mult are reset after "before" is finished, so they can't be added before then. It's because the hand can level up in that step
+                    -- Could maybe implement a "after_before" step to address this?
+                    -- Shouldn't be *that* hard, surely :]
+                    
+                    -- ((horse.jack == false) and context.before and context.cardarea == G.jokers) or
+                    ((horse.jack == false) and context.joker_main and context.cardarea == G.jokers) or
                     ((horse.jack == true ) and context.individual and context.cardarea == G.play and context.other_card\get_id() == 11)
                 ) then
                     money_earned = 0
