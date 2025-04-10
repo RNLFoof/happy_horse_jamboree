@@ -89,7 +89,7 @@ jack and "jack" or ""local key =
 bonus_1 .. bonus_2 .. bonus_3 .. jackstr;local horse_joker = 
 
 
-SMODS.Joker({ key = "mig_horse_" .. index, atlas = 
+SMODS.Joker({ key = "mig_horse_" .. key, atlas = 
 "atlas_horses", pos = 
 atlas_horses_positions[key], rarity = 
 1, cost = 
@@ -149,23 +149,23 @@ Card.set_edition;local _anon_func_0 = function(self)local _obj_0 =
 
 
 
-self.config.center;if _obj_0 ~= nil then return _obj_0.config end;return nil end;local _anon_func_1 = function(self)local _obj_0 = 
-self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;local wrapper;wrapper = function(self, edition, immediate, silent)ref(self, edition, immediate, silent)print(self.config.center)print(_anon_func_0(self))if _anon_func_1(self) ~= nil then local horse_joker = 
+
+self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;local wrapper;wrapper = function(self, edition, immediate, silent)ref(self, edition, immediate, silent)if _anon_func_0(self) ~= nil then local horse_joker = 
 self.config.center;local the_sprite_is_in_here = 
 self.children.center
-print(the_sprite_is_in_here)
-print(edition)
-print(edition == "e_negative")
+
+
+
 local change_pos_to;if (
-edition == "e_negative" or edition.negative) then
-change_pos_to = atlas_horses_positions[horse_joker.config.key .. "neg"]
-print()else
+edition ~= nil and (edition == "e_negative" or edition.negative)) then
+change_pos_to = atlas_horses_positions[horse_joker.config.key .. "neg"]else
+
 
 change_pos_to = atlas_horses_positions[horse_joker.config.key]end
-print(atlas_horses_positions)
-print(horse_joker.config.key)
-print(change_pos_to)
-print(atlas_horses_positions[horse_joker.config.key])
+
+
+
+
 change_pos_to = atlas_horses_positions[horse_joker.config.key .. "neg"]if 
 horse_joker.pos ~= change_pos_to then
 horse_joker.pos = change_pos_to;return 

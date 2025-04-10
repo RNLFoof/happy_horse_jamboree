@@ -89,7 +89,7 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
         key = bonus_1 .. bonus_2 .. bonus_3 .. jackstr
 
         horse_joker = SMODS.Joker
-            key: "mig_horse_" .. index
+            key: "mig_horse_" .. key
             atlas: "atlas_horses"
             pos: atlas_horses_positions[key]
             rarity: 1
@@ -148,24 +148,24 @@ ref = Card.set_edition
 wrapper = (self, edition, immediate, silent) -> 
     ref(self, edition, immediate, silent)
 
-    print(self.config.center)
-    print(self.config.center?.config)
+    -- print(self.config.center)
+    -- print(self.config.center?.config)
     if self.config.center?.config?.is_horse != nil then
         horse_joker = self.config.center
         the_sprite_is_in_here = self.children.center
-        print(the_sprite_is_in_here)
-        print(edition)
-        print(edition == "e_negative")
+        -- print(the_sprite_is_in_here)
+        -- print(edition)
+        -- print(edition == "e_negative")
         local change_pos_to
-        if (edition == "e_negative" or edition.negative) then
+        if (edition != nil and (edition == "e_negative" or edition.negative)) then
             change_pos_to = atlas_horses_positions[horse_joker.config.key .. "neg"]
-            print() -- horse_joker.pos = atlas_horses_positions[horse_joker.config.key]
+            -- print() -- horse_joker.pos = atlas_horses_positions[horse_joker.config.key]
         else
             change_pos_to = atlas_horses_positions[horse_joker.config.key]
-        print(atlas_horses_positions)
-        print(horse_joker.config.key)
-        print(change_pos_to)
-        print(atlas_horses_positions[horse_joker.config.key])
+        -- print(atlas_horses_positions)
+        -- print(horse_joker.config.key)
+        -- print(change_pos_to)
+        -- print(atlas_horses_positions[horse_joker.config.key])
         change_pos_to = atlas_horses_positions[horse_joker.config.key .. "neg"]
         if horse_joker.pos != change_pos_to then
             horse_joker.pos = change_pos_to
