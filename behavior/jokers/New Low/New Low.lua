@@ -7,10 +7,12 @@ atlas_jokers_positions["New Low"], rarity =
 
 "New Low", text = { 
 
-"Lets you play {C:attention}Low Card{}." } }, loc_vars = function(self, info_queue, card)return 
+"Enables the poker hand {C:attention}Low Card{}.", 
+"Consists of exactly one {C:attention}2{},", 
+"starts with {C:mult}0{} Mult and {C:chips}0{} Chips." } }, loc_vars = function(self, info_queue, card)
 
 
-
+info_queue[#info_queue + 1] = G.P_CENTERS.c_mig_haumea;return 
 {  }end, calculate = function(self, card, context)return 
 
 nil end })

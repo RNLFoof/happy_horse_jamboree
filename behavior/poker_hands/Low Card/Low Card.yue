@@ -4,8 +4,10 @@ SMODS.PokerHand
     mult: 0,
     l_chips: 100,
     l_mult: 10,
+    order_offset: 6
+    visible: false
     example: {
-        { 'S_2',    true },
+        { 'S_2', true },
     }
     loc_txt: 
         ['en-us']: 
@@ -14,7 +16,12 @@ SMODS.PokerHand
                 "Exactly one 2"
             }
     evaluate: (parts, hand) ->
-        -- if #hand > 1
-        --     return {}
-        return {}
+        if #hand > 1
+            return {}
+        if #SMODS.find_card("j_mig_new_low", false) == 0
+            return {}
+        for _, card in ipairs(hand)
+            if card::get_id() != 2
+                return {}
+        return hand
         
