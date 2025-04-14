@@ -1,7 +1,4 @@
 /scripts
-/assets/1x/*
-/assets/2x/*
-!/assets/1x/atlas_horses.png
 /.vs
 /assets/uncombined/horses/*/*
 !/assets/uncombined/horses/oklch*
