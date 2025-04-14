@@ -1,0 +1,6 @@
+export wrap_method = (class_, method_name, before = (-> nil), after = (-> nil)) ->
+    ref = class_[method_name]
+    class_[method_name] = (...) ->
+        before(...)
+        ref(...)
+        after(...)
