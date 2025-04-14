@@ -67,6 +67,9 @@ round = (num, numDecimalPlaces) ->
   mult = 10^(numDecimalPlaces or 0)
   return math.floor(num * mult + 0.5) / mult
 
+neigh = ->
+    play_sound('mig_neigh', 0.9 + math.random()*0.2, 1)
+
 index = 0
 for    bonus_1_index, bonus_1 in ipairs(bonus_types)                                                   do
  for   bonus_2_index, bonus_2 in ipairs([_ for _ in *bonus_types[bonus_1_index,                    ]]) do
@@ -167,6 +170,7 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
                                     add_tag(Tag('tag_mig_horse_luck'))
                                     play_sound('generic1', 0.9 + math.random()*0.1, 0.8)
                                     play_sound('holo1', 1.2 + math.random()*0.1, 0.4)
+                                    neigh()
                                     return true
                             )
                             card_eval_status_text(card, 'extra', nil, nil, nil, {message: "HORSE LUCK", colour: G.C.GREEN})

@@ -65,7 +65,10 @@ local required_horse_name_count = 40;local horse_names = {
 
 local round;round = function(num, numDecimalPlaces)local mult = 
 10 ^ (numDecimalPlaces or 0)return 
-math.floor(num * mult + 0.5) / mult end;local index = 
+math.floor(num * mult + 0.5) / mult end
+
+local neigh;neigh = function()return 
+play_sound('mig_neigh', 0.9 + math.random() * 0.2, 1)end;local index = 
 
 0;for bonus_1_index, bonus_1 in 
 ipairs(bonus_types) do for bonus_2_index, bonus_2 in 
@@ -166,7 +169,8 @@ pseudorandom('horse_luck') < G.GAME.probabilities.normal / 20 then
 G.E_MANAGER:add_event(Event({ func = function()
 add_tag(Tag('tag_mig_horse_luck'))
 play_sound('generic1', 0.9 + math.random() * 0.1, 0.8)
-play_sound('holo1', 1.2 + math.random() * 0.1, 0.4)return 
+play_sound('holo1', 1.2 + math.random() * 0.1, 0.4)
+neigh()return 
 true end }))
 
 card_eval_status_text(card, 'extra', nil, nil, nil, { message = "HORSE LUCK", colour = G.C.GREEN })end end;local output = { chips = 
