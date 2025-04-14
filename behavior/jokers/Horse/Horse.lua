@@ -22,7 +22,12 @@ local required_horse_name_count = 40;local horse_names = {
 "Sunrise", 
 "Shepard", 
 
+"Pumpernickel", 
+
 "Sprinkletoes", 
+
+"Old ale", 
+"Kettle Sour", 
 
 "Clarence", 
 "Spriggan", 
@@ -121,8 +126,16 @@ jack }, loc_txt = { name =
 
 
 horse_name, text = 
-horse_ability_description }, loc_vars = function(self, info_queue, card)return { vars = { 
+horse_ability_description }, loc_vars = function(self, info_queue, card)if 
 
+
+bonuses_for_this_horse.luck > 0 then
+
+info_queue[#info_queue + 1] = { key = "horse_luck", set = 
+"Other", vars = { 
+G.GAME and G.GAME.probabilities.normal or 1 } }
+
+info_queue[#info_queue + 1] = G.P_TAGS.tag_mig_horse_luck end;return { vars = { 
 
 
 G.GAME and G.GAME.probabilities.normal or 1 } }end, discovered = 

@@ -10,5 +10,14 @@ return {
                 },
             }
         },
+        Other = {
+            horse_luck = {
+                name = "HORSE LUCK",
+                text = {
+                    "Up to three {C:green}#1# in 20{} chances",
+                    "for a {C:green}HORSE LUCK TAG{}",
+                }
+            }
+        }
     }
 }

@@ -22,7 +22,12 @@ horse_names = {
     "Sunrise"
     "Shepard"
 
+    "Pumpernickel"
+
     "Sprinkletoes"
+
+    "Old ale"
+    "Kettle Sour"
 
     "Clarence"
     "Spriggan"
@@ -124,6 +129,14 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
                 text: horse_ability_description
             },
             loc_vars: (info_queue, card) => 
+                if bonuses_for_this_horse.luck > 0
+                    info_queue[] = {
+                        key: "horse_luck"
+                        set: "Other"
+                        vars: { G.GAME and G.GAME.probabilities.normal or 1 }
+                    }
+                    info_queue[] = G.P_TAGS.tag_mig_horse_luck
+                
                 return vars: {
                     G.GAME and G.GAME.probabilities.normal or 1
                 }
