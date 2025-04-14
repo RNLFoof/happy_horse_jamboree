@@ -1,0 +1,28 @@
+haumea = SMODS.Consumable
+    key: "mig_haumea"
+    set: "Planet"
+    atlas: "atlas_planets"
+    pos: atlas_planets_positions["Haumea"]
+    loc_txt: {
+        name: "Haumea",
+        -- text: {
+        --     "uh, fuck"
+        -- }
+        -- text: {
+        --     "{S:0.8}({S:0.8,V:1}lvl.#1\#{S:0.8}){} Level up",
+        --     "{C:attention}#2#",
+        --     "{C:mult}+#3\#{} Mult and",
+        --     "{C:chips}+#4\#{} chips",
+        -- },
+    }
+    generate_ui: 0,
+    process_loc_text: =>
+        --use another planet's loc txt instead
+        target_text = G.localization.descriptions[self.set]['c_mercury'].text
+        SMODS.Consumable.process_loc_text(self)
+        G.localization.descriptions[self.set][self.key].text = target_text
+    set_card_type_badge: (card, badges) =>
+        badges[1] = create_badge(localize('k_dwarf_planet'), get_type_colour(self or card.config, card), nil, 1.2)
+    config:
+        hand_type: 'mig_low_card'
+        softlock: true
