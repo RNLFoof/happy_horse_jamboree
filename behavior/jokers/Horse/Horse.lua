@@ -157,8 +157,20 @@ horse.jack == false) and context.joker_main and context.cardarea == G.jokers) or
 
 0;for _ = 
 1, horse.bonuses.money do if 
-pseudorandom('horse') < G.GAME.probabilities.normal / 2 then
-money_earned = money_earned + 1 end end;local output = { chips = 
+pseudorandom('horse_money') < G.GAME.probabilities.normal / 2 then
+money_earned = money_earned + 1 end end;for _ = 
+
+1, horse.bonuses.luck do if 
+pseudorandom('horse_luck') < G.GAME.probabilities.normal / 20 then
+
+G.E_MANAGER:add_event(Event({ func = function()
+add_tag(Tag('tag_mig_horse_luck'))
+play_sound('generic1', 0.9 + math.random() * 0.1, 0.8)
+play_sound('holo1', 1.2 + math.random() * 0.1, 0.4)return 
+true end }))
+
+card_eval_status_text(card, 'extra', nil, nil, nil, { message = "HORSE LUCK", colour = G.C.GREEN })end end;local output = { chips = 
+
 
 
 horse.bonuses.chips, mult = 
