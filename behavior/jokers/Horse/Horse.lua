@@ -189,7 +189,7 @@ money_earned }for key, value in
 
 pairs(output) do
 output[key] = value ~= 0 and value or nil end;return 
-output end end })end end end end;local ref = 
+output end end })end end end end;local _anon_func_0 = function(self)local _obj_0 = 
 
 
 
@@ -197,13 +197,39 @@ output end end })end end end end;local ref =
 
 
 
-Card.set_edition;local _anon_func_0 = function(self)local _obj_0 = 
 
 
 
 
 
-self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;local wrapper;wrapper = function(self, edition, immediate, silent)ref(self, edition, immediate, silent)if _anon_func_0(self) ~= nil then local horse_joker = 
+
+
+
+
+self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;local wrapperr;wrapperr = function(self)print(self.config)if _anon_func_0(self) then return neigh()end end;do local refr = 
+
+Card.hover;function Card:hover()wrapperr(self)refr(self)end end;local ref = 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Card.set_edition;local _anon_func_1 = function(self)local _obj_0 = 
+
+
+
+
+
+self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;local wrapper;wrapper = function(self, edition, immediate, silent)ref(self, edition, immediate, silent)if _anon_func_1(self) ~= nil then local horse_joker = 
 self.config.center;local the_sprite_is_in_here = 
 self.children.center
 
@@ -224,10 +250,6 @@ horse_joker.pos ~= change_pos_to then
 horse_joker.pos = change_pos_to;return 
 
 the_sprite_is_in_here:set_sprite_pos(horse_joker.pos)end end end;do function 
-
-
-
-
 
 
 

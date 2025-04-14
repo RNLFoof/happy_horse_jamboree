@@ -197,6 +197,32 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
             --             text: {"desc"}
             --     }
 
+
+macro lua = (code) -> {
+  :code
+  type: "lua"
+}
+
+
+wrapperr = (self) ->
+    print(self.config)
+    neigh() if self.config.center?.config?.is_horse
+
+$lua[==[
+local refr = Card.hover
+function Card:hover()
+    wrapperr(self)
+    refr(self)
+end
+]==]
+
+
+-- $lua[==[
+-- function horse_joker:hover()
+--     wrapper()
+-- end
+-- ]==]
+
 ref = Card.set_edition
 wrapper = (self, edition, immediate, silent) -> 
     ref(self, edition, immediate, silent)
@@ -227,10 +253,6 @@ wrapper = (self, edition, immediate, silent) ->
             
 
 
-macro lua = (code) -> {
-  :code
-  type: "lua"
-}
 
 -- the raw string leading and ending symbols are auto trimed
 $lua[==[
