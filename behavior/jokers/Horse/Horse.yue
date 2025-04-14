@@ -11,6 +11,7 @@ horse_names = {
     "Cupcake"  -- Keep this on an odd number so that Cupcake and Slayer are a pair :)
     "Slayer"
     "Lucky"
+    "Special Week"
 
     "Hemmingway"
     "Whiskey"
@@ -19,8 +20,12 @@ horse_names = {
     "Orchard"
     "Old Tom"
     "Sunrise"
+    "Shepard"
 
     "Sprinkletoes"
+
+    "Clarence"
+    "Spriggan"
 
     "Angel Face"
     "Casino"

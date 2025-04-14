@@ -11,6 +11,7 @@ local required_horse_name_count = 40;local horse_names = {
 "Cupcake", 
 "Slayer", 
 "Lucky", 
+"Special Week", 
 
 "Hemmingway", 
 "Whiskey", 
@@ -19,8 +20,12 @@ local required_horse_name_count = 40;local horse_names = {
 "Orchard", 
 "Old Tom", 
 "Sunrise", 
+"Shepard", 
 
 "Sprinkletoes", 
+
+"Clarence", 
+"Spriggan", 
 
 "Angel Face", 
 "Casino", 
