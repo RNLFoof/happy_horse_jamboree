@@ -12,7 +12,7 @@ atlas_decks = SMODS.Atlas {
 }
 
 atlas_decks_positions = {
-    ["Psychostasia Deck"] = {x=0, y=0}
+    ["Psychostasia Deck"] = {x=0, y=0},
 }
 
 --- HORSES ---
@@ -104,7 +104,7 @@ atlas_horses_positions = {
     ["multmultmult"] = {x=4, y=9},
     ["multmultmultjack"] = {x=5, y=9},
     ["multmultmultjackneg"] = {x=6, y=9},
-    ["multmultmultneg"] = {x=7, y=9}
+    ["multmultmultneg"] = {x=7, y=9},
 }
 
 --- JOKERS ---
@@ -118,8 +118,12 @@ atlas_jokers = SMODS.Atlas {
 
 atlas_jokers_positions = {
     ["Dizzy Joker"] = {x=0, y=0},
-    ["Gambler's Fallacy"] = {x=1, y=0},
-    ["Horse"] = {x=2, y=0}
+    ["Gambler's Fallacy"] = {
+        ["active"] = {x=1, y=0},
+        ["inactive"] = {x=2, y=0},
+    },
+    ["Horse"] = {x=3, y=0},
+    ["New Low"] = {x=4, y=0},
 }
 
 --- PLANETS ---
@@ -132,7 +136,7 @@ atlas_planets = SMODS.Atlas {
 }
 
 atlas_planets_positions = {
-    ["Haumea"] = {x=0, y=0}
+    ["Haumea"] = {x=0, y=0},
 }
 
 --- TAGS ---
@@ -146,5 +150,5 @@ atlas_tags = SMODS.Atlas {
 
 atlas_tags_positions = {
     ["Happy Horse Jamboree Tag"] = {x=0, y=0},
-    ["HORSE LUCK TAG"] = {x=1, y=0}
+    ["HORSE LUCK TAG"] = {x=1, y=0},
 }
