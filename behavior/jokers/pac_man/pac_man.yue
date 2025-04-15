@@ -96,12 +96,12 @@ pac_man = SMODS.Joker
         red_stated_to_pixels_ratio = ref_sizes.red.pixels.w / ref_sizes.red.stated.w
         window_width, window_height = love.graphics.getDimensions()
         window_scale = math.min(
-            ref_sizes.window.pixels.w / window_width,
-            ref_sizes.window.pixels.h / window_height,
+            window_width /  ref_sizes.window.pixels.w,
+            window_height / ref_sizes.window.pixels.h,
         )
         request_this_size = {
-            w: ref_sizes.red.stated.w * (ref_sizes.nes.pixels.w / ref_sizes.red.pixels.w)
-            h: ref_sizes.red.stated.h * (ref_sizes.nes.pixels.h / ref_sizes.red.pixels.h)
+            w: ref_sizes.red.stated.w * (ref_sizes.nes.pixels.w / ref_sizes.red.pixels.w) / window_scale
+            h: ref_sizes.red.stated.h * (ref_sizes.nes.pixels.h / ref_sizes.red.pixels.h) / window_scale
         }
         desc_nodes[] = {{
             n: G.UIT.C
@@ -120,4 +120,5 @@ pac_man = SMODS.Joker
             window_height: window_height
             red_stated_to_pixels_ratio: red_stated_to_pixels_ratio
             request_this_size: request_this_size
+            window_scale: window_scale
         })

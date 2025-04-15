@@ -95,13 +95,13 @@ SMODS.Joker.generate_ui(self, info_queue, card, desc_nodes, specific_vars, full_
 
 ref_sizes.red.pixels.w / ref_sizes.red.stated.w;local window_width,window_height = 
 love.graphics.getDimensions()local window_scale = 
-math.min(ref_sizes.window.pixels.w / window_width, ref_sizes.window.pixels.h / window_height)local request_this_size = { w = 
+math.min(window_width / ref_sizes.window.pixels.w, window_height / ref_sizes.window.pixels.h)local request_this_size = { w = 
 
 
 
 
-ref_sizes.red.stated.w * (ref_sizes.nes.pixels.w / ref_sizes.red.pixels.w), h = 
-ref_sizes.red.stated.h * (ref_sizes.nes.pixels.h / ref_sizes.red.pixels.h) }
+ref_sizes.red.stated.w * (ref_sizes.nes.pixels.w / ref_sizes.red.pixels.w) / window_scale, h = 
+ref_sizes.red.stated.h * (ref_sizes.nes.pixels.h / ref_sizes.red.pixels.h) / window_scale }
 
 desc_nodes[#desc_nodes + 1] = { { n = 
 G.UIT.C, config = { minw = 
@@ -119,4 +119,5 @@ print({ minw = 240 / 100, minh =
 window_width, window_height = 
 window_height, red_stated_to_pixels_ratio = 
 red_stated_to_pixels_ratio, request_this_size = 
-request_this_size })end })
+request_this_size, window_scale = 
+window_scale })end })
