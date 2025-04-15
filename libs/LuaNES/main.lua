@@ -69,7 +69,7 @@ function spawn_a_nes()
             pc = tonumber(arg[4])
         end
         imageData = love.image.newImageData(width * pixSize + 1, height * pixSize + 1)
-        nes_image = love.graphics.newImage(imageData)
+        spawned_nes.image = love.graphics.newImage(imageData)
         
         -- love.window.setTitle("LuaNEs")
         --Nes = NES:new({file="tests/hello.nes", loglevel=5})
@@ -166,7 +166,7 @@ function spawn_a_nes()
     local tickRate = 0
     local tickRatetmp = 0
     local pixelCount = PPU.SCREEN_HEIGHT * PPU.SCREEN_WIDTH
-    local function update()
+    function spawned_nes.update()
         drawn = true
         tickRatetmp = tickRatetmp + 1
         for i, v in ipairs(keyEvents) do
@@ -182,9 +182,9 @@ function spawn_a_nes()
         QS:play()
     end
     local function drawScreen()
-        local sx = nes_width / nes_image:getWidth()
-        local sy = nes_height / nes_image:getHeight()
-        love.graphics.draw(nes_image, 0, 0, 0, sx, sy)
+        local sx = nes_width / spawned_nes.image:getWidth()
+        local sy = nes_height / spawned_nes.image:getHeight()
+        love.graphics.draw(spawned_nes.image, 0, 0, 0, sx, sy)
         love.graphics.print(" Nes Tick Rate: " .. tostring(tickRate), 10, 10)
         love.graphics.print(" FPS: " .. tostring(fps), 10, 30)
     end
@@ -319,13 +319,13 @@ function spawn_a_nes()
             imageData:setPixel(x + 1, y + 1, px[1], px[2], px[3], 1)
             --]]
         end
-        nes_image:replacePixels(imageData)
+        spawned_nes.image:replacePixels(imageData)
 
         draw()
         
         -- New
         -- love.graphics.setCanvas()
-        love.graphics.draw(nes_image, 0,0)
+        love.graphics.draw(spawned_nes.image, 0,0)
         --prof.pop("frame")
     end
 

@@ -1,5 +1,37 @@
 assert(SMODS.load_file("libs\\LuaNES\\main.lua"))()
 
+keys = {
+    UP: "w"
+    LEFT: "a"
+    DOWN: "s"
+    RIGHT: "d"
+    A: "o"
+    B: "p"
+    SELECT: "i"
+    START: "return"
+    NOTHING: "4"
+}
+
+class Input
+    new: (key, frames) =>
+        @key = key
+        @frames = frames
+
+process_inputs = (card) ->
+    input = card.ability.inputs[1]
+    if input
+        if input.frames == 0
+            card.ability.nes.keyreleased(input.key)
+            print("release ", input.key)
+            card.ability.inputs = [x for x in *card.ability.inputs[2,]]
+            process_inputs(card)
+        else
+            card.ability.nes.keypressed(input.key)
+            print("press ", input.key)
+            input.frames -= 1
+            card.ability.nes.update()
+    
+
 pac_man = SMODS.Joker
     key: "pac_man"
     atlas: "atlas_jokers"
@@ -7,14 +39,50 @@ pac_man = SMODS.Joker
         name: "Pac-Man"
         text: {
             "Play literally Pac-Man for the NES lmao"
-            "Number cards hold the direction of their suit"
-            "for that number of frames"
-            "Game doesn't run when no input is given"
+            "Control it by scoring cards"
+            "{s:0.8,C:inactive}Number cards hold the direction of their suit"
+            "{s:0.8,C:inactive}for that number of frames"
+            "{s:0.8,C:inactive}Faces and aces just press their button"
+            "{s:0.8,C:inactive}Game doesn't run when no input is given"
         }
     pos: atlas_jokers_positions["pac_man"]
     set_ability: (card, initial, delay_sprites) =>
-        self.nes = spawn_a_nes()
-        print("boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it ")
-        self.nes.load({"Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes"})
+        card.ability.nes = spawn_a_nes()
+        -- print("boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it ")
+        card.ability.nes.load({"Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes"})
+        card.ability.nes.update() -- Update just once to spawn the image
+        card.ability.inputs = {
+            -- This is NOT an optimal set of inputs 
+            Input(keys.START, 1),
+            Input(keys.START, 1),
+            Input(keys.START, 1),
+            Input(keys.START, 1),
+            Input(keys.START, 1),
+            Input(keys.START, 1),
+            Input(keys.START, 1),
+            Input(keys.START, 1),
+            Input(keys.NOTHING, 60),
+            Input(keys.A, 1),
+            Input(keys.START, 1),
+            Input(keys.NOTHING, 60),
+            Input(keys.NOTHING, 60),
+            Input(keys.NOTHING, 60),
+            Input(keys.NOTHING, 60),
+            Input(keys.NOTHING, 30),
+        }
     draw: (card, layer) =>
-        self.nes.draw()
+        card.ability.nes.draw()
+    update: (card, dt) =>
+        process_inputs(card)
+    generate_ui: (info_queue, card, desc_nodes, specific_vars, full_UI_table) =>
+        SMODS.Joker.generate_ui(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
+        print(card.ability.nes)
+        print(card.ability.nes.image)
+        desc_nodes[] = {{
+            n: G.UIT.C
+            config: 
+                minw: 240/100
+                minh: 224/100
+
+        }}
+        print(desc_nodes)
