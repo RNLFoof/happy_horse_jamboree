@@ -1,3 +1,4 @@
+
 if pcall(require, "jit.opt") then
     require("jit.opt").start(
         "maxmcode=8192",
@@ -36,6 +37,9 @@ function love.errorhandler(msg)
     end
 end
 
+nes_canvas = nil
+nes_width = 256
+nes_height = 240
 -- was function love.load(arg)
 function loady(arg)
     print(arg)
@@ -45,6 +49,9 @@ function loady(arg)
     print(arg[4])
     print(arg[5])
     print(arg[6])
+
+    nes_canvas = love.graphics.newCanvas(600, 800)
+
     if vscode_debugger then
         require("lldebugger").start()
     end
@@ -70,7 +77,7 @@ function loady(arg)
         pc = tonumber(arg[4])
     end
     imageData = love.image.newImageData(width * pixSize + 1, height * pixSize + 1)
-    image = love.graphics.newImage(imageData)
+    nes_image = love.graphics.newImage(imageData)
     love.window.setTitle("LuaNEs")
     --Nes = NES:new({file="tests/hello.nes", loglevel=5})
     Nes =
@@ -98,7 +105,7 @@ function loady(arg)
 end
 -- was nothing
 print("boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it ")
-loady({"Balatro\\Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes"})
+loady({"Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes"})
 
 local keyEvents = {}
 local keyDownEventObjCache = {}
@@ -113,7 +120,10 @@ local keyButtons = {
     ["i"] = Pad.SELECT,
     ["return"] = Pad.START
 }
+
+ref=love.keypressed
 function love.keypressed(key)
+    ref(key)
     if key == "t" then
         Nes.cpu.dbgPrint = true
     end
@@ -134,7 +144,9 @@ function love.keypressed(key)
     end
 end
 
+ref=love.keyreleased
 function love.keyreleased(key)
+    ref(key)
     if key == "t" then
         Nes.cpu.dbgPrint = false
     end
@@ -183,9 +195,9 @@ local function update()
     QS:play()
 end
 local function drawScreen()
-    local sx = love.graphics.getWidth() / image:getWidth()
-    local sy = love.graphics.getHeight() / image:getHeight()
-    love.graphics.draw(image, 0, 0, 0, sx, sy)
+    local sx = nes_width / nes_image:getWidth()
+    local sy = nes_height / nes_image:getHeight()
+    love.graphics.draw(nes_image, 0, 0, 0, sx, sy)
     love.graphics.print(" Nes Tick Rate: " .. tostring(tickRate), 10, 10)
     love.graphics.print(" FPS: " .. tostring(fps), 10, 30)
 end
@@ -247,7 +259,14 @@ local function draw()
         drawAPUState()
     end
 end
+
+ref = love.draw
 function love.draw()
+    -- New
+    ref()
+    -- love.graphics.setCanvas(nes_canvas)
+    -- Newn't 
+
     --prof.push("frame")
     --[
     time = time + love.timer.getDelta()
@@ -311,9 +330,13 @@ function love.draw()
         imageData:setPixel(x + 1, y + 1, px[1], px[2], px[3], 1)
         --]]
     end
-    image:replacePixels(imageData)
+    nes_image:replacePixels(imageData)
 
     draw()
+    
+    -- New
+    -- love.graphics.setCanvas()
+    love.graphics.draw(nes_image, 0,0)
     --prof.pop("frame")
 end
 
