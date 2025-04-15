@@ -42,8 +42,8 @@ pac_man = SMODS.Joker
             "Control it by scoring cards"
             "{s:0.8,C:inactive}Number cards hold the direction of their suit"
             "{s:0.8,C:inactive}for that number of frames"
-            "{s:0.8,C:inactive}Faces and aces just press their button"
-            "{s:0.8,C:inactive}Game doesn't run when no input is given"
+            "{s:0.8,C:inactive}Faces and Aces just press their button"
+            "{s:0.8,C:inactive}The game doesn't run when no input is given"
         }
     pos: atlas_jokers_positions["pac_man"]
     set_ability: (card, initial, delay_sprites) =>
@@ -64,11 +64,7 @@ pac_man = SMODS.Joker
             Input(keys.NOTHING, 60),
             Input(keys.A, 1),
             Input(keys.START, 1),
-            Input(keys.NOTHING, 60),
-            Input(keys.NOTHING, 60),
-            Input(keys.NOTHING, 60),
-            Input(keys.NOTHING, 60),
-            Input(keys.NOTHING, 30),
+            Input(keys.NOTHING, 60*4.5),
         }
     draw: (card, layer) =>
         card.ability.nes.draw()
@@ -76,13 +72,52 @@ pac_man = SMODS.Joker
         process_inputs(card)
     generate_ui: (info_queue, card, desc_nodes, specific_vars, full_UI_table) =>
         SMODS.Joker.generate_ui(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
-        print(card.ability.nes)
-        print(card.ability.nes.image)
+        
+        -- I took a reference screenshot with a somewhat arbitrarily sized red square in it
+        -- IDK what the units in the UI *are* but we should be able to figure out what to tell it to get what number of pixels
+        -- (We want a section for the game that's *always* the size of an NES screen)
+        ref_sizes = {
+            red:
+                pixels:
+                    w: 214
+                    h: 200
+                stated:
+                    w: 240/100
+                    h: 224/100
+            window:
+                pixels:
+                    w: 2048
+                    h: 1152
+            nes:
+                pixels:
+                    w: 240
+                    h: 224
+        }
+        red_stated_to_pixels_ratio = ref_sizes.red.pixels.w / ref_sizes.red.stated.w
+        window_width, window_height = love.graphics.getDimensions()
+        window_scale = math.min(
+            ref_sizes.window.pixels.w / window_width,
+            ref_sizes.window.pixels.h / window_height,
+        )
+        request_this_size = {
+            w: ref_sizes.red.stated.w * (ref_sizes.nes.pixels.w / ref_sizes.red.pixels.w)
+            h: ref_sizes.red.stated.h * (ref_sizes.nes.pixels.h / ref_sizes.red.pixels.h)
+        }
         desc_nodes[] = {{
             n: G.UIT.C
             config: 
-                minw: 240/100
-                minh: 224/100
+                minw: request_this_size.w
+                minh: request_this_size.h
+                colour: G.C.RED
 
         }}
-        print(desc_nodes)
+        --print(desc_nodes)
+        --print(full_UI_table)
+        print({
+            minw: 240/100
+            minh: 224/100
+            window_width: window_width
+            window_height: window_height
+            red_stated_to_pixels_ratio: red_stated_to_pixels_ratio
+            request_this_size: request_this_size
+        })
