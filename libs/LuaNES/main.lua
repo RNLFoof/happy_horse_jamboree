@@ -98,7 +98,7 @@ function loady(arg)
 end
 -- was nothing
 print("boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it ")
-loady({"C:\\Users\\Zach\\AppData\\Roaming\\Balatro\\Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes"})
+loady({"Balatro\\Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes"})
 
 local keyEvents = {}
 local keyDownEventObjCache = {}
