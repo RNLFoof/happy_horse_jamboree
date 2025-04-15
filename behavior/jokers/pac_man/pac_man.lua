@@ -1,0 +1,20 @@
+assert(SMODS.load_file("libs\\LuaNES\\main.lua"))()local pac_man = 
+
+
+SMODS.Joker({ key = "pac_man", atlas = 
+"atlas_jokers", loc_txt = { name = 
+
+"Pac-Man", text = { 
+
+"Play literally Pac-Man for the NES lmao", 
+"Number cards hold the direction of their suit", 
+"for that number of frames", 
+"Game doesn't run when no input is given" } }, pos = 
+
+atlas_jokers_positions["pac_man"], set_ability = function(self, card, initial, delay_sprites)
+
+self.nes = spawn_a_nes()
+print("boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it ")return 
+self.nes.load({ "Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes" })end, draw = function(self, card, layer)return 
+
+self.nes.draw()end })

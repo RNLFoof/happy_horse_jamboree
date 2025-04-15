@@ -124,6 +124,7 @@ atlas_jokers_positions = {
     },
     ["Horse"] = {x=3, y=0},
     ["New Low"] = {x=4, y=0},
+    ["pac_man"] = {x=5, y=0},
 }
 
 --- PLANETS ---
