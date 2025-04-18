@@ -12,6 +12,7 @@ keys = {
     NOTHING: "4"
 }
 
+
 class Input
     new: (key, frames) =>
         @key = key
@@ -31,6 +32,8 @@ process_inputs = (card) ->
             input.frames -= 1
             card.ability.nes.update()
     
+-- pretend_youre_a_center = (center, and_do_this) ->
+
 
 pac_man = SMODS.Joker
     key: "pac_man"
@@ -66,8 +69,40 @@ pac_man = SMODS.Joker
             Input(keys.START, 1),
             Input(keys.NOTHING, 60*4.5),
         }
+        card.ability.screen_x = 0
+        card.ability.screen_y = 0
     draw: (card, layer) =>
-        card.ability.nes.draw()
+        card.ability.nes.update_image()
+        if card.children.h_popup
+            print([key for key, value in pairs(card.children.h_popup)])
+            print([key for key, value in pairs(card.children.h_popup.T)])
+            pac_man_container = card.children.h_popup::get_UIE_by_ID("pac_man_container")
+            card.ability.screen_x = card.children.h_popup.T.x
+            card.ability.screen_y = card.children.h_popup.T.y
+        
+        sprite = card.children.center
+        if not sprite.states.visible then return
+        if sprite.sprite_pos.x ~= sprite.sprite_pos_copy.x or sprite.sprite_pos.y ~= sprite.sprite_pos_copy.y
+            sprite::set_sprite_pos(sprite.sprite_pos)
+        prep_draw(sprite, 1)
+        love.graphics.scale(1/(sprite.scale.x/sprite.VT.w), 1/(sprite.scale.y/sprite.VT.h))
+        love.graphics.setColor(overlay or G.BRUTE_OVERLAY or G.C.WHITE)
+
+        -- love.graphics.draw(
+        --     card.atlas.image,
+        --     card.sprite,
+        --     0 ,0,
+        --     0,
+        --     card.VT.w/(card.T.w),
+        --     card.VT.h/(card.T.h)
+        -- )
+        love.graphics.draw(spawned_nes.image, 0, 0)
+
+        love.graphics.pop()
+        add_to_drawhash(sprite)
+        sprite::draw_boundingrect()
+        if sprite.shader_tab then love.graphics.setShader()
+        -- love.graphics.draw(spawned_nes.image, card.ability.screen_x, card.ability.screen_y)
     update: (card, dt) =>
         process_inputs(card)
     generate_ui: (info_queue, card, desc_nodes, specific_vars, full_UI_table) =>
@@ -106,6 +141,7 @@ pac_man = SMODS.Joker
         desc_nodes[] = {{
             n: G.UIT.C
             config: 
+                id: "pac_man_container"
                 minw: request_this_size.w
                 minh: request_this_size.h
                 colour: G.C.RED

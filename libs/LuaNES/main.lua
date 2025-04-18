@@ -247,8 +247,7 @@ function spawn_a_nes()
         end
     end
 
-    ref = love.draw
-    function spawned_nes.draw()
+    function spawned_nes.update_image()
         -- New
         -- ref()
         -- Newn't 
@@ -325,7 +324,7 @@ function spawn_a_nes()
         
         -- New
         -- love.graphics.setCanvas()
-        love.graphics.draw(spawned_nes.image, 0,0)
+        --love.graphics.draw(spawned_nes.image, at_x, at_y)
         --prof.pop("frame")
     end
 
