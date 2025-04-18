@@ -32,6 +32,11 @@ print("press ", input.key)
 input.frames = input.frames - 1;return 
 card.ability.nes.update()end end end
 
+local pretend_youre_drawable;pretend_youre_drawable = function(drawable, and_do_this)
+prep_draw(drawable, 1)
+and_do_this()return 
+love.graphics.pop()end
+
 local pretend_youre_a_center;pretend_youre_a_center = function(center, and_do_this)if not 
 center.states.visible then return end;if 
 center.sprite_pos.x ~= center.sprite_pos_copy.x or center.sprite_pos.y ~= center.sprite_pos_copy.y then
@@ -59,8 +64,8 @@ local field_replace_context;field_replace_context = function(object, field_name,
 object[field_name]
 object[field_name] = value
 do_this()
-object[field_name] = original_value;return 
-print(tostring(object) .. "." .. tostring(field_name) .. " from " .. tostring(original_value) .. " to  " .. tostring(value) .. " and back to  " .. tostring(original_value))end
+object[field_name] = original_value end
+
 
 local field_operation_context;field_operation_context = function(object, field_name, operation, do_this)return 
 field_replace_context(object, field_name, operation(object[field_name]), do_this)end
@@ -82,7 +87,7 @@ SMODS.Joker({ key = "pac_man", atlas =
 "{s:0.8,C:inactive}Number cards hold the direction of their suit", 
 "{s:0.8,C:inactive}for that number of frames", 
 "{s:0.8,C:inactive}Faces and Aces just press their button", 
-"{s:0.8,C:inactive}The game doesn't run when no input is given" } }, pos = 
+"{s:0.8,C:inactive}The game doesn't run when no input is given{}" } }, pos = 
 
 atlas_jokers_positions["pac_man"], set_ability = function(self, card, initial, delay_sprites)
 
@@ -108,13 +113,16 @@ Input(keys.NOTHING, 60 * 4.5) }
 card.ability.screen_x = 0
 card.ability.screen_y = 0 end, draw = function(self, card, layer)
 
-card.ability.nes.update_image()if 
-card.children.h_popup then local pac_man_container = 
+card.ability.nes.update_image()local center = 
 
 
-card.children.h_popup:get_UIE_by_ID("pac_man_container")
-card.ability.screen_x = card.children.h_popup.T.x
-card.ability.screen_y = card.children.h_popup.T.y end;local center = 
+
+
+
+
+
+
+
 
 card.children.center;local screen_dims = { x = 
 
@@ -143,10 +151,13 @@ love.graphics.draw(spawned_nes.image, 0, 0)end)end)end)end)end)end, update = fun
 
 process_inputs(card)end, generate_ui = function(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
 
-SMODS.Joker.generate_ui(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)local ref_sizes = { red = { pixels = { w = 
+SMODS.Joker.generate_ui(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)local nes_width = 
 
 
 
+
+spawned_nes.image:getWidth()local nes_height = 
+spawned_nes.image:getHeight()local ref_sizes = { red = { pixels = { w = 
 
 
 
@@ -162,8 +173,8 @@ SMODS.Joker.generate_ui(self, info_queue, card, desc_nodes, specific_vars, full_
 1152 } }, nes = { pixels = { w = 
 
 
-240, h = 
-224 } } }local red_stated_to_pixels_ratio = 
+nes_width, h = 
+nes_height } } }local red_stated_to_pixels_ratio = 
 
 ref_sizes.red.pixels.w / ref_sizes.red.stated.w;local window_width,window_height = 
 love.graphics.getDimensions()local window_scale = 
@@ -173,24 +184,58 @@ math.min(window_width / ref_sizes.window.pixels.w, window_height / ref_sizes.win
 
 
 ref_sizes.red.stated.w * (ref_sizes.nes.pixels.w / ref_sizes.red.pixels.w) / window_scale, h = 
-ref_sizes.red.stated.h * (ref_sizes.nes.pixels.h / ref_sizes.red.pixels.h) / window_scale }
+ref_sizes.red.stated.h * (ref_sizes.nes.pixels.h / ref_sizes.red.pixels.h) / window_scale }if 
+
+
+card.children.h_popup then local pac_man_container = 
+
+
+card.children.h_popup:get_UIE_by_ID("pac_man_container")
+card.ability.screen_x = card.children.h_popup.T.x
+card.ability.screen_y = card.children.h_popup.T.y end;local wait_can_i_just = 
+
+
+
+Moveable()
+
+wait_can_i_just.draw = function(self)
+prep_draw(self, 1)for _ = 
+
+1, 1 do local left,top = 
+love.graphics.transformPoint(0, 0)local right,bottom = 
+
+love.graphics.transformPoint(nes_width, nes_height)local width = (
+
+right - left)local height = (
+bottom - top)local scale_x = 
+
+1 / (width / nes_width)local scale_y = 
+1 / (height / nes_height)
+
+love.graphics.scale(scale_x, scale_y)end
+
+
+
+
+
+
+
+
+
+
+
+love.graphics.draw(spawned_nes.image, 0, 0)return 
+love.graphics.pop()end
 
 desc_nodes[#desc_nodes + 1] = { { n = 
 G.UIT.C, config = { id = 
 
 "pac_man_container", minw = 
 request_this_size.w, minh = 
-request_this_size.h, colour = 
-G.C.RED } } }return 
+request_this_size.h }, nodes = { { n = 
 
 
 
+G.UIT.O, config = { object = 
 
-
-print({ minw = 240 / 100, minh = 
-224 / 100, window_width = 
-window_width, window_height = 
-window_height, red_stated_to_pixels_ratio = 
-red_stated_to_pixels_ratio, request_this_size = 
-request_this_size, window_scale = 
-window_scale })end })
+wait_can_i_just } } } } }end })

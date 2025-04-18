@@ -31,6 +31,11 @@ process_inputs = (card) ->
             print("press ", input.key)
             input.frames -= 1
             card.ability.nes.update()
+
+pretend_youre_drawable = (drawable, and_do_this) ->
+    prep_draw(drawable, 1)
+    and_do_this()    
+    love.graphics.pop()
     
 pretend_youre_a_center = (center, and_do_this) ->
     if not center.states.visible then return
@@ -60,7 +65,7 @@ field_replace_context = (object, field_name, value, do_this) ->
     object[field_name] = value
     do_this()
     object[field_name] = original_value
-    print("#{object}.#{field_name} from #{original_value} to  #{value} and back to  #{original_value}")
+    -- print("#{object}.#{field_name} from #{original_value} to  #{value} and back to  #{original_value}")
 
 field_operation_context = (object, field_name, operation, do_this) ->
     field_replace_context(object, field_name, operation(object[field_name]), do_this)
@@ -82,7 +87,7 @@ pac_man = SMODS.Joker
             "{s:0.8,C:inactive}Number cards hold the direction of their suit"
             "{s:0.8,C:inactive}for that number of frames"
             "{s:0.8,C:inactive}Faces and Aces just press their button"
-            "{s:0.8,C:inactive}The game doesn't run when no input is given"
+            "{s:0.8,C:inactive}The game doesn't run when no input is given{}"
         }
     pos: atlas_jokers_positions["pac_man"]
     set_ability: (card, initial, delay_sprites) =>
@@ -109,12 +114,15 @@ pac_man = SMODS.Joker
         card.ability.screen_y = 0
     draw: (card, layer) =>
         card.ability.nes.update_image()
-        if card.children.h_popup
-            -- print([key for key, value in pairs(card.children.h_popup)])
-            -- print([key for key, value in pairs(card.children.h_popup.T)])
-            pac_man_container = card.children.h_popup::get_UIE_by_ID("pac_man_container")
-            card.ability.screen_x = card.children.h_popup.T.x
-            card.ability.screen_y = card.children.h_popup.T.y
+        -- if card.children.h_popup
+        --     -- print([key for key, value in pairs(card.children.h_popup)])
+        --     -- print([key for key, value in pairs(card.children.h_popup.T)])
+        --     pac_man_container = card.children.h_popup::get_UIE_by_ID("pac_man_container")
+        --     card.ability.screen_x = card.children.h_popup.T.x
+        --     card.ability.screen_y = card.children.h_popup.T.y
+        --     pretend_youre_drawable(pac_man_container, ->
+        --         love.graphics.draw(spawned_nes.image, 0, 0)
+        --     )
         
         center = card.children.center
         -- 71 is how wide, in pixels, cards are
@@ -148,6 +156,9 @@ pac_man = SMODS.Joker
         -- I took a reference screenshot with a somewhat arbitrarily sized red square in it
         -- IDK what the units in the UI *are* but we should be able to figure out what to tell it to get what number of pixels
         -- (We want a section for the game that's *always* the size of an NES screen)
+        nes_width = spawned_nes.image::getWidth()
+        nes_height = spawned_nes.image::getHeight()
+
         ref_sizes = {
             red:
                 pixels:
@@ -162,8 +173,8 @@ pac_man = SMODS.Joker
                     h: 1152
             nes:
                 pixels:
-                    w: 240
-                    h: 224
+                    w: nes_width
+                    h: nes_height
         }
         red_stated_to_pixels_ratio = ref_sizes.red.pixels.w / ref_sizes.red.stated.w
         window_width, window_height = love.graphics.getDimensions()
@@ -175,23 +186,72 @@ pac_man = SMODS.Joker
             w: ref_sizes.red.stated.w * (ref_sizes.nes.pixels.w / ref_sizes.red.pixels.w) / window_scale
             h: ref_sizes.red.stated.h * (ref_sizes.nes.pixels.h / ref_sizes.red.pixels.h) / window_scale
         }
+
+        if card.children.h_popup
+            -- print([key for key, value in pairs(card.children.h_popup)])
+            -- print([key for key, value in pairs(card.children.h_popup.T)])
+            pac_man_container = card.children.h_popup::get_UIE_by_ID("pac_man_container")
+            card.ability.screen_x = card.children.h_popup.T.x
+            card.ability.screen_y = card.children.h_popup.T.y
+            -- pretend_youre_drawable(pac_man_container, ->
+            --     love.graphics.draw(spawned_nes.image, 0, 0)
+
+        wait_can_i_just=Moveable()
+        -- wait_can_i_just.VT.scale = 71 / 256
+        wait_can_i_just.draw = =>
+            prep_draw(self, 1)
+
+            for _=1,1
+                left, top = love.graphics.transformPoint(0, 0)
+                --print(left, top)
+                right, bottom = love.graphics.transformPoint(nes_width, nes_height)
+                --print(right, bottom)
+                width = (right-left)
+                height = (bottom-top)
+                --print(width, height)
+                scale_x = 1/(width  / nes_width)
+                scale_y = 1/(height / nes_height)
+                --print(scale_x, scale_y)
+                love.graphics.scale(scale_x, scale_y)
+                -- print()
+            -- print()
+            -- print()
+            -- print()
+
+            -- scale = 1 / (G.TILESCALE*G.TILESIZE)
+            -- scale *= 0.9
+            -- scale *= 256/(256-9)
+            -- print(scale)
+            -- -- love.graphics.origin()
+            --love.graphics.translate(card.ability.screen_x*G.TILESCALE*G.TILESIZE, 0)
+            love.graphics.draw(spawned_nes.image, 0, 0)
+            love.graphics.pop()
+
         desc_nodes[] = {{
             n: G.UIT.C
             config: 
                 id: "pac_man_container"
                 minw: request_this_size.w
                 minh: request_this_size.h
-                colour: G.C.RED
-
+                --colour: G.C.RED 
+            nodes: {
+                {
+                    n: G.UIT.O,
+                    config: {
+                        object: wait_can_i_just
+                        --colour: G.C.WHITE
+                    }
+                }
+            }
         }}
         --print(desc_nodes)
         --print(full_UI_table)
-        print({
-            minw: 240/100
-            minh: 224/100
-            window_width: window_width
-            window_height: window_height
-            red_stated_to_pixels_ratio: red_stated_to_pixels_ratio
-            request_this_size: request_this_size
-            window_scale: window_scale
-        })
+        -- print({
+        --     minw: 240/100
+        --     minh: 224/100
+        --     window_width: window_width
+        --     window_height: window_height
+        --     red_stated_to_pixels_ratio: red_stated_to_pixels_ratio
+        --     request_this_size: request_this_size
+        --     window_scale: window_scale
+        -- })
