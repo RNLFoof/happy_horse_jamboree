@@ -30,62 +30,14 @@ process_inputs(card)else
 card.ability.nes.keypressed(input.key)
 print("press ", input.key)
 input.frames = input.frames - 1;return 
-card.ability.nes.update()end end end;local _anon_func_0 = function(card, pairs)local _accum_0 = 
+card.ability.nes.update()end end end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{  }local _len_0 = 1;for key, value in pairs(card.children.h_popup) do _accum_0[_len_0] = key;_len_0 = _len_0 + 1 end;return _accum_0 end;local _anon_func_1 = function(card, pairs)local _accum_0 = 
-{  }local _len_0 = 1;for key, value in pairs(card.children.h_popup.T) do _accum_0[_len_0] = key;_len_0 = _len_0 + 1 end;return _accum_0 end;local pac_man = SMODS.Joker({ key = "pac_man", atlas = "atlas_jokers", loc_txt = { name = "Pac-Man", text = { "Play literally Pac-Man for the NES lmao", "Control it by scoring cards", "{s:0.8,C:inactive}Number cards hold the direction of their suit", "{s:0.8,C:inactive}for that number of frames", "{s:0.8,C:inactive}Faces and Aces just press their button", "{s:0.8,C:inactive}The game doesn't run when no input is given" } }, pos = atlas_jokers_positions["pac_man"], set_ability = function(self, card, initial, delay_sprites)card.ability.nes = spawn_a_nes()card.ability.nes.load({ "Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes" })card.ability.nes.update()card.ability.inputs = { Input(keys.START, 1), Input(keys.START, 1), Input(keys.START, 1), Input(keys.START, 1), Input(keys.START, 1), Input(keys.START, 1), Input(keys.START, 1), Input(keys.START, 1), Input(keys.NOTHING, 60), Input(keys.A, 1), Input(keys.START, 1), Input(keys.NOTHING, 60 * 4.5) }card.ability.screen_x = 0;card.ability.screen_y = 0 end, draw = function(self, card, layer)card.ability.nes.update_image()if card.children.h_popup then print(_anon_func_0(card, pairs))print(_anon_func_1(card, pairs))local pac_man_container = 
-card.children.h_popup:get_UIE_by_ID("pac_man_container")
-card.ability.screen_x = card.children.h_popup.T.x
-card.ability.screen_y = card.children.h_popup.T.y end;local sprite = 
-
-card.children.center;if not 
-sprite.states.visible then return end;if 
-sprite.sprite_pos.x ~= sprite.sprite_pos_copy.x or sprite.sprite_pos.y ~= sprite.sprite_pos_copy.y then
-sprite:set_sprite_pos(sprite.sprite_pos)end
-prep_draw(sprite, 1)
-love.graphics.scale(1 / (sprite.scale.x / sprite.VT.w), 1 / (sprite.scale.y / sprite.VT.h))
+local pretend_youre_a_center;pretend_youre_a_center = function(center, and_do_this)if not 
+center.states.visible then return end;if 
+center.sprite_pos.x ~= center.sprite_pos_copy.x or center.sprite_pos.y ~= center.sprite_pos_copy.y then
+center:set_sprite_pos(center.sprite_pos)end
+prep_draw(center, 1)
+love.graphics.scale(1 / (center.scale.x / center.VT.w), 1 / (center.scale.y / center.VT.h))
 love.graphics.setColor(overlay or G.BRUTE_OVERLAY or G.C.WHITE)
 
 
@@ -96,12 +48,62 @@ love.graphics.setColor(overlay or G.BRUTE_OVERLAY or G.C.WHITE)
 
 
 
-love.graphics.draw(spawned_nes.image, 0, 0)
+and_do_this()
 
 love.graphics.pop()
-add_to_drawhash(sprite)
-sprite:draw_boundingrect()if 
-sprite.shader_tab then return love.graphics.setShader()end end, update = function(self, card, dt)return 
+add_to_drawhash(center)
+center:draw_boundingrect()if 
+center.shader_tab then return love.graphics.setShader()end end;local pac_man = 
+
+
+SMODS.Joker({ key = "pac_man", atlas = 
+"atlas_jokers", loc_txt = { name = 
+
+"Pac-Man", text = { 
+
+"Play literally Pac-Man for the NES lmao", 
+"Control it by scoring cards", 
+"{s:0.8,C:inactive}Number cards hold the direction of their suit", 
+"{s:0.8,C:inactive}for that number of frames", 
+"{s:0.8,C:inactive}Faces and Aces just press their button", 
+"{s:0.8,C:inactive}The game doesn't run when no input is given" } }, pos = 
+
+atlas_jokers_positions["pac_man"], set_ability = function(self, card, initial, delay_sprites)
+
+card.ability.nes = spawn_a_nes()
+
+card.ability.nes.load({ "Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes" })
+card.ability.nes.update()
+
+
+card.ability.inputs = { Input(keys.START, 1), 
+Input(keys.START, 1), 
+Input(keys.START, 1), 
+Input(keys.START, 1), 
+Input(keys.START, 1), 
+Input(keys.START, 1), 
+Input(keys.START, 1), 
+Input(keys.START, 1), 
+Input(keys.NOTHING, 60), 
+Input(keys.A, 1), 
+Input(keys.START, 1), 
+Input(keys.NOTHING, 60 * 4.5) }
+
+card.ability.screen_x = 0
+card.ability.screen_y = 0 end, draw = function(self, card, layer)
+
+card.ability.nes.update_image()if 
+card.children.h_popup then local pac_man_container = 
+
+
+card.children.h_popup:get_UIE_by_ID("pac_man_container")
+card.ability.screen_x = card.children.h_popup.T.x
+card.ability.screen_y = card.children.h_popup.T.y end;return 
+
+pretend_youre_a_center(card.children.center, function()return 
+love.graphics.draw(spawned_nes.image, 0, 0)end)end, update = function(self, card, dt)return 
+
+
 
 
 process_inputs(card)end, generate_ui = function(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
