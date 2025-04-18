@@ -34,6 +34,10 @@ function spawn_a_nes()
     spawned_nes = {}
     nes_width = 256
     nes_height = 240
+
+    function spawned_nes.get_actual_internal_nes_object()
+        return Nes
+    end
     -- was function love.load(arg)
     function spawned_nes.load(arg)
         print(arg)

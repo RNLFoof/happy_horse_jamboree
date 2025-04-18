@@ -87,7 +87,12 @@ pac_man = SMODS.Joker
             "{s:0.8,C:inactive}Number cards hold the direction of their suit"
             "{s:0.8,C:inactive}for that number of frames"
             "{s:0.8,C:inactive}Faces and Aces just press their button"
-            "{s:0.8,C:inactive}The game doesn't run when no input is given{}"
+            "{s:0.8,C:inactive}The game doesn't run when no input is given"
+            "{C:chips}Score/Chips: #1#"
+        }
+    loc_vars: (info_queue, card) => 
+        return vars: {
+            card.ability.score
         }
     pos: atlas_jokers_positions["pac_man"]
     set_ability: (card, initial, delay_sprites) =>
@@ -110,8 +115,7 @@ pac_man = SMODS.Joker
             Input(keys.START, 1),
             Input(keys.NOTHING, 60*4.5),
         }
-        card.ability.screen_x = 0
-        card.ability.screen_y = 0
+        card.ability.score = 0
     draw: (card, layer) =>
         card.ability.nes.update_image()
         -- if card.children.h_popup
@@ -150,6 +154,13 @@ pac_man = SMODS.Joker
         -- love.graphics.draw(spawned_nes.image, card.ability.screen_x, card.ability.screen_y)
     update: (card, dt) =>
         process_inputs(card)
+        score = ""
+        peek_ram = card.ability.nes.get_actual_internal_nes_object().cpu::peek_ram
+        for address = 0x0070, 0x0075
+            score = tostring(peek_ram(address)) .. score
+        score ..= "0"
+        card.ability.score = tonumber(score)
+        print(score, card.ability.score)
     generate_ui: (info_queue, card, desc_nodes, specific_vars, full_UI_table) =>
         SMODS.Joker.generate_ui(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
         

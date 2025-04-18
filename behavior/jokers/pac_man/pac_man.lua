@@ -87,7 +87,12 @@ SMODS.Joker({ key = "pac_man", atlas =
 "{s:0.8,C:inactive}Number cards hold the direction of their suit", 
 "{s:0.8,C:inactive}for that number of frames", 
 "{s:0.8,C:inactive}Faces and Aces just press their button", 
-"{s:0.8,C:inactive}The game doesn't run when no input is given{}" } }, pos = 
+"{s:0.8,C:inactive}The game doesn't run when no input is given", 
+"{C:chips}Score/Chips: #1#" } }, loc_vars = function(self, info_queue, card)return { vars = { 
+
+
+
+card.ability.score } }end, pos = 
 
 atlas_jokers_positions["pac_man"], set_ability = function(self, card, initial, delay_sprites)
 
@@ -110,8 +115,7 @@ Input(keys.A, 1),
 Input(keys.START, 1), 
 Input(keys.NOTHING, 60 * 4.5) }
 
-card.ability.screen_x = 0
-card.ability.screen_y = 0 end, draw = function(self, card, layer)
+card.ability.score = 0 end, draw = function(self, card, layer)
 
 card.ability.nes.update_image()local center = 
 
@@ -140,7 +144,7 @@ field_multiplication_context(center.scale, "y", screen_size_multiplier_y, functi
 field_addition_context(center.VT, "x", (screen_dims.x - 1) * multiply_your_pixels_by_this_for_movement, function()return 
 field_addition_context(center.VT, "y", (screen_dims.y) * multiply_your_pixels_by_this_for_movement, function()return 
 pretend_youre_a_center(center, function()return 
-love.graphics.draw(spawned_nes.image, 0, 0)end)end)end)end)end)end, update = function(self, card, dt)return 
+love.graphics.draw(spawned_nes.image, 0, 0)end)end)end)end)end)end, update = function(self, card, dt)
 
 
 
@@ -149,7 +153,14 @@ love.graphics.draw(spawned_nes.image, 0, 0)end)end)end)end)end)end, update = fun
 
 
 
-process_inputs(card)end, generate_ui = function(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
+process_inputs(card)local score = 
+""
+local peek_ram;do local _base_0 = card.ability.nes.get_actual_internal_nes_object().cpu;local _fn_0 = _base_0.peek_ram;peek_ram = _fn_0 and function(...)return _fn_0(_base_0, ...)end end;for address = 
+0x0070, 0x0075 do
+score = tostring(peek_ram(address)) .. score end
+score = score .. "0"
+card.ability.score = tonumber(score)return 
+print(score, card.ability.score)end, generate_ui = function(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
 
 SMODS.Joker.generate_ui(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)local nes_width = 
 

@@ -108,7 +108,7 @@ function CPU:peek_jam_2(_addr)
 end
 
 function CPU:peek_ram(addr)
-    return self.ram[addr % CPRAM_SIZE]
+    return self.ram[addr]  -- This used to have " % CPRAM_SIZE", but CPRAM_SIZE is never defined, so whatever
 end
 
 function CPU:poke_ram(addr, data)
