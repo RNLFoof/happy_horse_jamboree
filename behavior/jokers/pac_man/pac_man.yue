@@ -118,14 +118,19 @@ pac_man = SMODS.Joker
         
         center = card.children.center
         -- 71 is how wide, in pixels, cards are
-        margin_width = 10
-        margin_top = 10
-        screen_size_multiplier = 256 / (71 - margin_width*2)  -- Dude for some reason making the scale bigger makes the screen smaller? WAK
+        screen_dims = {
+            x: 10
+            y: 10
+            w: 51
+            h: 46
+        }
+        screen_size_multiplier_x = 256 / screen_dims.w  -- Dude for some reason making the scale bigger makes the screen smaller? WAK
+        screen_size_multiplier_y = 240 / screen_dims.h
         multiply_your_pixels_by_this_for_movement = G.CARD_W / 71 -- How wide cards are in pixels vs how wide they are in the funny mystery units the game uses
-        field_multiplication_context(center.scale, "x", screen_size_multiplier, ->
-            field_multiplication_context(center.scale, "y", screen_size_multiplier, ->
-                field_addition_context(center.VT, "x", (margin_width-1) * multiply_your_pixels_by_this_for_movement, ->
-                    field_addition_context(center.VT, "y", (margin_top-1) * multiply_your_pixels_by_this_for_movement, ->
+        field_multiplication_context(center.scale, "x", screen_size_multiplier_x, ->
+            field_multiplication_context(center.scale, "y", screen_size_multiplier_y, ->
+                field_addition_context(center.VT, "x", (screen_dims.x-1) * multiply_your_pixels_by_this_for_movement, -> -- why is it off by 1? probably something to do with how it doesn't seem to fully respect the scale...
+                    field_addition_context(center.VT, "y", (screen_dims.y) * multiply_your_pixels_by_this_for_movement, ->
                         pretend_youre_a_center(center, ->
                             love.graphics.draw(spawned_nes.image, 0, 0)
                         )
