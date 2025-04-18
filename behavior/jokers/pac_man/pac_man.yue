@@ -224,6 +224,8 @@ pac_man = SMODS.Joker
             -- print(scale)
             -- -- love.graphics.origin()
             --love.graphics.translate(card.ability.screen_x*G.TILESCALE*G.TILESIZE, 0)
+            love.graphics.setColor(1, 1, 1)
+            --love.graphics.setBlendMode("alpha")
             love.graphics.draw(spawned_nes.image, 0, 0)
             love.graphics.pop()
 

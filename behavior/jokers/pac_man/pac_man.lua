@@ -224,6 +224,8 @@ love.graphics.scale(scale_x, scale_y)end
 
 
 
+love.graphics.setColor(1, 1, 1)
+
 love.graphics.draw(spawned_nes.image, 0, 0)return 
 love.graphics.pop()end
 
