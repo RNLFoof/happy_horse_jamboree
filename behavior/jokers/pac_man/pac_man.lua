@@ -116,12 +116,20 @@ card.children.h_popup:get_UIE_by_ID("pac_man_container")
 card.ability.screen_x = card.children.h_popup.T.x
 card.ability.screen_y = card.children.h_popup.T.y end;local center = 
 
-card.children.center;local screen_size_multiplier = 
-256 / 71;return 
+card.children.center;local margin_width = 
+
+10;local margin_top = 
+10;local screen_size_multiplier = 
+256 / (71 - margin_width * 2)local multiply_your_pixels_by_this_for_movement = 
+G.CARD_W / 71;return 
 field_multiplication_context(center.scale, "x", screen_size_multiplier, function()return 
 field_multiplication_context(center.scale, "y", screen_size_multiplier, function()return 
+field_addition_context(center.VT, "x", (margin_width - 1) * multiply_your_pixels_by_this_for_movement, function()return 
+field_addition_context(center.VT, "y", (margin_top - 1) * multiply_your_pixels_by_this_for_movement, function()return 
 pretend_youre_a_center(center, function()return 
-love.graphics.draw(spawned_nes.image, 0, 0)end)end)end)end, update = function(self, card, dt)return 
+love.graphics.draw(spawned_nes.image, 0, 0)end)end)end)end)end)end, update = function(self, card, dt)return 
+
+
 
 
 
