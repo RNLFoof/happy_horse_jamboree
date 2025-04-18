@@ -55,6 +55,22 @@ pretend_youre_a_center = (center, and_do_this) ->
     center::draw_boundingrect()
     if center.shader_tab then love.graphics.setShader()
 
+field_replace_context = (object, field_name, value, do_this) ->
+    original_value = object[field_name]  -- Does this instead of dividing it back bc of floating point inaccuracy
+    object[field_name] = value
+    do_this()
+    object[field_name] = original_value
+    print("#{object}.#{field_name} from #{original_value} to  #{value} and back to  #{original_value}")
+
+field_operation_context = (object, field_name, operation, do_this) ->
+    field_replace_context(object, field_name, operation(object[field_name]), do_this)
+
+field_addition_context = (object, field_name, the_guy_you_add_idk, do_this) ->
+    field_operation_context(object, field_name, ((x) -> x+the_guy_you_add_idk), do_this)
+
+field_multiplication_context = (object, field_name, multiplier, do_this) ->
+    field_operation_context(object, field_name, ((x) -> x*multiplier), do_this)
+
 pac_man = SMODS.Joker
     key: "pac_man"
     atlas: "atlas_jokers"
@@ -100,8 +116,14 @@ pac_man = SMODS.Joker
             card.ability.screen_x = card.children.h_popup.T.x
             card.ability.screen_y = card.children.h_popup.T.y
         
-        pretend_youre_a_center(card.children.center, ->
-            love.graphics.draw(spawned_nes.image, 0, 0)
+        center = card.children.center
+        screen_size_multiplier = 256 / 71  -- Dude for some reason making the scale bigger makes the screen smaller? WAK
+        field_multiplication_context(center.scale, "x", screen_size_multiplier, ->
+            field_multiplication_context(center.scale, "y", screen_size_multiplier, ->
+                pretend_youre_a_center(center, ->
+                    love.graphics.draw(spawned_nes.image, 0, 0)
+                )
+            )
         )
         
         -- love.graphics.draw(spawned_nes.image, card.ability.screen_x, card.ability.screen_y)

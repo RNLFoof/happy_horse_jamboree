@@ -53,7 +53,23 @@ and_do_this()
 love.graphics.pop()
 add_to_drawhash(center)
 center:draw_boundingrect()if 
-center.shader_tab then return love.graphics.setShader()end end;local pac_man = 
+center.shader_tab then return love.graphics.setShader()end end
+
+local field_replace_context;field_replace_context = function(object, field_name, value, do_this)local original_value = 
+object[field_name]
+object[field_name] = value
+do_this()
+object[field_name] = original_value;return 
+print(tostring(object) .. "." .. tostring(field_name) .. " from " .. tostring(original_value) .. " to  " .. tostring(value) .. " and back to  " .. tostring(original_value))end
+
+local field_operation_context;field_operation_context = function(object, field_name, operation, do_this)return 
+field_replace_context(object, field_name, operation(object[field_name]), do_this)end
+
+local field_addition_context;field_addition_context = function(object, field_name, the_guy_you_add_idk, do_this)return 
+field_operation_context(object, field_name, (function(x)return x + the_guy_you_add_idk end), do_this)end
+
+local field_multiplication_context;field_multiplication_context = function(object, field_name, multiplier, do_this)return 
+field_operation_context(object, field_name, (function(x)return x * multiplier end), do_this)end;local pac_man = 
 
 
 SMODS.Joker({ key = "pac_man", atlas = 
@@ -98,10 +114,16 @@ card.children.h_popup then local pac_man_container =
 
 card.children.h_popup:get_UIE_by_ID("pac_man_container")
 card.ability.screen_x = card.children.h_popup.T.x
-card.ability.screen_y = card.children.h_popup.T.y end;return 
+card.ability.screen_y = card.children.h_popup.T.y end;local center = 
 
-pretend_youre_a_center(card.children.center, function()return 
-love.graphics.draw(spawned_nes.image, 0, 0)end)end, update = function(self, card, dt)return 
+card.children.center;local screen_size_multiplier = 
+256 / 71;return 
+field_multiplication_context(center.scale, "x", screen_size_multiplier, function()return 
+field_multiplication_context(center.scale, "y", screen_size_multiplier, function()return 
+pretend_youre_a_center(center, function()return 
+love.graphics.draw(spawned_nes.image, 0, 0)end)end)end)end, update = function(self, card, dt)return 
+
+
 
 
 
