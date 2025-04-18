@@ -199,23 +199,10 @@ card.ability.screen_y = card.children.h_popup.T.y end;local wait_can_i_just =
 Moveable()
 
 wait_can_i_just.draw = function(self)
-prep_draw(self, 1)for _ = 
-
-1, 1 do local left,top = 
-love.graphics.transformPoint(0, 0)local right,bottom = 
-
-love.graphics.transformPoint(nes_width, nes_height)local width = (
-
-right - left)local height = (
-bottom - top)local scale_x = 
-
-1 / (width / nes_width)local scale_y = 
-1 / (height / nes_height)
-
-love.graphics.scale(scale_x, scale_y)end
-
-
-
+prep_draw(self, 1)local screen_x,screen_y = 
+love.graphics.transformPoint(0, 0)
+love.graphics.origin()local pixel_x,pixel_y = 
+love.graphics.inverseTransformPoint(math.floor(screen_x + 0.5), math.floor(screen_y + 0.5))
 
 
 
@@ -226,7 +213,16 @@ love.graphics.scale(scale_x, scale_y)end
 
 love.graphics.setColor(1, 1, 1)
 
-love.graphics.draw(spawned_nes.image, 0, 0)return 
+
+
+
+
+
+
+
+
+
+love.graphics.draw(spawned_nes.image, pixel_x, pixel_y)return 
 love.graphics.pop()end
 
 desc_nodes[#desc_nodes + 1] = { { n = 
