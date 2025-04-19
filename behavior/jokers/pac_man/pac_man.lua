@@ -18,10 +18,14 @@ math.floor(207 / 19 / 2)local keys = { UP =
 
 
 
-local Input;do local _class_0;local _base_0 = {  }if _base_0.__index == nil then _base_0.__index = _base_0 end
+local Input;do local _class_0;local _base_0 = { copy = function(self)
 
 
-_class_0 = setmetatable({ __init = function(self, key, frames)self.key = key;self.frames = frames end, __base = _base_0, __name = "Input" }, { __index = _base_0, __call = function(cls, ...)local _self_0 = setmetatable({  }, _base_0)cls.__init(_self_0, ...)return _self_0 end })_base_0.__class = _class_0;Input = _class_0 end
+
+
+
+print(self)return 
+Input(self.key, self.frames)end }if _base_0.__index == nil then _base_0.__index = _base_0 end;_class_0 = setmetatable({ __init = function(self, key, frames)self.key = key;self.frames = frames end, __base = _base_0, __name = "Input" }, { __index = _base_0, __call = function(cls, ...)local _self_0 = setmetatable({  }, _base_0)cls.__init(_self_0, ...)return _self_0 end })_base_0.__class = _class_0;Input = _class_0 end
 
 local pretend_youre_drawable;pretend_youre_drawable = function(drawable, and_do_this)
 prep_draw(drawable, 1)
@@ -85,16 +89,31 @@ SMODS.Joker({ key = "pac_man", atlas =
 
 card.ability.score } }end, pos = 
 
-atlas_jokers_positions["pac_man"], set_ability = function(self, card, initial, delay_sprites)
-
-self.nes = spawn_a_nes()
-print("set :)")
-
-self.nes.load({ "Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes" })
-self.nes.update()
+atlas_jokers_positions["pac_man"], prepare_yourself = function(self, card)
 
 
-card.ability.inputs = { Input(keys.START, 1), 
+
+card.doesnt_save = { nes = spawn_a_nes(), inputs = 
+{  }, frames_per_frame = 
+1 }
+
+card.doesnt_save.nes.load({ "Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes" })return 
+card.doesnt_save.nes.update()end, load = function(self, card, card_table, other_card)
+
+
+self:prepare_yourself(card)
+card.doesnt_save.frames_per_frame = 30
+card.doesnt_save.just_reloaded = true end, set_ability = function(self, card, initial, delay_sprites)
+
+self:prepare_yourself(card)
+card.doesnt_save.frames_per_frame = 1
+card.ability.score = 0
+card.ability.input_history = {  }
+print("set!")local _list_0 = { 
+
+
+
+Input(keys.START, 1), 
 Input(keys.START, 1), 
 Input(keys.START, 1), 
 Input(keys.START, 1), 
@@ -105,11 +124,12 @@ Input(keys.START, 1),
 Input(keys.NOTHING, 60), 
 Input(keys.A, 1), 
 Input(keys.START, 1), 
-Input(keys.NOTHING, 60 * 4.5) }
+Input(keys.NOTHING, 60 * 4.5) }for _index_0 = 
+1, #_list_0 do local input = _list_0[_index_0]
+self:add_input(card, input)end end, draw = function(self, card, layer)
 
-card.ability.score = 0 end, draw = function(self, card, layer)
 
-self.nes.update_image()local center = 
+card.doesnt_save.nes.update_image()local center = 
 
 
 
@@ -136,7 +156,7 @@ field_multiplication_context(center.scale, "y", screen_size_multiplier_y, functi
 field_addition_context(center.VT, "x", (screen_dims.x - 1) * multiply_your_pixels_by_this_for_movement, function()return 
 field_addition_context(center.VT, "y", (screen_dims.y) * multiply_your_pixels_by_this_for_movement, function()return 
 pretend_youre_a_center(center, function()return 
-love.graphics.draw(self.nes.image, 0, 0)end)end)end)end)end)end, update = function(self, card, dt)
+love.graphics.draw(card.doesnt_save.nes.image, 0, 0)end)end)end)end)end)end, update = function(self, card, dt)if 
 
 
 
@@ -145,21 +165,43 @@ love.graphics.draw(self.nes.image, 0, 0)end)end)end)end)end)end, update = functi
 
 
 
+card.doesnt_save.just_reloaded and card.ability.input_history then do local _accum_0 = 
+{  }local _len_0 = 1;local _list_0 = card.ability.input_history;for _index_0 = 1, #_list_0 do local input = _list_0[_index_0]_accum_0[_len_0] = Input.copy(input)_len_0 = _len_0 + 1 end;card.doesnt_save.inputs = _accum_0 end
+card.doesnt_save.just_reloaded = nil
+print("reloaded!")
+print(card.doesnt_save.inputs)end;local cpu = 
+
+card.doesnt_save.nes:get_actual_internal_nes_object().cpu;local ram = 
+
+
+
+
+
+
+cpu.ram;if 
+ram then
 self:process_inputs(card)local score = 
+
 ""
-local peek_ram;do local _base_0 = self.nes.get_actual_internal_nes_object().cpu;local _fn_0 = _base_0.peek_ram;peek_ram = _fn_0 and function(...)return _fn_0(_base_0, ...)end end;for address = 
-0x0070, 0x0075 do
-score = tostring(peek_ram(address)) .. score end
+local peek_ram;do local _base_0 = card.doesnt_save.nes.get_actual_internal_nes_object().cpu;local _fn_0 = _base_0.peek_ram;peek_ram = _fn_0 and function(...)return _fn_0(_base_0, ...)end end;for address = 
+0x0070, 0x0075 do local digit = 
+peek_ram(address)if 
+digit < 10 then
+score = tostring(digit) .. score end end
+
 score = score .. "0"
-card.ability.score = tonumber(score)end, generate_ui = function(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
+card.ability.score = tonumber(score)end end, generate_ui = function(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
+
+
+
 
 SMODS.Joker.generate_ui(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)local nes_width = 
 
 
 
 
-self.nes.image:getWidth()local nes_height = 
-self.nes.image:getHeight()local ref_sizes = { red = { pixels = { w = 
+card.doesnt_save.nes.image:getWidth()local nes_height = 
+card.doesnt_save.nes.image:getHeight()local ref_sizes = { red = { pixels = { w = 
 
 
 
@@ -198,8 +240,7 @@ card.ability.screen_y = card.children.h_popup.T.y end;local wait_can_i_just =
 
 
 
-Moveable()local cardself = 
-self
+Moveable()
 
 wait_can_i_just.draw = function(self)
 prep_draw(self, 1)local screen_x,screen_y = 
@@ -225,7 +266,7 @@ love.graphics.setColor(1, 1, 1)
 
 
 
-love.graphics.draw(cardself.nes.image, pixel_x, pixel_y)return 
+love.graphics.draw(card.doesnt_save.nes.image, pixel_x, pixel_y)return 
 love.graphics.pop()end
 
 desc_nodes[#desc_nodes + 1] = { { n = 
@@ -261,8 +302,7 @@ context.joker_main and context.cardarea == G.jokers then return { chips =
 
 card.ability.score }elseif 
 
-context.individual and context.cardarea == G.play then
-print("brhg")if 
+context.individual and context.cardarea == G.play then if 
 context.other_card.ability.effect == 'Stone Card' then
 return end;local input_to_add = 
 nil;local card_id = 
@@ -287,25 +327,31 @@ input_to_add = Input(keys.LEFT, card_id * frame_multiplier)elseif
 "Clubs" == _exp_0 then
 input_to_add = Input(keys.RIGHT, card_id * frame_multiplier)else
 
-input_to_add = nil end end
-print(input_to_add)if 
+input_to_add = nil end end;if 
 input_to_add then return 
 
-G.E_MANAGER:add_event(Event({ func = function()do local _obj_0 = 
-card.ability.inputs;_obj_0[#_obj_0 + 1] = input_to_add end;return 
-true end }))end end end, process_inputs = function(self, card)local input = 
+G.E_MANAGER:add_event(Event({ func = function()
+self:add_input(card, input_to_add)return 
+true end }))end end end, add_input = function(self, card, input)do local _obj_0 = 
 
 
 
-card.ability.inputs[1]if 
+card.doesnt_save.inputs;_obj_0[#_obj_0 + 1] = input end;local _obj_0 = 
+card.ability.input_history;_obj_0[#_obj_0 + 1] = input:copy()end, process_inputs = function(self, card)for _ = 
+
+
+1, card.doesnt_save.frames_per_frame do local input = 
+card.doesnt_save.inputs[1]if 
 input then if 
 input.frames == 0 then
-self.nes.keyreleased(input.key)do local _accum_0 = 
+card.doesnt_save.nes.keyreleased(input.key)do local _accum_0 = 
 
-{  }local _len_0 = 1;local _list_0 = card.ability.inputs;for _index_0 = 2, #_list_0 do local x = _list_0[_index_0]_accum_0[_len_0] = x;_len_0 = _len_0 + 1 end;card.ability.inputs = _accum_0 end;return 
+{  }local _len_0 = 1;local _list_0 = card.doesnt_save.inputs;for _index_0 = 2, #_list_0 do local x = _list_0[_index_0]_accum_0[_len_0] = x;_len_0 = _len_0 + 1 end;card.doesnt_save.inputs = _accum_0 end
 self:process_inputs(card)else
 
-self.nes.keypressed(input.key)
+card.doesnt_save.nes.keypressed(input.key)
 
-input.frames = input.frames - 1;return 
-self.nes.update()end end end })
+input.frames = input.frames - 1
+card.doesnt_save.nes.update()end else
+
+card.doesnt_save.frames_per_frame = 1 end end end })
