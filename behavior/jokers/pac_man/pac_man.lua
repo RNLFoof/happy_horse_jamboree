@@ -157,8 +157,10 @@ field_multiplication_context(center.scale, "x", screen_size_multiplier_x, functi
 field_multiplication_context(center.scale, "y", screen_size_multiplier_y, function()return 
 field_addition_context(center.VT, "x", (screen_dims.x - 1) * multiply_your_pixels_by_this_for_movement, function()return 
 field_addition_context(center.VT, "y", (screen_dims.y) * multiply_your_pixels_by_this_for_movement, function()return 
-pretend_youre_a_center(center, function()return 
-love.graphics.draw(card.doesnt_save.nes.image, 0, 0)end)end)end)end)end)end, update = function(self, card, dt)if 
+pretend_youre_a_center(center, function()
+love.graphics.setShader(G.SHADERS['dissolve'])
+love.graphics.draw(card.doesnt_save.nes.image, 0, 0)return 
+love.graphics.setShader()end)end)end)end)end)end, update = function(self, card, dt)if 
 
 
 

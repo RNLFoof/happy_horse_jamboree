@@ -158,7 +158,9 @@ pac_man = SMODS.Joker
                 field_addition_context(center.VT, "x", (screen_dims.x-1) * multiply_your_pixels_by_this_for_movement, -> -- why is it off by 1? probably something to do with how it doesn't seem to fully respect the scale...
                     field_addition_context(center.VT, "y", (screen_dims.y) * multiply_your_pixels_by_this_for_movement, ->
                         pretend_youre_a_center(center, ->
+                            love.graphics.setShader( G.SHADERS['dissolve'])
                             love.graphics.draw(card.doesnt_save.nes.image, 0, 0)
+                            love.graphics.setShader()
                         )
                     )
                 )
