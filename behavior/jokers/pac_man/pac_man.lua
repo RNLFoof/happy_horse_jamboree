@@ -1,4 +1,9 @@
-assert(SMODS.load_file("libs\\LuaNES\\main.lua"))()local keys = { UP = 
+assert(SMODS.load_file("libs\\LuaNES\\main.lua"))()local frame_multiplier = 
+
+
+
+
+math.floor(207 / 19 / 2)local keys = { UP = 
 
 
 "w", LEFT = 
@@ -17,20 +22,6 @@ local Input;do local _class_0;local _base_0 = {  }if _base_0.__index == nil then
 
 
 _class_0 = setmetatable({ __init = function(self, key, frames)self.key = key;self.frames = frames end, __base = _base_0, __name = "Input" }, { __index = _base_0, __call = function(cls, ...)local _self_0 = setmetatable({  }, _base_0)cls.__init(_self_0, ...)return _self_0 end })_base_0.__class = _class_0;Input = _class_0 end
-
-local process_inputs;process_inputs = function(card)local input = 
-card.ability.inputs[1]if 
-input then if 
-input.frames == 0 then
-card.ability.nes.keyreleased(input.key)
-print("release ", input.key)do local _accum_0 = 
-{  }local _len_0 = 1;local _list_0 = card.ability.inputs;for _index_0 = 2, #_list_0 do local x = _list_0[_index_0]_accum_0[_len_0] = x;_len_0 = _len_0 + 1 end;card.ability.inputs = _accum_0 end;return 
-process_inputs(card)else
-
-card.ability.nes.keypressed(input.key)
-print("press ", input.key)
-input.frames = input.frames - 1;return 
-card.ability.nes.update()end end end
 
 local pretend_youre_drawable;pretend_youre_drawable = function(drawable, and_do_this)
 prep_draw(drawable, 1)
@@ -85,7 +76,7 @@ SMODS.Joker({ key = "pac_man", atlas =
 "Play literally Pac-Man for the NES lmao", 
 "Control it by scoring cards", 
 "{s:0.8,C:inactive}Number cards hold the direction of their suit", 
-"{s:0.8,C:inactive}for that number of frames", 
+"{s:0.8,C:inactive}for that number of frames (x" .. tostring(frame_multiplier) .. ")", 
 "{s:0.8,C:inactive}Faces and Aces just press their button", 
 "{s:0.8,C:inactive}The game doesn't run when no input is given", 
 "{C:chips}Score/Chips: #1#" } }, loc_vars = function(self, info_queue, card)return { vars = { 
@@ -96,10 +87,11 @@ card.ability.score } }end, pos =
 
 atlas_jokers_positions["pac_man"], set_ability = function(self, card, initial, delay_sprites)
 
-card.ability.nes = spawn_a_nes()
+self.nes = spawn_a_nes()
+print("set :)")
 
-card.ability.nes.load({ "Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes" })
-card.ability.nes.update()
+self.nes.load({ "Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes" })
+self.nes.update()
 
 
 card.ability.inputs = { Input(keys.START, 1), 
@@ -117,7 +109,7 @@ Input(keys.NOTHING, 60 * 4.5) }
 
 card.ability.score = 0 end, draw = function(self, card, layer)
 
-card.ability.nes.update_image()local center = 
+self.nes.update_image()local center = 
 
 
 
@@ -144,7 +136,7 @@ field_multiplication_context(center.scale, "y", screen_size_multiplier_y, functi
 field_addition_context(center.VT, "x", (screen_dims.x - 1) * multiply_your_pixels_by_this_for_movement, function()return 
 field_addition_context(center.VT, "y", (screen_dims.y) * multiply_your_pixels_by_this_for_movement, function()return 
 pretend_youre_a_center(center, function()return 
-love.graphics.draw(spawned_nes.image, 0, 0)end)end)end)end)end)end, update = function(self, card, dt)
+love.graphics.draw(self.nes.image, 0, 0)end)end)end)end)end)end, update = function(self, card, dt)
 
 
 
@@ -153,22 +145,21 @@ love.graphics.draw(spawned_nes.image, 0, 0)end)end)end)end)end)end, update = fun
 
 
 
-process_inputs(card)local score = 
+self:process_inputs(card)local score = 
 ""
-local peek_ram;do local _base_0 = card.ability.nes.get_actual_internal_nes_object().cpu;local _fn_0 = _base_0.peek_ram;peek_ram = _fn_0 and function(...)return _fn_0(_base_0, ...)end end;for address = 
+local peek_ram;do local _base_0 = self.nes.get_actual_internal_nes_object().cpu;local _fn_0 = _base_0.peek_ram;peek_ram = _fn_0 and function(...)return _fn_0(_base_0, ...)end end;for address = 
 0x0070, 0x0075 do
 score = tostring(peek_ram(address)) .. score end
 score = score .. "0"
-card.ability.score = tonumber(score)return 
-print(score, card.ability.score)end, generate_ui = function(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
+card.ability.score = tonumber(score)end, generate_ui = function(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
 
 SMODS.Joker.generate_ui(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)local nes_width = 
 
 
 
 
-spawned_nes.image:getWidth()local nes_height = 
-spawned_nes.image:getHeight()local ref_sizes = { red = { pixels = { w = 
+self.nes.image:getWidth()local nes_height = 
+self.nes.image:getHeight()local ref_sizes = { red = { pixels = { w = 
 
 
 
@@ -207,7 +198,8 @@ card.ability.screen_y = card.children.h_popup.T.y end;local wait_can_i_just =
 
 
 
-Moveable()
+Moveable()local cardself = 
+self
 
 wait_can_i_just.draw = function(self)
 prep_draw(self, 1)local screen_x,screen_y = 
@@ -233,7 +225,7 @@ love.graphics.setColor(1, 1, 1)
 
 
 
-love.graphics.draw(spawned_nes.image, pixel_x, pixel_y)return 
+love.graphics.draw(cardself.nes.image, pixel_x, pixel_y)return 
 love.graphics.pop()end
 
 desc_nodes[#desc_nodes + 1] = { { n = 
@@ -247,4 +239,73 @@ request_this_size.h }, nodes = { { n =
 
 G.UIT.O, config = { object = 
 
-wait_can_i_just } } } } }end })
+wait_can_i_just } } } } }end, calculate = function(self, card, context)if 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+context.joker_main and context.cardarea == G.jokers then return { chips = 
+
+card.ability.score }elseif 
+
+context.individual and context.cardarea == G.play then
+print("brhg")if 
+context.other_card.ability.effect == 'Stone Card' then
+return end;local input_to_add = 
+nil;local card_id = 
+context.other_card:get_id()if 
+
+14 == card_id then
+input_to_add = Input(keys.A, 1)elseif 
+13 == card_id then
+input_to_add = Input(keys.START, 1)elseif 
+12 == card_id then
+input_to_add = Input(keys.SELECT, 1)elseif 
+11 == card_id then
+input_to_add = Input(keys.B, 1)else local _exp_0 = 
+
+context.other_card.base.suit;if 
+"Spades" == _exp_0 then
+input_to_add = Input(keys.UP, card_id * frame_multiplier)elseif 
+"Hearts" == _exp_0 then
+input_to_add = Input(keys.DOWN, card_id * frame_multiplier)elseif 
+"Diamonds" == _exp_0 then
+input_to_add = Input(keys.LEFT, card_id * frame_multiplier)elseif 
+"Clubs" == _exp_0 then
+input_to_add = Input(keys.RIGHT, card_id * frame_multiplier)else
+
+input_to_add = nil end end
+print(input_to_add)if 
+input_to_add then return 
+
+G.E_MANAGER:add_event(Event({ func = function()do local _obj_0 = 
+card.ability.inputs;_obj_0[#_obj_0 + 1] = input_to_add end;return 
+true end }))end end end, process_inputs = function(self, card)local input = 
+
+
+
+card.ability.inputs[1]if 
+input then if 
+input.frames == 0 then
+self.nes.keyreleased(input.key)do local _accum_0 = 
+
+{  }local _len_0 = 1;local _list_0 = card.ability.inputs;for _index_0 = 2, #_list_0 do local x = _list_0[_index_0]_accum_0[_len_0] = x;_len_0 = _len_0 + 1 end;card.ability.inputs = _accum_0 end;return 
+self:process_inputs(card)else
+
+self.nes.keypressed(input.key)
+
+input.frames = input.frames - 1;return 
+self.nes.update()end end end })

@@ -1,5 +1,10 @@
 assert(SMODS.load_file("libs\\LuaNES\\main.lua"))()
 
+-- self.nes = spawn_a_nes()
+-- It takes about 207 frames to go all the way across the bottom, which spans 19 dots
+-- so we want one rank to equal, what, half a dot? that seems about right?
+frame_multiplier = math.floor(207 / 19 / 2)
+
 keys = {
     UP: "w"
     LEFT: "a"
@@ -17,20 +22,6 @@ class Input
     new: (key, frames) =>
         @key = key
         @frames = frames
-
-process_inputs = (card) ->
-    input = card.ability.inputs[1]
-    if input
-        if input.frames == 0
-            card.ability.nes.keyreleased(input.key)
-            print("release ", input.key)
-            card.ability.inputs = [x for x in *card.ability.inputs[2,]]
-            process_inputs(card)
-        else
-            card.ability.nes.keypressed(input.key)
-            print("press ", input.key)
-            input.frames -= 1
-            card.ability.nes.update()
 
 pretend_youre_drawable = (drawable, and_do_this) ->
     prep_draw(drawable, 1)
@@ -85,7 +76,7 @@ pac_man = SMODS.Joker
             "Play literally Pac-Man for the NES lmao"
             "Control it by scoring cards"
             "{s:0.8,C:inactive}Number cards hold the direction of their suit"
-            "{s:0.8,C:inactive}for that number of frames"
+            "{s:0.8,C:inactive}for that number of frames (x#{frame_multiplier})"
             "{s:0.8,C:inactive}Faces and Aces just press their button"
             "{s:0.8,C:inactive}The game doesn't run when no input is given"
             "{C:chips}Score/Chips: #1#"
@@ -96,10 +87,11 @@ pac_man = SMODS.Joker
         }
     pos: atlas_jokers_positions["pac_man"]
     set_ability: (card, initial, delay_sprites) =>
-        card.ability.nes = spawn_a_nes()
+        self.nes = spawn_a_nes()
+        print("set :)")
         -- print("boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it boutta load it ")
-        card.ability.nes.load({"Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes"})
-        card.ability.nes.update() -- Update just once to spawn the image
+        self.nes.load({"Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes"})
+        self.nes.update() -- Update just once to spawn the image
         card.ability.inputs = {
             -- This is NOT an optimal set of inputs 
             Input(keys.START, 1),
@@ -117,7 +109,7 @@ pac_man = SMODS.Joker
         }
         card.ability.score = 0
     draw: (card, layer) =>
-        card.ability.nes.update_image()
+        self.nes.update_image()
         -- if card.children.h_popup
         --     -- print([key for key, value in pairs(card.children.h_popup)])
         --     -- print([key for key, value in pairs(card.children.h_popup.T)])
@@ -125,7 +117,7 @@ pac_man = SMODS.Joker
         --     card.ability.screen_x = card.children.h_popup.T.x
         --     card.ability.screen_y = card.children.h_popup.T.y
         --     pretend_youre_drawable(pac_man_container, ->
-        --         love.graphics.draw(spawned_nes.image, 0, 0)
+        --         love.graphics.draw(self.nes.image, 0, 0)
         --     )
         
         center = card.children.center
@@ -144,31 +136,30 @@ pac_man = SMODS.Joker
                 field_addition_context(center.VT, "x", (screen_dims.x-1) * multiply_your_pixels_by_this_for_movement, -> -- why is it off by 1? probably something to do with how it doesn't seem to fully respect the scale...
                     field_addition_context(center.VT, "y", (screen_dims.y) * multiply_your_pixels_by_this_for_movement, ->
                         pretend_youre_a_center(center, ->
-                            love.graphics.draw(spawned_nes.image, 0, 0)
+                            love.graphics.draw(self.nes.image, 0, 0)
                         )
                     )
                 )
             )
         )
         
-        -- love.graphics.draw(spawned_nes.image, card.ability.screen_x, card.ability.screen_y)
+        -- love.graphics.draw(self.nes.image, card.ability.screen_x, card.ability.screen_y)
     update: (card, dt) =>
-        process_inputs(card)
+        self::process_inputs(card)
         score = ""
-        peek_ram = card.ability.nes.get_actual_internal_nes_object().cpu::peek_ram
+        peek_ram = self.nes.get_actual_internal_nes_object().cpu::peek_ram
         for address = 0x0070, 0x0075
             score = tostring(peek_ram(address)) .. score
         score ..= "0"
         card.ability.score = tonumber(score)
-        print(score, card.ability.score)
     generate_ui: (info_queue, card, desc_nodes, specific_vars, full_UI_table) =>
         SMODS.Joker.generate_ui(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
         
         -- I took a reference screenshot with a somewhat arbitrarily sized red square in it
         -- IDK what the units in the UI *are* but we should be able to figure out what to tell it to get what number of pixels
         -- (We want a section for the game that's *always* the size of an NES screen)
-        nes_width = spawned_nes.image::getWidth()
-        nes_height = spawned_nes.image::getHeight()
+        nes_width = self.nes.image::getWidth()
+        nes_height = self.nes.image::getHeight()
 
         ref_sizes = {
             red:
@@ -205,9 +196,10 @@ pac_man = SMODS.Joker
             card.ability.screen_x = card.children.h_popup.T.x
             card.ability.screen_y = card.children.h_popup.T.y
             -- pretend_youre_drawable(pac_man_container, ->
-            --     love.graphics.draw(spawned_nes.image, 0, 0)
+            --     love.graphics.draw(self.nes.image, 0, 0)
 
         wait_can_i_just=Moveable()
+        cardself = self
         -- wait_can_i_just.VT.scale = 71 / 256
         wait_can_i_just.draw = =>
             prep_draw(self, 1)
@@ -233,7 +225,7 @@ pac_man = SMODS.Joker
             -- height = (bottom_pixel- top_pixel)
             -- love.graphics.translate( width, height )
 
-            love.graphics.draw(spawned_nes.image, pixel_x, pixel_y)
+            love.graphics.draw(cardself.nes.image, pixel_x, pixel_y)
             love.graphics.pop()
 
         desc_nodes[] = {{
@@ -264,3 +256,56 @@ pac_man = SMODS.Joker
         --     request_this_size: request_this_size
         --     window_scale: window_scale
         -- })
+    calculate: (card, context) =>
+        if context.joker_main and context.cardarea == G.jokers
+            return {
+                chips: card.ability.score
+            }
+        elseif context.individual and context.cardarea == G.play
+            print("brhg")
+            if context.other_card.ability.effect == 'Stone Card'
+                return
+            input_to_add = nil
+            card_id = context.other_card::get_id()
+            input_to_add = switch card_id
+                when 14
+                    Input(keys.A, 1)
+                when 13
+                    Input(keys.START, 1)
+                when 12
+                    Input(keys.SELECT, 1)
+                when 11
+                    Input(keys.B, 1)
+                else
+                    switch context.other_card.base.suit
+                        when "Spades"
+                            Input(keys.UP, card_id*frame_multiplier)
+                        when "Hearts"
+                            Input(keys.DOWN, card_id*frame_multiplier)
+                        when "Diamonds"
+                            Input(keys.LEFT, card_id*frame_multiplier)
+                        when "Clubs"
+                            Input(keys.RIGHT, card_id*frame_multiplier)
+                        else
+                            nil
+            print(input_to_add)
+            if input_to_add
+                G.E_MANAGER::add_event(Event
+                    func: ->
+                        card.ability.inputs[] = input_to_add
+                        true
+                )
+    
+    process_inputs: (card) =>
+        input = card.ability.inputs[1]
+        if input
+            if input.frames == 0
+                self.nes.keyreleased(input.key)
+                --print("release ", input.key)
+                card.ability.inputs = [x for x in *card.ability.inputs[2,]]
+                self::process_inputs(card)
+            else
+                self.nes.keypressed(input.key)
+                --print("press ", input.key)
+                input.frames -= 1
+                self.nes.update()
