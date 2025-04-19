@@ -18,13 +18,12 @@ math.floor(207 / 19 / 2)local keys = { UP =
 
 
 
-local Input;do local _class_0;local _base_0 = { copy = function(self)
+local Input;do local _class_0;local _base_0 = { copy = function(self)return 
 
 
 
 
 
-print(self)return 
 Input(self.key, self.frames)end }if _base_0.__index == nil then _base_0.__index = _base_0 end;_class_0 = setmetatable({ __init = function(self, key, frames)self.key = key;self.frames = frames end, __base = _base_0, __name = "Input" }, { __index = _base_0, __call = function(cls, ...)local _self_0 = setmetatable({  }, _base_0)cls.__init(_self_0, ...)return _self_0 end })_base_0.__class = _class_0;Input = _class_0 end
 
 local pretend_youre_drawable;pretend_youre_drawable = function(drawable, and_do_this)
@@ -69,7 +68,9 @@ local field_addition_context;field_addition_context = function(object, field_nam
 field_operation_context(object, field_name, (function(x)return x + the_guy_you_add_idk end), do_this)end
 
 local field_multiplication_context;field_multiplication_context = function(object, field_name, multiplier, do_this)return 
-field_operation_context(object, field_name, (function(x)return x * multiplier end), do_this)end;local pac_man = 
+field_operation_context(object, field_name, (function(x)return x * multiplier end), do_this)end
+
+local score_to_chips;score_to_chips = function(score)return math.floor(score / 10)end;local pac_man = 
 
 
 SMODS.Joker({ key = "pac_man", atlas = 
@@ -83,11 +84,12 @@ SMODS.Joker({ key = "pac_man", atlas =
 "{s:0.8,C:inactive}for that number of frames (x" .. tostring(frame_multiplier) .. ")", 
 "{s:0.8,C:inactive}Faces and Aces just press their button", 
 "{s:0.8,C:inactive}The game doesn't run when no input is given", 
-"{C:chips}Score/Chips: #1#" } }, loc_vars = function(self, info_queue, card)return { vars = { 
+"{C:attention}Score: #1# {}->{C:chips} Chips: #2#" } }, loc_vars = function(self, info_queue, card)return { vars = { 
 
 
 
-card.ability.score } }end, pos = 
+card.ability.score, 
+score_to_chips(card.ability.score) } }end, pos = 
 
 atlas_jokers_positions["pac_man"], prepare_yourself = function(self, card)
 
@@ -300,7 +302,7 @@ wait_can_i_just } } } } }end, calculate = function(self, card, context)if
 
 context.joker_main and context.cardarea == G.jokers then return { chips = 
 
-card.ability.score }elseif 
+score_to_chips(card.ability.score) }elseif 
 
 context.individual and context.cardarea == G.play then if 
 context.other_card.ability.effect == 'Stone Card' then
