@@ -324,7 +324,7 @@ function spawn_a_nes()
         end
         spawned_nes.image:replacePixels(imageData)
 
-        draw()
+        -- draw()
         
         -- New
         -- love.graphics.setCanvas()
