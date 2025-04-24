@@ -1,6 +1,5 @@
 assert(SMODS.load_file("libs\\LuaNES\\main.lua"))()
 
--- card.doesnt_save.nes = spawn_a_nes()
 -- It takes about 207 frames to go all the way across the bottom, which spans 19 dots
 -- so we want one rank to equal, what, half a dot? that seems about right?
 frame_multiplier = math.floor(207 / 19 / 2)
@@ -38,15 +37,6 @@ pretend_youre_a_center = (center, and_do_this) ->
     prep_draw(center, 1)
     love.graphics.scale(1/(center.scale.x/center.VT.w), 1/(center.scale.y/center.VT.h))
     love.graphics.setColor(overlay or G.BRUTE_OVERLAY or G.C.WHITE)
-
-    -- love.graphics.draw(
-    --     card.atlas.image,
-    --     card.center,
-    --     0 ,0,
-    --     0,
-    --     card.VT.w/(card.T.w),
-    --     card.VT.h/(card.T.h)
-    -- )
     and_do_this()
 
     love.graphics.pop()
@@ -59,7 +49,6 @@ field_replace_context = (object, field_name, value, do_this) ->
     object[field_name] = value
     do_this()
     object[field_name] = original_value
-    -- print("#{object}.#{field_name} from #{original_value} to  #{value} and back to  #{original_value}")
 
 field_operation_context = (object, field_name, operation, do_this) ->
     field_replace_context(object, field_name, operation(object[field_name]), do_this)
@@ -111,7 +100,6 @@ pac_man = SMODS.Joker
         card.doesnt_save.frames_per_frame = 1
         card.ability.score = 0
         card.ability.input_history = {}
-        print("set!")
 
         for input in *{
             -- This is NOT an optimal set of inputs 
@@ -132,32 +120,37 @@ pac_man = SMODS.Joker
             
     draw: (card, layer) =>
         card.doesnt_save.nes.update_image()
-        -- if card.children.h_popup
-        --     -- print([key for key, value in pairs(card.children.h_popup)])
-        --     -- print([key for key, value in pairs(card.children.h_popup.T)])
-        --     pac_man_container = card.children.h_popup::get_UIE_by_ID("pac_man_container")
-        --     card.ability.screen_x = card.children.h_popup.T.x
-        --     card.ability.screen_y = card.children.h_popup.T.y
-        --     pretend_youre_drawable(pac_man_container, ->
-        --         love.graphics.draw(card.doesnt_save.nes.image, 0, 0)
-        --     )
+        center = card.children.center
+        -- 71 is how wide, in pixels, cards are
+        screen_dims = {
+            x: 10
+            y: 10
+            w: 51
+            h: 46
+        }
+        screen_size_multiplier_x = 256 / screen_dims.w  -- Dude for some reason making the scale bigger makes the screen smaller? WAK
+        screen_size_multiplier_y = 240 / screen_dims.h
+        multiply_your_pixels_by_this_for_movement = G.CARD_W / 71 -- How wide cards are in pixels vs how wide they are in the funny mystery units the game uses
+        field_multiplication_context(center.scale, "x", screen_size_multiplier_x, ->
+            field_multiplication_context(center.scale, "y", screen_size_multiplier_y, ->
+                field_addition_context(center.VT, "x", (screen_dims.x-1) * multiply_your_pixels_by_this_for_movement, -> -- why is it off by 1? probably something to do with how it doesn't seem to fully respect the scale...
+                    field_addition_context(center.VT, "y", (screen_dims.y) * multiply_your_pixels_by_this_for_movement, ->
+                        pretend_youre_a_center(center, ->
+                            love.graphics.setShader( G.SHADERS['dissolve'])
+                            love.graphics.draw(card.doesnt_save.nes.image, 0, 0)
+                            love.graphics.setShader()
+                        )
+                    )
+                )
+            )
+        )
         
-        
-        
-        -- love.graphics.draw(card.doesnt_save.nes.image, card.ability.screen_x, card.ability.screen_y)
     update: (card, dt) =>
         if card.doesnt_save.just_reloaded and card.ability.input_history
             card.doesnt_save.inputs = [Input.copy(input) for input in *card.ability.input_history]
             card.doesnt_save.just_reloaded = nil
-            print("reloaded!")
-            print(card.doesnt_save.inputs)
 
         cpu = card.doesnt_save.nes::get_actual_internal_nes_object().cpu
-        -- if card.ability.ram and self.load_ram_when_you_can
-        --     -- print(card.ability)
-        --     self.load_ram_when_you_can = false
-        --     cpu.ram = card.ability.ram
-        --     -- cpu.ppu = card.ability.ppu
         
         ram = cpu.ram
         if ram -- Ram doesn't seem to always be loaded right away?
@@ -172,9 +165,6 @@ pac_man = SMODS.Joker
                 
             score ..= "0"
             card.ability.score = tonumber(score)
-
-            -- card.ability.ram = ram
-            -- card.ability.ppu = cpu.ppu
     generate_ui: (info_queue, card, desc_nodes, specific_vars, full_UI_table) =>
         SMODS.Joker.generate_ui(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
         
@@ -213,40 +203,17 @@ pac_man = SMODS.Joker
         }
 
         if card.children.h_popup
-            -- print([key for key, value in pairs(card.children.h_popup)])
-            -- print([key for key, value in pairs(card.children.h_popup.T)])
             pac_man_container = card.children.h_popup::get_UIE_by_ID("pac_man_container")
             card.ability.screen_x = card.children.h_popup.T.x
             card.ability.screen_y = card.children.h_popup.T.y
-            -- pretend_youre_drawable(pac_man_container, ->
-            --     love.graphics.draw(card.doesnt_save.nes.image, 0, 0)
 
         wait_can_i_just=Moveable()
-        -- wait_can_i_just.VT.scale = 71 / 256
         wait_can_i_just.draw = =>
             prep_draw(self, 1)
             screen_x, screen_y = love.graphics.transformPoint(0, 0)
             love.graphics.origin()
             pixel_x, pixel_y = love.graphics.inverseTransformPoint(math.floor(screen_x+0.5), math.floor(screen_y+0.5))
-
-            -- left, top = love.graphics.transformPoint(0, 0)
-            -- right, bottom = love.graphics.transformPoint(nes_width, nes_height)
-            -- width = (right-left)
-            -- height = (bottom-top)
-            -- scale_x = 1/(width  / nes_width)
-            -- scale_y = 1/(height / nes_height)
-            -- love.graphics.scale(scale_x, scale_y)
             love.graphics.setColor(1, 1, 1)
-
-            -- Measuring so that it can be offset just enough to line up with a perfect pixel
-            -- This doesn't work though. Honestly very unsatisfying
-            -- uuuhhhhh it's crt coded
-            -- left_pixel, top_pixel = love.graphics.inverseTransformPoint(0, 0)
-            -- right_pixel, bottom_pixel = love.graphics.inverseTransformPoint(1, 1)
-            -- width =  ( right_pixel-left_pixel)
-            -- height = (bottom_pixel- top_pixel)
-            -- love.graphics.translate( width, height )
-
             love.graphics.draw(card.doesnt_save.nes.image, pixel_x, pixel_y)
             love.graphics.pop()
 
@@ -256,28 +223,16 @@ pac_man = SMODS.Joker
                 id: "pac_man_container"
                 minw: request_this_size.w
                 minh: request_this_size.h
-                --colour: G.C.RED 
             nodes: {
                 {
                     n: G.UIT.O,
                     config: {
                         object: wait_can_i_just
-                        --colour: G.C.WHITE
                     }
                 }
             }
         }}
-        --print(desc_nodes)
-        --print(full_UI_table)
-        -- print({
-        --     minw: 240/100
-        --     minh: 224/100
-        --     window_width: window_width
-        --     window_height: window_height
-        --     red_stated_to_pixels_ratio: red_stated_to_pixels_ratio
-        --     request_this_size: request_this_size
-        --     window_scale: window_scale
-        -- })
+
     calculate: (card, context) =>
         if context.joker_main and context.cardarea == G.jokers
             return {
@@ -326,55 +281,11 @@ pac_man = SMODS.Joker
             if input
                 if input.frames == 0
                     card.doesnt_save.nes.keyreleased(input.key)
-                    --print("release ", input.key)
                     card.doesnt_save.inputs = [x for x in *card.doesnt_save.inputs[2,]]
                     self::process_inputs(card)
                 else
                     card.doesnt_save.nes.keypressed(input.key)
-                    --print("press ", input.key)
                     input.frames -= 1
                     card.doesnt_save.nes.update()
             else
                 card.doesnt_save.frames_per_frame = 1
-
-SMODS.DrawStep
-    key: "burp"
-    order: 999
-    func: (card, layer) ->
-        if not card.doesnt_save
-            return
-        
-        center = card.children.center
-        -- 71 is how wide, in pixels, cards are
-        screen_dims = {
-            x: 10
-            y: 10
-            w: 51
-            h: 46
-        }
-        screen_size_multiplier_x = 256 / screen_dims.w  -- Dude for some reason making the scale bigger makes the screen smaller? WAK
-        screen_size_multiplier_y = 240 / screen_dims.h
-        multiply_your_pixels_by_this_for_movement = G.CARD_W / 71 -- How wide cards are in pixels vs how wide they are in the funny mystery units the game uses
-        field_multiplication_context(center.scale, "x", screen_size_multiplier_x, ->
-            field_multiplication_context(center.scale, "y", screen_size_multiplier_y, ->
-                field_addition_context(center.VT, "x", (screen_dims.x-1) * multiply_your_pixels_by_this_for_movement, -> -- why is it off by 1? probably something to do with how it doesn't seem to fully respect the scale...
-                    field_addition_context(center.VT, "y", (screen_dims.y) * multiply_your_pixels_by_this_for_movement, ->
-                        pretend_youre_a_center(center, ->
-                            
-
-                            love.graphics.setShader( G.SHADERS['dissolve'])
-                            love.graphics.draw(card.doesnt_save.nes.image, 0, 0)
-                            love.graphics.setShader()
-                        )
-                    )
-                )
-            )
-        )
-            -- prep_draw(card.children.center, 1)
-            -- love.graphics.setShader(G.SHADERS['dissolve'])
-            -- love.graphics.draw(card.doesnt_save.nes.image, 0, 0)
-            -- love.graphics.setShader()
-            -- love.graphics.pop()
-    conditions: {
-        facing: 'front'
-    }

@@ -1,4 +1,12 @@
 assert(SMODS.load_file("libs\\string_util.lua"))()
+package.path = 'Mods\\balatro-unknown-mod\\libs\\LuaNES\\?.lua;' .. package.path
+
+
+
+
+
+
+
 
 local load_all_files_in;load_all_files_in = function(directory)
 directory = directory;local files = 
