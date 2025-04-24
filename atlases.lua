@@ -127,19 +127,6 @@ atlas_jokers_positions = {
     ["pac_man"] = {x=5, y=0},
 }
 
---- PAC_MAN_PLACEHOLDER ---
-
-atlas_pac_man_placeholder = SMODS.Atlas {
-    key = "atlas_pac_man_placeholder",
-    path = "atlas_pac_man_placeholder.png",
-    px = 257,
-    py = 241
-}
-
-atlas_pac_man_placeholder_positions = {
-    ["yeah"] = {x=0, y=0},
-}
-
 --- PLANETS ---
 
 atlas_planets = SMODS.Atlas {
