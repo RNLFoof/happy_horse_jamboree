@@ -2,7 +2,6 @@ assert(SMODS.load_file("libs\\LuaNES\\main.lua"))()local frame_multiplier =
 
 
 
-
 math.floor(207 / 19 / 2)local keys = { UP = 
 
 
@@ -38,15 +37,6 @@ center:set_sprite_pos(center.sprite_pos)end
 prep_draw(center, 1)
 love.graphics.scale(1 / (center.scale.x / center.VT.w), 1 / (center.scale.y / center.VT.h))
 love.graphics.setColor(overlay or G.BRUTE_OVERLAY or G.C.WHITE)
-
-
-
-
-
-
-
-
-
 and_do_this()
 
 love.graphics.pop()
@@ -59,7 +49,6 @@ object[field_name]
 object[field_name] = value
 do_this()
 object[field_name] = original_value end
-
 
 local field_operation_context;field_operation_context = function(object, field_name, operation, do_this)return 
 field_replace_context(object, field_name, operation(object[field_name]), do_this)end
@@ -110,8 +99,7 @@ card.doesnt_save.just_reloaded = true end, set_ability = function(self, card, in
 self:prepare_yourself(card)
 card.doesnt_save.frames_per_frame = 1
 card.ability.score = 0
-card.ability.input_history = {  }
-print("set!")local _list_0 = { 
+card.ability.input_history = {  }local _list_0 = { 
 
 
 
@@ -132,16 +120,6 @@ self:add_input(card, input)end end, draw = function(self, card, layer)
 
 
 card.doesnt_save.nes.update_image()local center = 
-
-
-
-
-
-
-
-
-
-
 card.children.center;local screen_dims = { x = 
 
 
@@ -168,19 +146,11 @@ love.graphics.setShader()end)end)end)end)end)end, update = function(self, card, 
 
 
 
-
 card.doesnt_save.just_reloaded and card.ability.input_history then do local _accum_0 = 
 {  }local _len_0 = 1;local _list_0 = card.ability.input_history;for _index_0 = 1, #_list_0 do local input = _list_0[_index_0]_accum_0[_len_0] = Input.copy(input)_len_0 = _len_0 + 1 end;card.doesnt_save.inputs = _accum_0 end
-card.doesnt_save.just_reloaded = nil
-print("reloaded!")
-print(card.doesnt_save.inputs)end;local cpu = 
+card.doesnt_save.just_reloaded = nil end;local cpu = 
 
 card.doesnt_save.nes:get_actual_internal_nes_object().cpu;local ram = 
-
-
-
-
-
 
 cpu.ram;if 
 ram then
@@ -195,9 +165,6 @@ score = tostring(digit) .. score end end
 
 score = score .. "0"
 card.ability.score = tonumber(score)end end, generate_ui = function(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
-
-
-
 
 SMODS.Joker.generate_ui(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)local nes_width = 
 
@@ -236,40 +203,17 @@ ref_sizes.red.stated.h * (ref_sizes.nes.pixels.h / ref_sizes.red.pixels.h) / win
 
 
 card.children.h_popup then local pac_man_container = 
-
-
 card.children.h_popup:get_UIE_by_ID("pac_man_container")
 card.ability.screen_x = card.children.h_popup.T.x
 card.ability.screen_y = card.children.h_popup.T.y end;local wait_can_i_just = 
 
-
-
 Moveable()
-
 wait_can_i_just.draw = function(self)
 prep_draw(self, 1)local screen_x,screen_y = 
 love.graphics.transformPoint(0, 0)
 love.graphics.origin()local pixel_x,pixel_y = 
 love.graphics.inverseTransformPoint(math.floor(screen_x + 0.5), math.floor(screen_y + 0.5))
-
-
-
-
-
-
-
-
 love.graphics.setColor(1, 1, 1)
-
-
-
-
-
-
-
-
-
-
 love.graphics.draw(card.doesnt_save.nes.image, pixel_x, pixel_y)return 
 love.graphics.pop()end
 
@@ -281,21 +225,9 @@ request_this_size.w, minh =
 request_this_size.h }, nodes = { { n = 
 
 
-
 G.UIT.O, config = { object = 
 
 wait_can_i_just } } } } }end, calculate = function(self, card, context)if 
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -349,12 +281,10 @@ card.doesnt_save.inputs[1]if
 input then if 
 input.frames == 0 then
 card.doesnt_save.nes.keyreleased(input.key)do local _accum_0 = 
-
 {  }local _len_0 = 1;local _list_0 = card.doesnt_save.inputs;for _index_0 = 2, #_list_0 do local x = _list_0[_index_0]_accum_0[_len_0] = x;_len_0 = _len_0 + 1 end;card.doesnt_save.inputs = _accum_0 end
 self:process_inputs(card)else
 
 card.doesnt_save.nes.keypressed(input.key)
-
 input.frames = input.frames - 1
 card.doesnt_save.nes.update()end else
 

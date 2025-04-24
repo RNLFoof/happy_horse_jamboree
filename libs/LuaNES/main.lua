@@ -40,14 +40,6 @@ function spawn_a_nes()
     end
     -- was function love.load(arg)
     function spawned_nes.load(arg)
-        print(arg)
-        print(arg[1])
-        print(arg[2])
-        print(arg[3])
-        print(arg[4])
-        print(arg[5])
-        print(arg[6])
-
         if vscode_debugger then
             require("lldebugger").start()
         end
@@ -57,7 +49,6 @@ function spawn_a_nes()
         love.profiler.start()
         --]]
         local file = arg[1] or " "
-        print("the file is the file is the file is the file is the file is the file is the file is the file is the file is the file is the file is ", file)
         local loglvl = arg[2] and tonumber(arg[2]) or 0
         if arg[3] == "true" then
             IS_DEBUG = true
