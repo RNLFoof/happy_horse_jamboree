@@ -24,6 +24,8 @@ local required_horse_name_count = 40;local horse_names = {
 
 "Pumpernickel", 
 
+"Bert", 
+
 "Sprinkletoes", 
 
 "Old ale", 
@@ -206,7 +208,7 @@ output end end })end end end end;local _anon_func_0 = function(self)local _obj_0
 
 
 
-self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;local wrapperr;wrapperr = function(self)print(self.config)if _anon_func_0(self) then return neigh()end end;do local refr = 
+self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;local wrapperr;wrapperr = function(self)if _anon_func_0(self) then return neigh()end end;do local refr = 
 
 Card.hover;function Card:hover()wrapperr(self)refr(self)end end;local ref = 
 

@@ -24,6 +24,8 @@ horse_names = {
 
     "Pumpernickel"
 
+    "Bert"
+
     "Sprinkletoes"
 
     "Old ale"
@@ -205,7 +207,7 @@ macro lua = (code) -> {
 
 
 wrapperr = (self) ->
-    print(self.config)
+    -- print(self.config)
     neigh() if self.config.center?.config?.is_horse
 
 $lua[==[
