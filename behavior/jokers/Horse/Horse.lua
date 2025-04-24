@@ -24,6 +24,8 @@ local required_horse_name_count = 40;local horse_names = {
 
 "Pumpernickel", 
 
+"Bert", 
+
 "Sprinkletoes", 
 
 "Old ale", 
