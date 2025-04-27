@@ -6,6 +6,6 @@ SMODS.Tag
             "Shop has a {C:attention}horse{} :)"
     }
     atlas: "mig_atlas_tags"
-    pos: atlas_tags_positions["HORSE LUCK TAG"]
+    pos: atlas_tags_positions["horse_luck"]
     no_collection: true
     in_pool: (args) => false
