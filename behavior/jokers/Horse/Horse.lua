@@ -1,4 +1,7 @@
-local required_horse_name_count = 40;local horse_names = { 
+local useful_things = assert(SMODS.load_file("useful_things.lua"))()local round = 
+useful_things.round;local required_horse_name_count = 
+
+40;local horse_names = { 
 
 "Chestnut", 
 "Peanut", 
@@ -64,10 +67,6 @@ local required_horse_name_count = 40;local horse_names = {
 "money", 
 "mult" }
 
-
-local round;round = function(num, numDecimalPlaces)local mult = 
-10 ^ (numDecimalPlaces or 0)return 
-math.floor(num * mult + 0.5) / mult end
 
 local neigh;neigh = function()return 
 play_sound('mig_neigh', 0.9 + math.random() * 0.2, 1)end;local index = 
@@ -191,7 +190,7 @@ money_earned }for key, value in
 
 pairs(output) do
 output[key] = value ~= 0 and value or nil end;return 
-output end end })end end end end;local useful_things = 
+output end end })end end end end
 
 
 
@@ -205,7 +204,7 @@ output end end })end end end end;local useful_things =
 
 
 
-assert(SMODS.load_file("useful_things.lua"))()local _anon_func_0 = function(self)local _obj_0 = 
+useful_things = assert(SMODS.load_file("useful_things.lua"))()local _anon_func_0 = function(self)local _obj_0 = 
 
 
 self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;useful_things.wrap_method(Card, "hover", function(...)local self = ...if _anon_func_0(self) then return neigh()end end)local ref = 

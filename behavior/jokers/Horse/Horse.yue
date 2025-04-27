@@ -1,3 +1,6 @@
+useful_things = assert(SMODS.load_file("useful_things.lua"))()
+round = useful_things.round
+
 required_horse_name_count = 40
 horse_names = {
     "Chestnut"
@@ -64,10 +67,6 @@ bonus_types = {
     "money"
     "mult"
 }
-
-round = (num, numDecimalPlaces) ->
-  mult = 10^(numDecimalPlaces or 0)
-  return math.floor(num * mult + 0.5) / mult
 
 neigh = ->
     play_sound('mig_neigh', 0.9 + math.random()*0.2, 1)
