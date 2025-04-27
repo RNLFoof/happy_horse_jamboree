@@ -63,7 +63,8 @@ local score_to_chips;score_to_chips = function(score)return math.floor(score / 1
 
 
 SMODS.Joker({ key = "pac_man", atlas = 
-"atlas_jokers", loc_txt = { name = 
+"atlas_jokers", pos = 
+atlas_jokers_positions["pac_man"], loc_txt = { name = 
 
 "Pac-Man", text = { 
 
@@ -78,9 +79,8 @@ SMODS.Joker({ key = "pac_man", atlas =
 
 
 card.ability.score, 
-score_to_chips(card.ability.score) } }end, pos = 
+score_to_chips(card.ability.score) } }end, prepare_yourself = function(self, card)
 
-atlas_jokers_positions["pac_man"], prepare_yourself = function(self, card)
 
 
 

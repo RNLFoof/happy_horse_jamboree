@@ -64,6 +64,7 @@ score_to_chips = (score) -> math.floor(score / 10)
 pac_man = SMODS.Joker
     key: "pac_man"
     atlas: "atlas_jokers"
+    pos: atlas_jokers_positions["pac_man"]
     loc_txt:
         name: "Pac-Man"
         text: {
@@ -80,7 +81,6 @@ pac_man = SMODS.Joker
             card.ability.score,
             score_to_chips(card.ability.score)
         }
-    pos: atlas_jokers_positions["pac_man"]
     prepare_yourself: (card) =>
         -- This is for things that need to be done both on load and set_ability
         card.doesnt_save = {
