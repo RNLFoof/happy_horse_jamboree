@@ -1,0 +1,29 @@
+useful_things = assert(SMODS.load_file("useful_things.lua"))()
+
+export init_after = (X, Y, W, H, config={}) =>
+    default_hhj_config = {
+        update_initially_until: ->
+        update_initially_until_out_of_starting_range: false
+        starting_range: {
+            min_x: -G.CARD_W/2
+            max_x:  G.CARD_W/2
+            min_y: -G.CARD_H/2
+            max_y:  G.CARD_H/2
+        }
+        gravity_intensity: 0
+        gravity_direction: 270
+    }
+
+    -- print({...{a: 1, b: 2, c: 3}, ...{a: 4, b: 5}})
+    -- print({...{a: 4, b: 5}, ...{a: 1, b: 2, c: 3}})
+    config.hhj_config ??= {}
+    config.hhj_config.starting_range ??= {}
+
+    config.hhj_config.starting_range = {...default_hhj_config.starting_range, ...{...config.hhj_config.starting_range}}
+    config.hhj_config = {...default_hhj_config, ...{...config.hhj_config}}
+
+    -- To my surprise, it doesn't actually store the config in self?
+    -- But uh, I'm storing hhj_config. you can't stop me
+    @hhj_config = config.hhj_config
+
+useful_things.wrap_method(Particles, "init", nil, init_after)

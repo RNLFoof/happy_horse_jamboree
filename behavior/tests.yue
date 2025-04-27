@@ -1,0 +1,19 @@
+testing = assert(SMODS.load_file("libs\\steamodded_test\\main.lua"))()
+useful_things = assert(SMODS.load_file("useful_things.lua"))()
+
+G.steamodded_tests.tests[] = testing.TestBundle("misc", {
+
+    testing.Test("wrap_method", {
+        -> 
+            buildup = {}
+            obj = {
+                fun: ->
+                    buildup[] = "middle"
+            }
+            useful_things.wrap_method(obj, "fun", (-> buildup[] = "before"), (-> buildup[] = "after"))
+            obj.fun()
+            testing.assert_eq(table.concat(buildup, "_"), "before_middle_after")
+    }),
+
+
+})

@@ -3,4 +3,8 @@ class_[method_name]
 class_[method_name] = function(...)
 before(...)
 ref(...)return 
-after(...)end end;_module_0["wrap_method"] = wrap_method;return _module_0;
+after(...)end end;_module_0["wrap_method"] = wrap_method
+
+local round;round = function(num, numDecimalPlaces)local mult = 
+10 ^ (numDecimalPlaces or 0)return 
+math.floor(num * mult + 0.5) / mult end;_module_0["round"] = round;return _module_0;

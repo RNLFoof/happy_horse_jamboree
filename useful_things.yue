@@ -4,3 +4,7 @@ export wrap_method = (class_, method_name, before = (-> nil), after = (-> nil)) 
         before(...)
         ref(...)
         after(...)
+
+export round = (num, numDecimalPlaces) ->
+    mult = 10^(numDecimalPlaces or 0)
+    return math.floor(num * mult + 0.5) / mult
