@@ -2,7 +2,6 @@ assert(SMODS.load_file('atlases.lua'))()
 assert(atlas_decks)
 
 mig_psychostasia_atlas = atlas_decks
-print(atlas_decks)
 
 mig_psychostasia = SMODS.Back{
     name = "Psychostasia Deck",
@@ -181,7 +180,6 @@ function CardArea:draw()
             -- }
 
             effective_card_limit =get_effective_card_limit()
-            print(effective_card_limit)
 
             -- Filled notches
             filled_notch_count = 0
