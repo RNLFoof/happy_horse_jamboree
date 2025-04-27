@@ -1,7 +1,7 @@
 return 
 SMODS.Joker({ key = "shakedown", atlas = 
 "atlas_jokers", pos = 
-atlas_jokers_positions["New Low"], loc_txt = { name = 
+atlas_jokers_positions["new_low"], loc_txt = { name = 
 
 "Shakedown", text = { 
 

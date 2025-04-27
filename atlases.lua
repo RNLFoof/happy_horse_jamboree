@@ -12,7 +12,7 @@ atlas_decks = SMODS.Atlas {
 }
 
 atlas_decks_positions = {
-    ["Psychostasia Deck"] = {x=0, y=0},
+    ["psychostasia"] = {x=0, y=0},
 }
 
 --- HORSES ---
@@ -117,13 +117,13 @@ atlas_jokers = SMODS.Atlas {
 }
 
 atlas_jokers_positions = {
-    ["Dizzy Joker"] = {x=0, y=0},
-    ["Gambler's Fallacy"] = {
+    ["dizzy_joker"] = {x=0, y=0},
+    ["gamblers_fallacy"] = {
         ["active"] = {x=1, y=0},
         ["inactive"] = {x=2, y=0},
     },
-    ["Horse"] = {x=3, y=0},
-    ["New Low"] = {x=4, y=0},
+    ["horse"] = {x=3, y=0},
+    ["new_low"] = {x=4, y=0},
     ["pac_man"] = {x=5, y=0},
 }
 
@@ -150,6 +150,6 @@ atlas_tags = SMODS.Atlas {
 }
 
 atlas_tags_positions = {
-    ["Happy Horse Jamboree Tag"] = {x=0, y=0},
-    ["HORSE LUCK TAG"] = {x=1, y=0},
+    ["happy_horse_jamboree"] = {x=0, y=0},
+    ["horse_luck"] = {x=1, y=0},
 }

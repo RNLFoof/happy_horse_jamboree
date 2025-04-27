@@ -1,7 +1,7 @@
 SMODS.Joker
     key: "shakedown"
     atlas: "atlas_jokers"
-    pos: atlas_jokers_positions["New Low"]
+    pos: atlas_jokers_positions["new_low"]
     loc_txt:
         name: "Shakedown"
         text: {

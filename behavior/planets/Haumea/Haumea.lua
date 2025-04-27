@@ -2,7 +2,7 @@ local haumea =
 SMODS.Consumable({ key = "mig_haumea", set = 
 "Planet", atlas = 
 "atlas_planets", pos = 
-atlas_planets_positions["Haumea"], loc_txt = { name = 
+atlas_planets_positions["haumea"], loc_txt = { name = 
 
 "Haumea" }, generate_ui = 
 
