@@ -1,6 +1,19 @@
 useful_things = assert(SMODS.load_file("useful_things.lua"))()
 
+--[[
+    It's an acronym:
+        The original name i came up with was too edgy for a game where the edgiest thing is 
+        Acknowledging drinking but it was a lot more clever than everything else im coming 
+        Up with so im just going to pretend that thats what 
+        This says
+    Also, it removes line breaks from the passed code. Makes it into one straight line. Makes it taut, if you will.
+    Added because Yue is a whitespace significant language and you can't use line breaks in list or table comprehensions :(
+    You *can* multiline comment out all the line breaks, which miiiight look nicer, since it keeps syntax highlighting? idk man
+]]
+macro taut = (code) -> code::gsub("\n", " ")
+
 export init_after = (X, Y, W, H, config={}) =>
+    -- Config
     default_hhj_config = {
         update_initially_until: ->
         update_initially_until_out_of_starting_range: false
@@ -14,28 +27,67 @@ export init_after = (X, Y, W, H, config={}) =>
         gravity_direction: 270
     }
 
-    -- print({...{a: 1, b: 2, c: 3}, ...{a: 4, b: 5}})
-    -- print({...{a: 4, b: 5}, ...{a: 1, b: 2, c: 3}})
     config.hhj_config ??= {}
     config.hhj_config.starting_range ??= {}
 
     config.hhj_config.starting_range = {...default_hhj_config.starting_range, ...{...config.hhj_config.starting_range}}
     config.hhj_config = {...default_hhj_config, ...{...config.hhj_config}}
-
-    -- To my surprise, it doesn't actually store the config in self?
-    -- But uh, I'm storing hhj_config. you can't stop me
+    --[[
+    To my surprise, it doesn't actually store the config in self?
+    But uh, I'm storing hhj_config. you can't stop me
+    ]]
     @hhj_config = config.hhj_config
+    
+    -- Bother the dev
+    for axis in *{"x", "y"}
+        min, max = "min_#{axis}", "max_#{axis}"
+        if @hhj_config.starting_range[min] > @hhj_config.starting_range[max]
+            error("starting_range.#{min}(#{@hhj_config.starting_range[min]}) is larger than starting_range.#{max}(#{@hhj_config.starting_range[max]}) (this is undesirable)")
+
+
 useful_things.wrap_method(Particles, "init", nil, init_after)
 
 --distance = (x1, x2, y1, y2) -> (math.abs(x1 - x2)^2 + math.abs(y1 - y2)^2)^0.5
 useful_things.wrap_method(Particles, "move", nil, (dt) =>
     if self.timer_type ~= 'REAL' then dt = dt*G.SPEEDFACTOR
 
-    if @hhj_config.gravity_intensity != 0
-        for particle in *@particles
+    for particle in *@particles
+        if @hhj_config.gravity_intensity != 0
             particle.hhj ??= {}
             particle.hhj.gravity_speed ??= 0
             particle.hhj.gravity_speed += @hhj_config.gravity_intensity * dt
             particle.offset.x += math.sin(@hhj_config.gravity_direction) * particle.hhj.gravity_speed * dt
             particle.offset.y += math.cos(@hhj_config.gravity_direction) * particle.hhj.gravity_speed * dt
+        
+        unless particle.applied_initial_hhj_junk
+            particle.applied_initial_hhj_junk = true
+
+            if @hhj_config.update_initially_until_out_of_starting_range
+                print("hi :)")
+                speed = {
+                    x: math.sin(particle.dir)
+                    y: math.cos(particle.dir)
+                }
+                axes = {"x", "y"}
+                abs_speed = {axis, math.abs(speed[axis]) for axis in *axes}
+                
+                goal = $taut[==[
+                    { 
+                        axis,
+                        math.abs(
+                            speed[axis] > 0
+                            and @hhj_config.starting_range["max_#{axis}"]
+                            or  @hhj_config.starting_range["min_#{axis}"]
+                        )
+                        for axis
+                        in *axes
+                    }
+                ]==]
+                time_to_goal_by_axis = {axis, goal[axis] / abs_speed[axis] for axis in *axes}
+                quicker_axis = (time_to_goal_by_axis.x < time_to_goal_by_axis.y) and "x" or  "y" 
+                time_to_goal = time_to_goal_by_axis[quicker_axis]
+                for axis in *axes
+                    particle.offset[axis] += speed[axis] * time_to_goal
+                    print(axis, "+", speed[axis] * time_to_goal)
+
 )
