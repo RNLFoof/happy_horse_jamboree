@@ -25,5 +25,17 @@ export init_after = (X, Y, W, H, config={}) =>
     -- To my surprise, it doesn't actually store the config in self?
     -- But uh, I'm storing hhj_config. you can't stop me
     @hhj_config = config.hhj_config
-
 useful_things.wrap_method(Particles, "init", nil, init_after)
+
+--distance = (x1, x2, y1, y2) -> (math.abs(x1 - x2)^2 + math.abs(y1 - y2)^2)^0.5
+useful_things.wrap_method(Particles, "move", nil, (dt) =>
+    if self.timer_type ~= 'REAL' then dt = dt*G.SPEEDFACTOR
+
+    if @hhj_config.gravity_intensity != 0
+        for particle in *@particles
+            particle.hhj ??= {}
+            particle.hhj.gravity_speed ??= 0
+            particle.hhj.gravity_speed += @hhj_config.gravity_intensity * dt
+            particle.offset.x += math.sin(@hhj_config.gravity_direction) * particle.hhj.gravity_speed * dt
+            particle.offset.y += math.cos(@hhj_config.gravity_direction) * particle.hhj.gravity_speed * dt
+)

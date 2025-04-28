@@ -25,5 +25,17 @@ config.hhj_config;if _obj_0.starting_range == nil then _obj_0.starting_range = {
 
 
 self.hhj_config = config.hhj_config end;_module_0["init_after"] = init_after
+useful_things.wrap_method(Particles, "init", nil, init_after)
 
-useful_things.wrap_method(Particles, "init", nil, init_after)return _module_0;
+
+useful_things.wrap_method(Particles, "move", nil, function(self, dt)if 
+self.timer_type ~= 'REAL' then dt = dt * G.SPEEDFACTOR end;if 
+
+self.hhj_config.gravity_intensity ~= 0 then local _list_0 = 
+self.particles;for _index_0 = 1, #_list_0 do local particle = _list_0[_index_0]if 
+particle.hhj == nil then particle.hhj = {  }end;local _obj_0 = 
+particle.hhj;if _obj_0.gravity_speed == nil then _obj_0.gravity_speed = 0 end;local _obj_1 = 
+particle.hhj;_obj_1.gravity_speed = _obj_1.gravity_speed + (self.hhj_config.gravity_intensity * dt)local _obj_2 = 
+particle.offset;_obj_2.x = _obj_2.x + (math.sin(self.hhj_config.gravity_direction) * particle.hhj.gravity_speed * dt)local _obj_3 = 
+particle.offset;_obj_3.y = _obj_3.y + (math.cos(self.hhj_config.gravity_direction) * particle.hhj.gravity_speed * dt)end end end)return 
+_module_0;
