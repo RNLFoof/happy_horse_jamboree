@@ -24,7 +24,8 @@ G.CARD_H / 2, max_y =
 G.CARD_H / 2 }, gravity_intensity = 
 
 0, gravity_direction = 
-270 }if 
+270, fixed_scale = 
+nil }if 
 
 
 config.hhj_config == nil then config.hhj_config = {  }end;local _obj_0 = 
@@ -47,23 +48,13 @@ error("starting_range." .. tostring(min) .. "(" .. tostring(self.hhj_config.star
 
 useful_things.wrap_method(Particles, "init", nil, init_after)
 
-
-useful_things.wrap_method(Particles, "move", nil, function(self, dt)if 
-self.timer_type ~= 'REAL' then dt = dt * G.SPEEDFACTOR end;local _list_0 = 
-
-self.particles;for _index_0 = 1, #_list_0 do local particle = _list_0[_index_0]if 
-self.hhj_config.gravity_intensity ~= 0 then if 
-particle.hhj == nil then particle.hhj = {  }end;local _obj_0 = 
-particle.hhj;if _obj_0.gravity_speed == nil then _obj_0.gravity_speed = 0 end;local _obj_1 = 
-particle.hhj;_obj_1.gravity_speed = _obj_1.gravity_speed + (self.hhj_config.gravity_intensity * dt)local _obj_2 = 
-particle.offset;_obj_2.x = _obj_2.x + (math.sin(self.hhj_config.gravity_direction) * particle.hhj.gravity_speed * dt)local _obj_3 = 
-particle.offset;_obj_3.y = _obj_3.y + (math.cos(self.hhj_config.gravity_direction) * particle.hhj.gravity_speed * dt)end;if not 
-
-particle.applied_initial_hhj_junk then
+useful_things.wrap_method(Particles, "update", nil, function(self, dt)local _list_0 = 
+self.particles;for _index_0 = 1, #_list_0 do local particle = _list_0[_index_0]local _continue_0 = 
+false;repeat if particle.applied_initial_hhj_junk then
+_continue_0 = true;break end
 particle.applied_initial_hhj_junk = true;if 
 
-self.hhj_config.update_initially_until_out_of_starting_range then
-print("hi :)")local speed = { x = 
+self.hhj_config.update_initially_until_out_of_starting_range then local speed = { x = 
 
 math.sin(particle.dir), y = 
 math.cos(particle.dir) }local axes = { 
@@ -87,7 +78,28 @@ local time_to_goal_by_axis;do local _tbl_0 = {  }for _index_1 = 1, #axes do loca
 time_to_goal_by_axis.x < time_to_goal_by_axis.y) and "x" or "y"local time_to_goal = 
 time_to_goal_by_axis[quicker_axis]for _index_1 = 
 1, #axes do local axis = axes[_index_1]local _obj_0 = 
-particle.offset;_obj_0[axis] = _obj_0[axis] + (speed[axis] * time_to_goal)
-print(axis, "+", speed[axis] * time_to_goal)end end end end end)return 
+particle.offset;_obj_0[axis] = _obj_0[axis] + (speed[axis] * time_to_goal)end end
+
+print(self.hhj_config.fixed_scale)if 
+self.hhj_config.fixed_scale ~= nil then if 
+type(self.hhj_config.fixed_scale) == "number" then
+particle.fixed_scale = self.hhj_config.fixed_scale else
+
+particle.fixed_scale = self.hhj_config.fixed_scale.min + (self.hhj_config.fixed_scale.max - self.hhj_config.fixed_scale.min) * math.random()end end;_continue_0 = true until true;if not _continue_0 then break end end end)
+
+
+useful_things.wrap_method(Particles, "move", nil, function(self, dt)if 
+self.timer_type ~= 'REAL' then dt = dt * G.SPEEDFACTOR end;local _list_0 = 
+
+self.particles;for _index_0 = 1, #_list_0 do local particle = _list_0[_index_0]if 
+self.hhj_config.gravity_intensity ~= 0 then if 
+particle.hhj == nil then particle.hhj = {  }end;local _obj_0 = 
+particle.hhj;if _obj_0.gravity_speed == nil then _obj_0.gravity_speed = 0 end;local _obj_1 = 
+particle.hhj;_obj_1.gravity_speed = _obj_1.gravity_speed + (self.hhj_config.gravity_intensity * dt)local _obj_2 = 
+particle.offset;_obj_2.x = _obj_2.x + (math.sin(self.hhj_config.gravity_direction) * particle.hhj.gravity_speed * dt)local _obj_3 = 
+particle.offset;_obj_3.y = _obj_3.y + (math.cos(self.hhj_config.gravity_direction) * particle.hhj.gravity_speed * dt)end;if 
+
+particle.fixed_scale then
+particle.scale = particle.fixed_scale end end end)return 
 
 _module_0;

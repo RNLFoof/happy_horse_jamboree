@@ -25,6 +25,7 @@ export init_after = (X, Y, W, H, config={}) =>
         }
         gravity_intensity: 0
         gravity_direction: 270
+        fixed_scale: nil -- Can be nil, a number, or {min: number, max: number}
     }
 
     config.hhj_config ??= {}
@@ -47,7 +48,46 @@ export init_after = (X, Y, W, H, config={}) =>
 
 useful_things.wrap_method(Particles, "init", nil, init_after)
 
---distance = (x1, x2, y1, y2) -> (math.abs(x1 - x2)^2 + math.abs(y1 - y2)^2)^0.5
+useful_things.wrap_method(Particles, "update", nil, (dt) =>
+    for particle in *@particles
+        if particle.applied_initial_hhj_junk
+            continue
+        particle.applied_initial_hhj_junk = true
+
+        if @hhj_config.update_initially_until_out_of_starting_range
+            speed = {
+                x: math.sin(particle.dir)
+                y: math.cos(particle.dir)
+            }
+            axes = {"x", "y"}
+            abs_speed = {axis, math.abs(speed[axis]) for axis in *axes}
+            
+            goal = $taut[==[
+                { 
+                    axis,
+                    math.abs(
+                        speed[axis] > 0
+                        and @hhj_config.starting_range["max_#{axis}"]
+                        or  @hhj_config.starting_range["min_#{axis}"]
+                    )
+                    for axis
+                    in *axes
+                }
+            ]==]
+            time_to_goal_by_axis = {axis, goal[axis] / abs_speed[axis] for axis in *axes}
+            quicker_axis = (time_to_goal_by_axis.x < time_to_goal_by_axis.y) and "x" or  "y" 
+            time_to_goal = time_to_goal_by_axis[quicker_axis]
+            for axis in *axes
+                particle.offset[axis] += speed[axis] * time_to_goal
+
+        print(@hhj_config.fixed_scale)
+        if @hhj_config.fixed_scale != nil
+            if type(@hhj_config.fixed_scale) == "number"
+                particle.fixed_scale = @hhj_config.fixed_scale
+            else
+                particle.fixed_scale = @hhj_config.fixed_scale.min + (@hhj_config.fixed_scale.max - @hhj_config.fixed_scale.min) * math.random()
+)
+
 useful_things.wrap_method(Particles, "move", nil, (dt) =>
     if self.timer_type ~= 'REAL' then dt = dt*G.SPEEDFACTOR
 
@@ -59,35 +99,7 @@ useful_things.wrap_method(Particles, "move", nil, (dt) =>
             particle.offset.x += math.sin(@hhj_config.gravity_direction) * particle.hhj.gravity_speed * dt
             particle.offset.y += math.cos(@hhj_config.gravity_direction) * particle.hhj.gravity_speed * dt
         
-        unless particle.applied_initial_hhj_junk
-            particle.applied_initial_hhj_junk = true
-
-            if @hhj_config.update_initially_until_out_of_starting_range
-                print("hi :)")
-                speed = {
-                    x: math.sin(particle.dir)
-                    y: math.cos(particle.dir)
-                }
-                axes = {"x", "y"}
-                abs_speed = {axis, math.abs(speed[axis]) for axis in *axes}
-                
-                goal = $taut[==[
-                    { 
-                        axis,
-                        math.abs(
-                            speed[axis] > 0
-                            and @hhj_config.starting_range["max_#{axis}"]
-                            or  @hhj_config.starting_range["min_#{axis}"]
-                        )
-                        for axis
-                        in *axes
-                    }
-                ]==]
-                time_to_goal_by_axis = {axis, goal[axis] / abs_speed[axis] for axis in *axes}
-                quicker_axis = (time_to_goal_by_axis.x < time_to_goal_by_axis.y) and "x" or  "y" 
-                time_to_goal = time_to_goal_by_axis[quicker_axis]
-                for axis in *axes
-                    particle.offset[axis] += speed[axis] * time_to_goal
-                    print(axis, "+", speed[axis] * time_to_goal)
-
+        if particle.fixed_scale
+            particle.scale = particle.fixed_scale
+        
 )
