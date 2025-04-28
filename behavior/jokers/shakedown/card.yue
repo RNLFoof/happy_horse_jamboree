@@ -12,13 +12,12 @@ useful_things.wrap_method(Card, "juice_up", nil, (scale, rot_amount) =>
         add_unrounded = add
         add = useful_things.round(add, 3)
 
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        print(rot_amount, scale, add_unrounded, add)
-
-        
+        -- Hovering over a card is at 0.0006, and add_unrounded is to remove those (and similarly tiny ones, which are presumably also easily repeated)
+        if add < 0.001 or add_unrounded < 0.001 
+            return
 
         args = {}
-        draw_layer = -99
+        draw_layer = -1
         attach_to = UIBox{
             T: {0,0, 0,0},
             config: {
@@ -35,39 +34,43 @@ useful_things.wrap_method(Card, "juice_up", nil, (scale, rot_amount) =>
               }}, 
           }
 
+        scale_variance = 0.2
         self.childParts2 = Particles(G.CARD_W/2, G.CARD_H/2, 0, 0, {
             timer_type: 'TOTAL',
             timer: 0.01,
             scale: 0.2,
-            speed: 5,
+            speed: 3,
             pulse_max: math.max(add * 10, 1),
             max: 0,
             align:"cm"
-            --lifespan: 0,
+            lifespan: 5,
             attach: self,
             colours: {G.C.CHIPS},
             fill: true,
             attach: attach_to,
             draw_layer: draw_layer
+            hhj_config:
+                gravity_intensity: 2
+                update_initially_until_out_of_starting_range: true
+                fixed_scale: {min: 0.2 * (1-scale_variance), max: 0.2 * (1+scale_variance)}
+                min_speed: 2
         })
         
         G.E_MANAGER::add_event(Event
-            trigger: 'after',
-            delay: 5,
+            trigger: 'after', 
+            delay: 50,
+            blocking: false,
+            blockable: false,
             func: ->
                 attach_to::remove()
                 true
         )
 
-        -- Hovering over a card is at 0.0006, and add_unrounded is to remove those (and similarly tiny ones, which are presumably also easily repeated)
-        if add < 0.001 or add_unrounded < 0.001
-            return
-
         joker.ability.chips += add
 
         attention_text({
             text: "+#{add}",
-            scale: (add * 10) ^ 0.5, 
+            scale: 0.2 + add, 
             hold: 0.4,
             backdrop_colour: G.C.CHIPS,
             align: "cm",
@@ -77,6 +80,4 @@ useful_things.wrap_method(Card, "juice_up", nil, (scale, rot_amount) =>
                 y: G.CARD_H * math.random(-5, 5) / 10,
             }
         })
-
-        -- card_eval_status_text(joker, "chips", add, nil, nil, {message: "+{add}"})
 )
