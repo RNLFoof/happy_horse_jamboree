@@ -78,9 +78,22 @@ local time_to_goal_by_axis;do local _tbl_0 = {  }for _index_1 = 1, #axes do loca
 time_to_goal_by_axis.x < time_to_goal_by_axis.y) and "x" or "y"local time_to_goal = 
 time_to_goal_by_axis[quicker_axis]for _index_1 = 
 1, #axes do local axis = axes[_index_1]local _obj_0 = 
-particle.offset;_obj_0[axis] = _obj_0[axis] + (speed[axis] * time_to_goal)end end
+particle.offset;_obj_0[axis] = _obj_0[axis] + (speed[axis] * time_to_goal)end end;if 
 
-print(self.hhj_config.fixed_scale)if 
+self.hhj_config.min_speed then local min_vanilla_speed = 
+
+
+
+
+
+
+
+self.speed * (self.vel_variation * 0 + (1 - self.vel_variation)) * 0.7;local max_vanilla_speed = 
+self.speed * (self.vel_variation * 1 + (1 - self.vel_variation)) * 0.7;local max_min_speed = 
+self.hhj_config.min_speed * (self.vel_variation * 1 + (1 - self.vel_variation)) * 0.7;local normalized_velocity = 
+useful_things.normalize(min_vanilla_speed, particle.velocity, max_vanilla_speed)
+particle.velocity = useful_things.lerp(max_min_speed, max_vanilla_speed, normalized_velocity)end;if 
+
 self.hhj_config.fixed_scale ~= nil then if 
 type(self.hhj_config.fixed_scale) == "number" then
 particle.fixed_scale = self.hhj_config.fixed_scale else

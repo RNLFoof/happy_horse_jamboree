@@ -8,3 +8,17 @@ export wrap_method = (class_, method_name, before = (-> nil), after = (-> nil)) 
 export round = (num, numDecimalPlaces) ->
     mult = 10^(numDecimalPlaces or 0)
     return math.floor(num * mult + 0.5) / mult
+
+export lerp = (some_value, some_other_value, how_far) ->
+    -- Ideally `0 <= how_far <= 1` but you do you man
+    return some_value + (some_other_value - some_value) * how_far
+
+export random_float = (min, max) ->
+    assert(min <= max)
+    return lerp(min, max, math.random())
+
+export normalize = (min, mid, max) ->
+    assert(min <= mid <= max)
+    delta = max-min
+    adjusted_mid = mid - min
+    return adjusted_mid / delta

@@ -80,7 +80,20 @@ useful_things.wrap_method(Particles, "update", nil, (dt) =>
             for axis in *axes
                 particle.offset[axis] += speed[axis] * time_to_goal
 
-        print(@hhj_config.fixed_scale)
+        if @hhj_config.min_speed
+            --[[
+            So I assumed the game just choose a speed between the provided speed and 0, and min_speed would replace 0
+            But it actually does this:
+                velocity = self.speed*(self.vel_variation*math.random() + (1-self.vel_variation))*0.7
+            So uuuhhhhhhhhhhhhh
+            gonna. scale that
+            ]]
+            min_vanilla_speed = @speed*(@vel_variation*0 + (1-@vel_variation))*0.7
+            max_vanilla_speed = @speed*(@vel_variation*1 + (1-@vel_variation))*0.7
+            max_min_speed = @hhj_config.min_speed*(@vel_variation*1 + (1-@vel_variation))*0.7  -- Like, the maximum velocity if speed was set to min_speed 
+            normalized_velocity = useful_things.normalize(min_vanilla_speed, particle.velocity, max_vanilla_speed)
+            particle.velocity = useful_things.lerp(max_min_speed, max_vanilla_speed, normalized_velocity)
+
         if @hhj_config.fixed_scale != nil
             if type(@hhj_config.fixed_scale) == "number"
                 particle.fixed_scale = @hhj_config.fixed_scale
