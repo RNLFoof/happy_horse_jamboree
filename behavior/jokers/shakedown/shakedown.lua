@@ -3,7 +3,7 @@ local processed_chips;processed_chips = function(chips)return math.floor(chips)e
 
 SMODS.Joker({ key = "shakedown", atlas = 
 "atlas_jokers", pos = 
-atlas_jokers_positions["new_low"], loc_txt = { name = 
+atlas_jokers_positions["placeholder"]["blue"], loc_txt = { name = 
 
 "Shakedown", text = { 
 

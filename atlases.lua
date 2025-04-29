@@ -125,6 +125,16 @@ atlas_jokers_positions = {
     ["horse"] = {x=3, y=0},
     ["new_low"] = {x=4, y=0},
     ["pac_man"] = {x=5, y=0},
+    ["placeholder"] = {
+        ["blue"] = {x=6, y=0},
+        ["cyan"] = {x=7, y=0},
+        ["green"] = {x=0, y=1},
+        ["orange"] = {x=1, y=1},
+        ["pink"] = {x=2, y=1},
+        ["purple"] = {x=3, y=1},
+        ["red"] = {x=4, y=1},
+        ["yellow"] = {x=5, y=1},
+    },
 }
 
 --- PLANETS ---

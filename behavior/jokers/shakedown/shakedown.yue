@@ -3,7 +3,7 @@ processed_chips = (chips) -> math.floor(chips)
 SMODS.Joker
     key: "shakedown"
     atlas: "atlas_jokers"
-    pos: atlas_jokers_positions["new_low"]
+    pos: atlas_jokers_positions["placeholder"]["blue"]
     loc_txt:
         name: "Shakedown"
         text: {
