@@ -1,3 +1,5 @@
+processed_chips = (chips) -> math.floor(chips)
+
 SMODS.Joker
     key: "shakedown"
     atlas: "atlas_jokers"
@@ -6,13 +8,21 @@ SMODS.Joker
         name: "Shakedown"
         text: {
                 "Gains {C:chips}Chips",
-                "when a card is \"Juiced Up\",",
+                "when a card is {C:attention}juiced up{},"
+                "{C:inactive,s:0.5}(shaking animation)",
                 "based on intensity",
-                "{C:inactive}(Currently {C:chips}+#1# {C:inactive}Chips)",
+                "{C:inactive}(Currently {C:chips}+#1# {C:inactive}-> {C:chips}+#2# {C:inactive}Chips)",
         }
     loc_vars: (info_queue, card) => 
         return vars: {
             card.ability.chips,
+            processed_chips(card.ability.chips),
         }
     set_ability: (card, initial, delay_sprites) =>
         card.ability.chips = 0
+    
+    calculate: (card, context) =>
+        if context.joker_main and context.cardarea == G.jokers
+            return {
+                chips: processed_chips(card.ability.chips)
+            }

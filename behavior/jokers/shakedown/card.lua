@@ -1,19 +1,24 @@
-local useful_things = assert(SMODS.load_file("useful_things.lua"))()return 
+local useful_things = assert(SMODS.load_file("useful_things.lua"))()
+local adjust_add;adjust_add = function(rot_amount)return rot_amount * 2 end;return 
 
 useful_things.wrap_method(Card, "juice_up", nil, function(self, scale, rot_amount)if 
-self.config.center.key == "j_mig_shakedown" then
+G.SETTINGS.paused then
 return end;local _list_0 = 
+
 SMODS.find_card("j_mig_shakedown", false)for _index_0 = 1, #_list_0 do local joker = _list_0[_index_0]
 
 rot_amount = math.abs(rot_amount and rot_amount or 0.16)
 scale = scale and scale * 0.4 or 0.11;local add = 
 
-scale * rot_amount;local add_unrounded = 
+adjust_add(rot_amount)local add_unrounded = 
 add
-add = useful_things.round(add, 3)if 
+add = useful_things.round(add, 3)local adding_cutoff = 
+
+adjust_add(math.max(0.03))if 
 
 
-add < 0.001 or add_unrounded < 0.001 then
+
+add <= adding_cutoff or add_unrounded <= adding_cutoff then
 return end;local args = 
 
 {  }local draw_layer = -
@@ -70,7 +75,7 @@ joker.ability;_obj_0.chips = _obj_0.chips + add
 
 
 attention_text({ text = "+" .. tostring(add), scale = 
-0.2 + add, hold = 
+useful_things.lerp(0.1, 0.75, add), hold = 
 0.4, backdrop_colour = 
 G.C.CHIPS, align = 
 "cm", major = 

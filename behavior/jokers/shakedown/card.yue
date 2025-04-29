@@ -1,19 +1,24 @@
 useful_things = assert(SMODS.load_file("useful_things.lua"))()
+adjust_add = (rot_amount) -> rot_amount * 2
 
 useful_things.wrap_method(Card, "juice_up", nil, (scale, rot_amount) =>
-    if self.config.center.key == "j_mig_shakedown"
+    if G.SETTINGS.paused
         return
+    
     for joker in *SMODS.find_card("j_mig_shakedown", false)
         -- if joker.key == "j_mig_shakedown"add = scale * rot_amount
         rot_amount = math.abs(rot_amount and rot_amount or 0.16)
         scale = scale and scale*0.4 or 0.11
 
-        add = scale * rot_amount
+        add = adjust_add(rot_amount)
         add_unrounded = add
         add = useful_things.round(add, 3)
 
-        -- Hovering over a card is at 0.0006, and add_unrounded is to remove those (and similarly tiny ones, which are presumably also easily repeated)
-        if add < 0.001 or add_unrounded < 0.001 
+        adding_cutoff = math.max(
+            -- 0.001, -- Too small to show
+            0.03,  -- Rotation on card hover
+        ) |> adjust_add
+        if add <= adding_cutoff or add_unrounded <= adding_cutoff
             return
 
         args = {}
@@ -70,7 +75,7 @@ useful_things.wrap_method(Card, "juice_up", nil, (scale, rot_amount) =>
 
         attention_text({
             text: "+#{add}",
-            scale: 0.2 + add, 
+            scale: useful_things.lerp(0.1, 0.75, add), 
             hold: 0.4,
             backdrop_colour: G.C.CHIPS,
             align: "cm",
