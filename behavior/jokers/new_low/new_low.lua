@@ -7,9 +7,9 @@ atlas_jokers_positions["placeholder"]["red"], rarity =
 
 "New Low", text = { 
 
-"Enables the poker hand {C:attention}Low Card{}.", 
+"Enables the poker hand {C:attention}Low Card{}:", 
 "Consists of exactly one {C:attention}2{},", 
-"starts with {C:mult}0{} Mult and {C:chips}0{} Chips." } }, loc_vars = function(self, info_queue, card)
+"starts with {C:mult}0{} Mult and {C:chips}0{} Chips" } }, loc_vars = function(self, info_queue, card)
 
 
 info_queue[#info_queue + 1] = G.P_CENTERS.c_mig_haumea;return 
