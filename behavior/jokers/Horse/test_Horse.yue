@@ -4,38 +4,38 @@ G.steamodded_tests.tests[] = testing.TestBundle("horses", {
 
     testing.Test("chipschipschips", {
         testing.create_state_steps(),
-        -> testing.play_hand({"A"}, {centers: "j_mig_horse_chipschipschips"}),
+        -> testing.play_hand({"A"}, {centers: "j_hhj_horse_chipschipschips"}),
         -> testing.assert_hand_scored(11+5+24)
     }),
 
     testing.Test("chipschipschipsjack on a jack", {
         testing.create_state_steps(),
-        -> testing.play_hand({"J"}, {centers: "j_mig_horse_chipschipschipsjack"}),
+        -> testing.play_hand({"J"}, {centers: "j_hhj_horse_chipschipschipsjack"}),
         -> testing.assert_hand_scored(10+5+24)
     }),
 
     testing.Test("chipschipschipsjack not on a jack", {
         testing.create_state_steps(),
-        -> testing.play_hand({"T"}, {centers: "j_mig_horse_chipschipschipsjack"}),
+        -> testing.play_hand({"T"}, {centers: "j_hhj_horse_chipschipschipsjack"}),
         -> testing.assert_hand_scored(10+5)
     }),
 
     testing.Test("multmultmult", {
         testing.create_state_steps(),
-        -> testing.play_hand({"A"}, {centers: "j_mig_horse_multmultmult"}),
+        -> testing.play_hand({"A"}, {centers: "j_hhj_horse_multmultmult"}),
         -> testing.assert_hand_scored((11+5)*(1+(4*3)))
     }),
 
     testing.Test("moneymoneymoney", {
         testing.create_state_steps(),
         -> testing.play_hand({"A"}, {centers: {
-            "j_mig_horse_moneymoneymoney",
-            "j_mig_horse_moneymoneymoney",
-            "j_mig_horse_moneymoneymoney",
+            "j_hhj_horse_moneymoneymoney",
+            "j_hhj_horse_moneymoneymoney",
+            "j_hhj_horse_moneymoneymoney",
 
-            "j_mig_horse_moneymoneymoney",
-            "j_mig_horse_moneymoneymoney",
-            "j_mig_horse_moneymoneymoney",
+            "j_hhj_horse_moneymoneymoney",
+            "j_hhj_horse_moneymoneymoney",
+            "j_hhj_horse_moneymoneymoney",
         }}),
         -> testing.assert_dollars_gt(4)
         -> testing.assert_dollars_lt(4+(3*6))
@@ -44,13 +44,13 @@ G.steamodded_tests.tests[] = testing.TestBundle("horses", {
     testing.Test("moneymoneymoney with Oops! All 6s", {
         testing.create_state_steps(),
         -> testing.play_hand({"A"}, {centers: {
-            "j_mig_horse_moneymoneymoney",
-            "j_mig_horse_moneymoneymoney",
-            "j_mig_horse_moneymoneymoney",
+            "j_hhj_horse_moneymoneymoney",
+            "j_hhj_horse_moneymoneymoney",
+            "j_hhj_horse_moneymoneymoney",
 
-            "j_mig_horse_moneymoneymoney",
-            "j_mig_horse_moneymoneymoney",
-            "j_mig_horse_moneymoneymoney",
+            "j_hhj_horse_moneymoneymoney",
+            "j_hhj_horse_moneymoneymoney",
+            "j_hhj_horse_moneymoneymoney",
 
             "j_oops",
         }}),

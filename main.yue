@@ -2,8 +2,8 @@ assert(SMODS.load_file("libs\\string_util.lua"))()
 package.path = 'Mods\\balatro-unknown-mod\\libs\\LuaNES\\?.lua;' .. package.path
 
 macro lua = (code) -> {
-  :code
-  type: "lua"
+    :code
+    type: "lua"
 }
 
 
