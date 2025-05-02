@@ -12,7 +12,7 @@ new_low = SMODS.Joker
             "starts with {C:mult}0{} Mult and {C:chips}0{} Chips"
         }
     loc_vars: (info_queue, card) => 
-        info_queue[] = G.P_CENTERS.c_mig_haumea
+        info_queue[] = G.P_CENTERS.c_hhj_haumea
         return {}
     calculate: (card, context) =>
         nil

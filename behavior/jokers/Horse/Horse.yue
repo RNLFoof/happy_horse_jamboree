@@ -69,7 +69,7 @@ bonus_types = {
 }
 
 neigh = ->
-    play_sound('mig_neigh', 0.9 + math.random()*0.2, 1)
+    play_sound('hhj_neigh', 0.9 + math.random()*0.2, 1)
 
 index = 0
 for    bonus_1_index, bonus_1 in ipairs(bonus_types)                                                   do
@@ -117,7 +117,7 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
         key = bonus_1 .. bonus_2 .. bonus_3 .. jackstr
 
         horse_joker = SMODS.Joker
-            key: "mig_horse_" .. key
+            key: "hhj_horse_" .. key
             atlas: "atlas_horses"
             pos: atlas_horses_positions[key]
             rarity: 1
@@ -139,7 +139,7 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
                         set: "Other"
                         vars: { G.GAME and G.GAME.probabilities.normal or 1 }
                     }
-                    info_queue[] = G.P_TAGS.tag_mig_horse_luck
+                    info_queue[] = G.P_TAGS.tag_hhj_horse_luck
                 
                 return vars: {
                     G.GAME and G.GAME.probabilities.normal or 1
@@ -168,7 +168,7 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
                         if pseudorandom('horse_luck') < G.GAME.probabilities.normal / 20
                             G.E_MANAGER::add_event(Event
                                 func: () ->
-                                    add_tag(Tag('tag_mig_horse_luck'))
+                                    add_tag(Tag('tag_hhj_horse_luck'))
                                     play_sound('generic1', 0.9 + math.random()*0.1, 0.8)
                                     play_sound('holo1', 1.2 + math.random()*0.1, 0.4)
                                     neigh()

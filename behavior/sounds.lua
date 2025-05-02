@@ -1,3 +1,4 @@
-return 
-SMODS.Sound({ key = "neigh", path = 
-"neigh.mp3" })
+return SMODS.Sound({
+	key = "neigh",
+	path = "neigh.mp3"
+})
