@@ -15,6 +15,7 @@ horse_names = {
     "Slayer"
     "Lucky"
     "Special Week"
+    "Mr. Felony"
 
     "Hemmingway"
     "Whiskey"
@@ -75,7 +76,7 @@ index = 0
 for    bonus_1_index, bonus_1 in ipairs(bonus_types)                                                   do
  for   bonus_2_index, bonus_2 in ipairs([_ for _ in *bonus_types[bonus_1_index,                    ]]) do
   for  _,             bonus_3 in ipairs([_ for _ in *bonus_types[bonus_1_index + bonus_2_index - 1,]]) do 
-   for _,             jack    in ipairs({false, true}                                                ) do 
+    for _,             jack    in ipairs({false, true}                                                ) do 
         index += 1
         bonuses_as_list = {bonus_1, bonus_2, bonus_3}
         bonuses_for_this_horse = {

@@ -15,6 +15,7 @@ useful_things.round;local required_horse_name_count =
 "Slayer", 
 "Lucky", 
 "Special Week", 
+"Mr. Felony", 
 
 "Hemmingway", 
 "Whiskey", 
