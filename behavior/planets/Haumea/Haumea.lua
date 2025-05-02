@@ -1,5 +1,5 @@
 local haumea = SMODS.Consumable({
-	key = "mig_haumea",
+	key = "hhj_haumea",
 	set = "Planet",
 	atlas = "atlas_planets",
 	pos = atlas_planets_positions["haumea"],
@@ -16,7 +16,7 @@ local haumea = SMODS.Consumable({
 		badges[1] = create_badge(localize('k_dwarf_planet'), get_type_colour(self or card.config, card), nil, 1.2)
 	end,
 	config = {
-		hand_type = 'mig_low_card',
+		hand_type = 'hhj_low_card',
 		softlock = true
 	}
 })

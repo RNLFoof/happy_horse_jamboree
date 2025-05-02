@@ -7,7 +7,7 @@ _obj_0[#_obj_0 + 1] = testing.TestBundle("horses", {
 			return testing.play_hand({
 				"A"
 			}, {
-				centers = "j_mig_horse_chipschipschips"
+				centers = "j_hhj_horse_chipschipschips"
 			})
 		end,
 		function()
@@ -20,7 +20,7 @@ _obj_0[#_obj_0 + 1] = testing.TestBundle("horses", {
 			return testing.play_hand({
 				"J"
 			}, {
-				centers = "j_mig_horse_chipschipschipsjack"
+				centers = "j_hhj_horse_chipschipschipsjack"
 			})
 		end,
 		function()
@@ -33,7 +33,7 @@ _obj_0[#_obj_0 + 1] = testing.TestBundle("horses", {
 			return testing.play_hand({
 				"T"
 			}, {
-				centers = "j_mig_horse_chipschipschipsjack"
+				centers = "j_hhj_horse_chipschipschipsjack"
 			})
 		end,
 		function()
@@ -46,7 +46,7 @@ _obj_0[#_obj_0 + 1] = testing.TestBundle("horses", {
 			return testing.play_hand({
 				"A"
 			}, {
-				centers = "j_mig_horse_multmultmult"
+				centers = "j_hhj_horse_multmultmult"
 			})
 		end,
 		function()
@@ -60,12 +60,12 @@ _obj_0[#_obj_0 + 1] = testing.TestBundle("horses", {
 				"A"
 			}, {
 				centers = {
-					"j_mig_horse_moneymoneymoney",
-					"j_mig_horse_moneymoneymoney",
-					"j_mig_horse_moneymoneymoney",
-					"j_mig_horse_moneymoneymoney",
-					"j_mig_horse_moneymoneymoney",
-					"j_mig_horse_moneymoneymoney"
+					"j_hhj_horse_moneymoneymoney",
+					"j_hhj_horse_moneymoneymoney",
+					"j_hhj_horse_moneymoneymoney",
+					"j_hhj_horse_moneymoneymoney",
+					"j_hhj_horse_moneymoneymoney",
+					"j_hhj_horse_moneymoneymoney"
 				}
 			})
 		end,
@@ -83,12 +83,12 @@ _obj_0[#_obj_0 + 1] = testing.TestBundle("horses", {
 				"A"
 			}, {
 				centers = {
-					"j_mig_horse_moneymoneymoney",
-					"j_mig_horse_moneymoneymoney",
-					"j_mig_horse_moneymoneymoney",
-					"j_mig_horse_moneymoneymoney",
-					"j_mig_horse_moneymoneymoney",
-					"j_mig_horse_moneymoneymoney",
+					"j_hhj_horse_moneymoneymoney",
+					"j_hhj_horse_moneymoneymoney",
+					"j_hhj_horse_moneymoneymoney",
+					"j_hhj_horse_moneymoneymoney",
+					"j_hhj_horse_moneymoneymoney",
+					"j_hhj_horse_moneymoneymoney",
 					"j_oops"
 				}
 			})
