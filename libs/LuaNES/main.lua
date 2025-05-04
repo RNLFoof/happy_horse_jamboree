@@ -63,7 +63,8 @@ function spawn_a_nes()
         elseif arg[4] then
             pc = tonumber(arg[4])
         end
-        imageData = love.image.newImageData(width * pixSize + 1, height * pixSize + 1)
+        local addToSize = 0 -- Was 1, but was making shaders hell
+        imageData = love.image.newImageData(width * pixSize + addToSize, height * pixSize + addToSize)
         spawned_nes.image = love.graphics.newImage(imageData)
         
         -- love.window.setTitle("LuaNEs")
@@ -310,7 +311,8 @@ function spawn_a_nes()
             end
             --]]
             --[
-            imageData:setPixel(x + 1, y + 1, px[1], px[2], px[3], 1)
+            local addToSize = 0  -- was 1 but aaaaaaaaaaaaaaaaaaaaaaaa
+            imageData:setPixel(x + addToSize, y + addToSize, px[1], px[2], px[3], 1)
 
             -- Code for figuring out what colors are used
             -- color = "" .. px[1] .. " " .. px[2] .. " " .. px[3]

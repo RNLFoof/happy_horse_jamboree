@@ -135,6 +135,8 @@ pac_man = SMODS.Joker
     draw: (card, layer) =>
         card.doesnt_save.nes.update_image()
         center = card.children.center
+        G.debug_size_offset ??= 99.0
+        card.ARGS.send_to_shader.debug_size_offset = G.debug_size_offset
         center::draw_shader('hhj_pac_man_screen_summary', nil, card.ARGS.send_to_shader)
 
         -- 71 is how wide, in pixels, cards are

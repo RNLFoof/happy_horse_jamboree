@@ -134,7 +134,9 @@ self:add_input(card, input)end end, draw = function(self, card, layer)
 
 
 card.doesnt_save.nes.update_image()local center = 
-card.children.center
+card.children.center;local _obj_0 = 
+G;if _obj_0.debug_size_offset == nil then _obj_0.debug_size_offset = 99.0 end
+card.ARGS.send_to_shader.debug_size_offset = G.debug_size_offset
 center:draw_shader('hhj_pac_man_screen_summary', nil, card.ARGS.send_to_shader)if 
 
 
