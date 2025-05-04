@@ -311,6 +311,23 @@ function spawn_a_nes()
             --]]
             --[
             imageData:setPixel(x + 1, y + 1, px[1], px[2], px[3], 1)
+
+            -- Code for figuring out what colors are used
+            -- color = "" .. px[1] .. " " .. px[2] .. " " .. px[3]
+            -- if (
+            --     color ~= "0 0 0" and
+            --     color ~= "0.70703125 0.19140625 0.125" and
+            --     color ~= "0.390625 0.6875 0.99609375" and
+            --     color ~= "0.90625 0.78125 0.99609375" and
+            --     color ~= "0.59765625 0.3046875 0" and
+            --     color ~= "0.9140625 0.6171875 0.1328125" and
+            --     color ~= "0.08203125 0.37109375 0.84765625" and
+            --     color ~= "0.421875 0.0234375 0" and
+            --     color ~= "0.9921875 0.50390625 0.4375" and
+            --     color ~= "0.99609375 0.9921875 0.99609375"
+            -- ) then
+            --     print(color)
+            -- end
             --]]
         end
         spawned_nes.image:replacePixels(imageData)

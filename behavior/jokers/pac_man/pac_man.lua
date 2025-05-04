@@ -72,8 +72,13 @@ local score_to_chips;score_to_chips = function(score)return math.floor(score / 1
 
 
 SMODS.Joker({ key = "pac_man", atlas = 
+
+
+
+
 "atlas_pac_man_joker", pos = 
 atlas_pac_man_joker_positions["pac_man_joker"], loc_txt = { name = 
+
 
 "Pac-Man", text = { 
 
