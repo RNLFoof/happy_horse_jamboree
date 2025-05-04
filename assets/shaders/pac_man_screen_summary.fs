@@ -73,6 +73,20 @@ vec4 dissolve_mask(vec4 tex, vec2 texture_coords, vec2 uv)
     vec3 COL_MAYBE_CLYDE  = vec3(0.9921875,  0.50390625, 0.4375)    ;   // #fd8070
     vec3 COL_WHITE        = vec3(0.99609375, 0.9921875,  0.99609375);   // #fefdfe
 
+    vec3 COL_BLUNT_RED     = vec3(1.0, 0.0, 0.0);
+    vec3 COL_BLUNT_ORANGE  = vec3(1.0, 0.5, 0.0);
+    vec3 COL_BLUNT_YELLOW  = vec3(1.0, 1.0, 0.0);
+    vec3 COL_BLUNT_GREEN   = vec3(0.0, 1.0, 0.0);
+    vec3 COL_BLUNT_CYAN    = vec3(0.0, 1.0, 1.0);
+    vec3 COL_BLUNT_BLUE    = vec3(0.0, 0.0, 1.0);
+    vec3 COL_BLUNT_PURPLE  = vec3(0.5, 0.0, 1.0);
+    vec3 COL_BLUNT_MAGENTA = vec3(1.0, 0.0, 1.0);
+
+    vec3 COL_ERROR = COL_BLUNT_RED;
+    vec4 COL_EVERYTHING_IS_FINE = vec3(0, 0, 0, 0);
+    bool there_was_an_error = false;
+    vec4 COL_THAT_GETS_SET_WHEN_THERES_AN_ERROR = COL_EVERYTHING_IS_FINE;
+
     // vec3 COL_WALL  = vec3(21.0/255.0, 95.0/255.0, 216.0/255.0);
     // vec3 COL_BLACK = vec3(0.0, 0.0,     0.0    );
 
@@ -81,10 +95,16 @@ vec4 dissolve_mask(vec4 tex, vec2 texture_coords, vec2 uv)
     vec3 round(vec3 inputty) {return floor(inputty + 0.5);}
 
     // Honestly, I'm not sure why +1s everywhere made everything line up. Shouldn't -1s work?
-    vec2 normalized_to_card_pixel(vec2 coords) {return floor(vec2(coords.x * ( 71.0 + 1), coords.y * ( 95.0 + 1)));}
-    vec2 normalized_to_game_pixel(vec2 coords) {return floor(vec2(coords.x * (256.0 + 1), coords.y * (240.0 + 1)));}
-    vec2 card_pixel_to_normalized(vec2 coords) {return       vec2(coords.x / ( 71.0 + 1), coords.y / ( 95.0 + 1) ) ;}
-    vec2 game_pixel_to_normalized(vec2 coords) {return       vec2(coords.x / (256.0 + 1), coords.y / (240.0 + 1) ) ;}
+    /*
+        Okay hm
+        Normalized ranges from 0 <= n <= 1, but we don't actually want 1 to corespond to a unique pixel value, so we should clamp it
+        and I guess, corespondingly, the highest possible pixel value wouldn't give you 1. Like, 1 would be a valid answer, but only because of the clamping.
+        My original thought was that we would want to give the first(lowest) valid answer, but actually, I think we'd be better off with something in the middle, maybe. Keeps us away from the borders, where floating point imprecision might catch us.
+    */
+    vec2 normalized_to_card_pixel(vec2 coords) {return min(floor(vec2(coords.x * ( 71.0 - 1), coords.y * ( 95.0 - 1))), vec2(71. -1, 95.0 - 1));}
+    vec2 normalized_to_game_pixel(vec2 coords) {return min(floor(vec2(coords.x * (256.0 - 1), coords.y * (240.0 - 1))), vec2(256.0 - 1, 240.0 - 1));}
+    vec2 card_pixel_to_normalized(vec2 coords) {return       vec2((floor(coords.x) + 0.5) /  71.0, (floor(coords.y) + 0.5) /  95.0 ) ;}
+    vec2 game_pixel_to_normalized(vec2 coords) {return       vec2((floor(coords.x) + 0.5) / 256.0, (floor(coords.y) + 0.5) / 240.0 ) ;}
 
     bool compare_normalized_colors(vec3 a_normalized, vec3 b_normalized) {
         float lenience = 8.0 / 255.0;
@@ -125,15 +145,21 @@ vec4 dissolve_mask(vec4 tex, vec2 texture_coords, vec2 uv)
     }
 
     vec4 debug_grid(number check_count, vec2 texture_coords, bool test) {
-        number grid_index = floor(texture_coords.x*8) + floor(texture_coords.y*8) * 8;
-        if (check_count != grid_index) {
+        number count = 16;
+        number grid_index = floor(texture_coords.x*count) + floor(texture_coords.y*count) * count;
+        if (there_was_an_error) {
+            return COL_THAT_GETS_SET_WHEN_THERES_AN_ERROR;
+        }
+        else if (check_count != grid_index) {
             return vec4(0, 0, 0, 0);
-        } else if (!test) {
-            return vec4(1, 0, 1, 1);
-        } else if (mod(grid_index + floor(texture_coords.y*8), 2) == 0) {
-            return vec4(0.25, 0.25, 0.25, 1);
+        } else if (!test && mod(floor(pac_man_screen_summary[1] * 2), 2) == 0) {
+            COL_THAT_GETS_SET_WHEN_THERES_AN_ERROR = COL_ERROR;
+            there_was_an_error = true;
+            return vec4(COL_ERROR, 1);
+        } else if (mod(grid_index + floor(texture_coords.y*count), 2) == 0) {
+            return (vec4(COL_ERROR, 1) + vec4(0.25, 0.25, 0.25, 1) * 1) / 2;
         } else {
-            return vec4(0.75, 0.75, 0.75, 1);
+            return (vec4(COL_ERROR, 1) + vec4(0.35, 0.35, 0.35, 1) * 1) / 2;
         }
     }
 // New end
@@ -144,56 +170,77 @@ vec4 effect( vec4 colour, Image texture, vec2 texture_coords, vec2 screen_coords
         if (true) {
             highp float check_count = 0.0;
             vec4 outputty = vec4(0,0,0,0);
+            // r, g, b of output
+            // r, g, b of failure color
+            //  
+            // vec(0, 0,)
             
+            COL_ERROR = COL_BLUNT_RED;
             /*                                                 */ outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(COL_WALL, COL_WALL)); 
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, (1. / 2. == 0.5))              ; 
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, (float(1) / float(2) == 0.5)); 
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, (float(1) / 2 == 0.5))       ; 
             
+            COL_ERROR = COL_BLUNT_ORANGE;
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, (1        / float(2) == 0.5)); 
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, (1 + 0.5 == 1.5))            ; 
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0)));
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(vec3(0.0, 0.0, 0.0), vec3(0.0 / 255.0, 0.0 / 255.0, 0.0 / 255.0)));
             
+            COL_ERROR = COL_BLUNT_YELLOW;
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, normalized_color_at(vec2(1, 1)).r <= 1.5);
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, normalized_color_at(vec2(1, 1)).g <= 1.5);
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, normalized_color_at(vec2(1, 1)).b <= 1.5);
-            check_count++;
 
+            COL_ERROR = COL_BLUNT_GREEN;
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, normalized_color_at(vec2(1, 1)).r <= 1.0);
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, normalized_color_at(vec2(1, 1)).g <= 1.0);
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, normalized_color_at(vec2(1, 1)).b <= 1.0);
-            check_count++;
 
+            COL_ERROR = COL_BLUNT_CYAN;
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, (normalized_color_at(vec2(1, 1)).r <= 10./255.));
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, (normalized_color_at(vec2(1, 1)).g <= 10./255.)); 
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, (normalized_color_at(vec2(1, 1)).b <= 10./255.));
-            check_count++;
 
+            COL_ERROR = COL_BLUNT_BLUE;
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, normalized_color_at(vec2(1, 1)).r <= 0.0);
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, normalized_color_at(vec2(1, 1)).g <= 0.0);
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, normalized_color_at(vec2(1, 1)).b <= 0.0);
-            check_count++;
 
-            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(53.0, 18.0-2.0)), COL_BLACK)); 
-            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(53.0, 18.0-1.0)), COL_BLACK)); 
-            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, !compare_normalized_colors(normalized_color_at(vec2(53.0, 18.0-0.0)), COL_BLACK)); 
-            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(53.0, 18.0+1.0)), COL_BLACK)); 
-            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(53.0, 18.0+2.0)), COL_BLACK));
+            COL_ERROR = COL_BLUNT_PURPLE;
+            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(53.0, 18.0-1.0)), COL_BLACK));
             // check_count++;
             // if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(53.0, 18.0-2.0)), COL_WALL)); 
             // if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(53.0, 18.0-1.0)), COL_WALL)); 
             // if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(53.0, 18.0-0.0)), COL_WALL)); 
             // if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(53.0, 18.0+1.0)), COL_WALL)); 
             // if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(53.0, 18.0+2.0)), COL_WALL));
-            check_count++;
+            
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(53.0, 18.0)), COL_WALL));
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(53.0, 226.0)), COL_WALL));
-            check_count++;
 
+            COL_ERROR = COL_BLUNT_MAGENTA;
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(27, 9)), COL_WALL)); 
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(1, 1)), COL_BLACK));
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(vec3(1.0/255.0, 1.0/255.0, 1.0/255.0), vec3(5.0/255.0, 5.0/255.0, 5.0/255.0)));
+
+            COL_ERROR = COL_BLUNT_RED;
+            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(27, 9)), COL_WALL)); 
+            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(1, 1)), COL_BLACK));
+            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, compare_normalized_colors(vec3(1.0/255.0, 1.0/255.0, 1.0/255.0), vec3(5.0/255.0, 5.0/255.0, 5.0/255.0)));
+
+            COL_ERROR = COL_BLUNT_ORANGE;
+            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, normalized_to_card_pixel(vec2(0,0)) == vec2(0,0));
+            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, normalized_to_game_pixel(vec2(0,0)) == vec2(0,0));
+            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, normalized_to_card_pixel(vec2(1,1)) == vec2(70,94));
+            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, normalized_to_game_pixel(vec2(1,1)) == vec2(255,239));
+
+            COL_ERROR = COL_BLUNT_YELLOW;
+            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, all(lessThan(   vec2( 0./ 71., 0./ 95.), card_pixel_to_normalized(vec2(0,0)))));
+            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, all(lessThan(   vec2( 0./256., 0./240.), game_pixel_to_normalized(vec2(0,0)))));
+            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, all(greaterThan(vec2( 1./ 71., 1./ 95.), card_pixel_to_normalized(vec2(0,0)))));
+            if (outputty != vec4(0, 0, 0, 0)) {return outputty;}; outputty = debug_grid(check_count++, texture_coords, all(greaterThan(vec2( 1./256., 1./240.), game_pixel_to_normalized(vec2(0,0)))));
+
             if (outputty != vec4(0, 0, 0, 0)) {return outputty;};
         }
             
