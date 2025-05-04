@@ -2,6 +2,15 @@ assert(SMODS.load_file("libs\\LuaNES\\main.lua"))()local frame_multiplier =
 
 
 
+
+
+
+
+
+
+
+
+
 math.floor(207 / 19 / 2)local keys = { UP = 
 
 
@@ -63,8 +72,8 @@ local score_to_chips;score_to_chips = function(score)return math.floor(score / 1
 
 
 SMODS.Joker({ key = "pac_man", atlas = 
-"atlas_jokers", pos = 
-atlas_jokers_positions["pac_man"], loc_txt = { name = 
+"atlas_pac_man_joker", pos = 
+atlas_pac_man_joker_positions["pac_man_joker"], loc_txt = { name = 
 
 "Pac-Man", text = { 
 
@@ -88,7 +97,7 @@ card.doesnt_save = { nes = spawn_a_nes(), inputs =
 {  }, frames_per_frame = 
 1 }
 
-card.doesnt_save.nes.load({ "Mods\\balatro-unknown-mod\\libs\\LuaNES\\roms\\Pac-Man.nes" })return 
+card.doesnt_save.nes.load({ SMODS.Mods.happy_horse_jamboree.path .. "libs\\LuaNES\\roms\\Pac-Man.nes" })return 
 card.doesnt_save.nes.update()end, load = function(self, card, card_table, other_card)
 
 
@@ -120,8 +129,11 @@ self:add_input(card, input)end end, draw = function(self, card, layer)
 
 
 card.doesnt_save.nes.update_image()local center = 
-card.children.center;local screen_dims = { x = 
+card.children.center
+center:draw_shader('hhj_pac_man_screen_summary', nil, card.ARGS.send_to_shader)if 
 
+
+false then local screen_dims = { x = 
 
 10, y = 
 10, w = 
@@ -138,7 +150,7 @@ field_addition_context(center.VT, "y", (screen_dims.y) * multiply_your_pixels_by
 pretend_youre_a_center(center, function()
 love.graphics.setShader(G.SHADERS['dissolve'])
 love.graphics.draw(card.doesnt_save.nes.image, 0, 0)return 
-love.graphics.setShader()end)end)end)end)end)end, update = function(self, card, dt)if 
+love.graphics.setShader()end)end)end)end)end)end end, update = function(self, card, dt)if 
 
 
 
