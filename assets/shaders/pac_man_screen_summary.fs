@@ -64,16 +64,16 @@ vec4 dissolve_mask(vec4 tex, vec2 texture_coords, vec2 uv)
 }
 
 // New
-    vec3 COL_BLACK        = vec3(0.0,        0.0,        0.0)       ;   // #000000
-    vec3 COL_BLINKY       = vec3(0.70703125, 0.19140625, 0.125)     ;   // #b43120
-    vec3 COL_INKY         = vec3(0.390625,   0.6875,     0.99609375);   // #64affe
-    vec3 COL_PINKY        = vec3(0.90625,    0.78125,    0.99609375);   // #e7c7fe
-    vec3 COL_CLYDE        = vec3(0.59765625, 0.3046875,  0.0)       ;   // #984e00
-    vec3 COL_YELLOW       = vec3(0.9140625,  0.6171875,  0.1328125) ;   // #e99d22
-    vec3 COL_WALL         = vec3(0.08203125, 0.37109375, 0.84765625);   // #155fd8
-    vec3 COL_BROWN        = vec3(0.421875,   0.0234375,  0.0)       ;   // #6c6000
-    vec3 COL_MAYBE_CLYDE  = vec3(0.9921875,  0.50390625, 0.4375)    ;   // #fd8070
-    vec3 COL_WHITE        = vec3(0.99609375, 0.9921875,  0.99609375);   // #fefdfe
+    vec3 COL_BLACK            = vec3(0.0,        0.0,        0.0)       ;   // #000000
+    vec3 COL_CHERRY           = vec3(0.70703125, 0.19140625, 0.125)     ;   // #b43120
+    vec3 COL_INKY             = vec3(0.390625,   0.6875,     0.99609375);   // #64affe
+    vec3 COL_PINKY            = vec3(0.90625,    0.78125,    0.99609375);   // #e7c7fe
+    vec3 COL_CLYDE            = vec3(0.59765625, 0.3046875,  0.0)       ;   // #984e00
+    vec3 COL_YELLOW           = vec3(0.9140625,  0.6171875,  0.1328125) ;   // #e99d22
+    vec3 COL_WALL             = vec3(0.08203125, 0.37109375, 0.84765625);   // #155fd8
+    vec3 COL_BLINKY           = vec3(0.421875,   0.0234375,  0.0)       ;   // #6c0600
+    vec3 COL_TITLE_SCREEN_RED = vec3(0.9921875,  0.50390625, 0.4375)    ;   // #fd8070
+    vec3 COL_WHITE            = vec3(0.99609375, 0.9921875,  0.99609375);   // #fefdfe
 
     vec3 COL_BLUNT_RED     = vec3(1.0, 0.0, 0.0);
     vec3 COL_BLUNT_ORANGE  = vec3(1.0, 0.5, 0.0);
@@ -97,24 +97,25 @@ vec4 dissolve_mask(vec4 tex, vec2 texture_coords, vec2 uv)
     vec2 round(vec2 inputty) {return floor(inputty + 0.5);}
     vec3 round(vec3 inputty) {return floor(inputty + 0.5);}
 
-    // Honestly, I'm not sure why +1s everywhere made everything line up. Shouldn't -1s work?
     /*
         Okay hm
         Normalized ranges from 0 <= n <= 1, but we don't actually want 1 to corespond to a unique pixel value, so we should clamp it
         and I guess, corespondingly, the highest possible pixel value wouldn't give you 1. Like, 1 would be a valid answer, but only because of the clamping.
         My original thought was that we would want to give the first(lowest) valid answer, but actually, I think we'd be better off with something in the middle, maybe. Keeps us away from the borders, where floating point imprecision might catch us.
     */
-    vec2 normalized_to_card_pixel(vec2 coords) {return min(floor(vec2(coords.x * ( 71.0 - 1), coords.y * ( 95.0 - 1))), vec2(71.   - 1,  95.0 - 1));}
-    vec2 normalized_to_game_pixel(vec2 coords) {return min(floor(vec2(coords.x * (256.0 - 1), coords.y * (240.0 - 1))), vec2(256.0 - 1, 240.0 - 1));}
-    vec2 card_pixel_to_normalized(vec2 coords) {return       vec2((floor(coords.x) + 0.5) / ( 71.0 - 0), (floor(coords.y) + 0.5) / ( 95.0 - 0) ) ;}
-    vec2 game_pixel_to_normalized(vec2 coords) {return       vec2((floor(coords.x) + 0.5) / (256.0 - 0), (floor(coords.y) + 0.5) / (240.0 - 0) ) ;}
+    vec2 card_dims = vec2(71, 95);
+    vec2 half_off = vec2(0.5, 0.5);
+    vec2 normalized_to_card_pixel(vec2 coords) {return min(floor(coords * card_dims    ), card_dims     - 1);}
+    vec2 normalized_to_game_pixel(vec2 coords) {return min(floor(coords * gameplay_dims), gameplay_dims - 1);}
+    vec2 card_pixel_to_normalized(vec2 coords) {return       (coords + half_off) / card_dims     ;}
+    vec2 game_pixel_to_normalized(vec2 coords) {return       (coords + half_off) / gameplay_dims ;}
 
     // These seem like they should make sense mathematically but it slowly misaligns so I guess not?
     // vec2 card_pixel_to_normalized(vec2 coords) {return       vec2((floor(coords.x) + 0.5) /  71.0, (floor(coords.y) + 0.5) /  95.0 ) ;}
     // vec2 game_pixel_to_normalized(vec2 coords) {return       vec2((floor(coords.x) + 0.5) / 256.0, (floor(coords.y) + 0.5) / 240.0 ) ;}
 
     bool compare_normalized_colors(vec3 a_normalized, vec3 b_normalized) {
-        float lenience = 128.0 / 256.0;
+        float lenience = 2.0 / 256.0;
         vec3 dif = abs(a_normalized-b_normalized);
         // return floor(a_normalized * 255.0 + 0.25) == floor(b_normalized * 255.0 + 0.25);
         return (dif.r + dif.g + dif.b) <= lenience;
@@ -129,8 +130,7 @@ vec4 dissolve_mask(vec4 tex, vec2 texture_coords, vec2 uv)
     }
 
     vec3 normalized_color_at(vec2 this_pixel) {
-        // This was offset by + vec2(1.5,1.5) before the normalized values were set to the middle of the "pixel" anyway
-        return Texel(gameplay, game_pixel_to_normalized(this_pixel) + vec2(0.0 / 256., 0.0 / 240.)).rgb;
+        return Texel(gameplay, game_pixel_to_normalized(this_pixel)).rgb;
         // return max(vec3(1,1,1), Texel(gameplay, game_pixel_to_normalized(this_pixel)).rgb);
     }
 
@@ -141,15 +141,79 @@ vec4 dissolve_mask(vec4 tex, vec2 texture_coords, vec2 uv)
         );
     }
 
+    
+
+    vec3 convert_palette(vec3 rgb) {
+        if (compare_normalized_colors(rgb, COL_WALL  )) {return COL_WALL * 7. / 8;}
+
+        if (compare_normalized_colors(rgb, COL_BLINKY)) {return vec3(0.94f, 0.3f, 0.3f);}  // #f04d4d #de0f0f
+        // if (compare_normalized_colors(rgb, COL_INKY  )) {return vec3(0.12f, 0.59f, 1.f);}  // #1e96fe
+        // if (compare_normalized_colors(rgb, COL_PINKY )) {return vec3(0.7f, 0.2f, 0.76f);}  // #b332c2
+        if (compare_normalized_colors(rgb, COL_CLYDE )) {return vec3(0.98f, 0.56f, 0.f);}  // #fa8f00
+        return rgb;
+    }
+
     vec3 processed_pixel_for(vec2 card_texture_coords_normalized) {
         vec2 card_pixel_pos = normalized_to_card_pixel(card_texture_coords_normalized) * 8;  // Each pixel on the card represents 8x8 on the game screen
 
-        // if (is_normalized_color_at(card_pixel_pos + vec2(2.0, 2.0), COL_WALL)) {return COL_WALL;};
-        // if (is_normalized_color_at(card_pixel_pos + vec2(5.0, 5.0), COL_WALL)) {return COL_WALL;};
-        // if (is_normalized_color_at(card_pixel_pos + vec2(2.0, 5.0), COL_WALL)) {return COL_WALL;};
-        // if (is_normalized_color_at(card_pixel_pos + vec2(5.0, 2.0), COL_WALL)) {return COL_WALL;};
+        // GUI, seems there's only ever one color per block on the right side, so just return the first thing seen (that'll look nice)
+        // This could *absolutley* be optimized but it probably doesn't matter
+        if (card_pixel_pos.x >= 176) {
+            for (int x_offset = 0; x_offset < 8; x_offset++) {
+                for (int y_offset = 0; y_offset < 8; y_offset++) {
+                    vec2 offset = vec2(x_offset, y_offset);
+                    if (!is_normalized_color_at(card_pixel_pos + offset, COL_BLACK)) {
+                        return normalized_color_at(card_pixel_pos + offset);
+                    }
+                }
+            }
+            return COL_BLACK;
+        }
 
-        return Texel(gameplay, game_pixel_to_normalized(card_pixel_pos+vec2(4., 4.))).rgb;  // If nothing is found, just use whatever's in the middle of the block
+        // Walls
+        if (is_normalized_color_at(card_pixel_pos + vec2(2.0, 2.0), COL_WALL)) {return COL_WALL;};
+        if (is_normalized_color_at(card_pixel_pos + vec2(5.0, 5.0), COL_WALL)) {return COL_WALL;};
+        if (is_normalized_color_at(card_pixel_pos + vec2(2.0, 5.0), COL_WALL)) {return COL_WALL;};
+        if (is_normalized_color_at(card_pixel_pos + vec2(5.0, 2.0), COL_WALL)) {return COL_WALL;};
+
+        // Dots, doing it exactly like this stops it from picking up parts of the life counter
+        if (
+            is_normalized_color_at(card_pixel_pos + vec2(3.0, 2.0), COL_BLACK) && 
+            is_normalized_color_at(card_pixel_pos + vec2(3.0, 3.0), COL_YELLOW)
+        ) {return COL_YELLOW / 3;};
+
+        // Dudes, checks if three of the four corners contain dudes :)
+        vec3 dude_colors[6] = vec3[](COL_BLINKY, COL_INKY, COL_PINKY, COL_CLYDE, COL_YELLOW, COL_WHITE);
+        vec2 corners[4] = vec2[](vec2(1.0, 1.0), vec2(6.0, 6.0), vec2(1.0, 6.0), vec2(6.0, 1.0));
+        vec3 output_dude_color = vec3(0, 0, 0);
+        int dudes_spotted = 0;
+        for (int corner_index=0; corner_index < corners.length(); corner_index++) {
+            vec2 corner = corners[corner_index];
+            vec3 corner_color = normalized_color_at(card_pixel_pos + corner);
+            for (int dude_index=0; dude_index < dude_colors.length(); dude_index++) {
+                vec3 dude_color = dude_colors[dude_index];
+                if (!compare_normalized_colors(corner_color, dude_color)) {continue;}
+
+                // If it hits a ghost's eye, go down until you get the body
+                vec2 white_avoiding_offset = vec2(0, 0);
+                while (compare_normalized_colors(corner_color, COL_WHITE)) {
+                    white_avoiding_offset += vec2(0, 1);
+                    corner_color = normalized_color_at(card_pixel_pos + corner + white_avoiding_offset);
+                }
+
+                output_dude_color += convert_palette(corner_color);
+                dudes_spotted++;
+                break;
+            }
+        }
+        if (dudes_spotted > corners.length()) {
+            return COL_BLUNT_MAGENTA;
+        }
+        if (dudes_spotted >= 3) {
+            return  output_dude_color / dudes_spotted; // COL_BLUNT_CYAN; //
+        }
+
+        return COL_BLACK; // Texel(gameplay, game_pixel_to_normalized(card_pixel_pos+vec2(4., 5.))).rgb;
     }
 
     void debug_grid(number check_count, vec2 texture_coords, bool test) {
@@ -170,12 +234,25 @@ vec4 dissolve_mask(vec4 tex, vec2 texture_coords, vec2 uv)
             COL_DEBUG_GRID = (vec4(COL_ERROR, 1) + vec4(0.35, 0.35, 0.35, 1) * 1) / 2;
         }
     }
+
+    //Source: https://github.com/tobspr/GLSL-Color-Spaces/blob/master/ColorSpaces.inc.glsl
+    #ifndef saturate
+    #define saturate(v) clamp(v,0.,1.)
+    //      clamp(v,0.,1.)
+    #endif
+
+    //HSV (hue, saturation, value) to RGB.
+    //Sources: https://gist.github.com/yiwenl/745bfea7f04c456e0101, https://gist.github.com/sugi-cho/6a01cae436acddd72bdf
+    vec3 hsv2rgb(vec3 c){
+        vec4 K=vec4(1.,2./3.,1./3.,3.);
+        return c.z*mix(K.xxx,saturate(abs(fract(c.x+K.xyz)*6.-K.w)-K.x),c.y);
+    }
 // New end
 
 vec4 effect( vec4 colour, Image texture, vec2 texture_coords, vec2 screen_coords )
 {
     // New
-        if (false) {
+        if (true) {
             highp float check_count = 0.0;
             vec4 COL_BLANK;
             // r, g, b of output
@@ -228,12 +305,7 @@ vec4 effect( vec4 colour, Image texture, vec2 texture_coords, vec2 screen_coords
             debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(53.0, 226.0)), COL_WALL));
 
             COL_ERROR = COL_BLUNT_MAGENTA;
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(27, 9)), COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(1, 1)), COL_BLACK));
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(vec3(1.0/255.0, 1.0/255.0, 1.0/255.0), vec3(5.0/255.0, 5.0/255.0, 5.0/255.0)));
-
-            COL_ERROR = COL_BLUNT_RED;
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(27, 9)), COL_WALL)); 
+            debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(27, 18)), COL_WALL)); 
             debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(1, 1)), COL_BLACK));
             // debug_grid(check_count++, texture_coords, compare_normalized_colors(vec3(1.0/255.0, 1.0/255.0, 1.0/255.0), vec3(5.0/255.0, 5.0/255.0, 5.0/255.0)));
 
@@ -257,36 +329,42 @@ vec4 effect( vec4 colour, Image texture, vec2 texture_coords, vec2 screen_coords
 
             COL_ERROR = COL_BLUNT_CYAN;
             // Trying to figure out exactly what this thing wants from me 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 8.5  / 257, 42.5  / 241.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 8.5  / 256, 42.5  / 240.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 8.5  / 255, 42.5  / 239.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.   / 257, 43.   / 241.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.   / 256, 43.   / 240.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.   / 255, 43.   / 239.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.25 / 257, 43.25 / 241.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.25 / 256, 43.25 / 240.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.25 / 255, 43.25 / 239.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.5  / 257, 43.5  / 241.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.5  / 256, 43.5  / 240.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.5  / 255, 43.5  / 239.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.75 / 257, 43.75 / 241.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.75 / 256, 43.75 / 240.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.75 / 255, 43.75 / 239.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.   / 257, 43.   / 241.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.   / 256, 43.   / 240.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.   / 255, 43.   / 239.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.25 / 257, 44.25 / 241.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.25 / 256, 44.25 / 240.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.25 / 255, 44.25 / 239.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.5  / 257, 44.5  / 241.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.5  / 256, 44.5  / 240.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.5  / 255, 44.5  / 239.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.75 / 257, 44.75 / 241.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.75 / 256, 44.75 / 240.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.75 / 255, 44.75 / 239.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(11.   / 257, 45.   / 241.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(11.   / 256, 45.   / 240.) ).rgb, COL_WALL)); 
-            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(11.   / 255, 45.   / 239.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 8.5  / 257, 42.5  / 241.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 8.5  / 256, 42.5  / 240.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 8.5  / 255, 42.5  / 239.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.   / 257, 43.   / 241.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.   / 256, 43.   / 240.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.   / 255, 43.   / 239.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.25 / 257, 43.25 / 241.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.25 / 256, 43.25 / 240.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.25 / 255, 43.25 / 239.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.5  / 257, 43.5  / 241.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.5  / 256, 43.5  / 240.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.5  / 255, 43.5  / 239.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.75 / 257, 43.75 / 241.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.75 / 256, 43.75 / 240.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 9.75 / 255, 43.75 / 239.) ).rgb, COL_WALL)); 
+            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 10.5  / 257, 44.5   / 241.) ).rgb, COL_WALL)); 
+            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 10.5  / 256, 44.5   / 240.) ).rgb, COL_WALL)); 
+            debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2( 10.5  / 255, 44.5   / 239.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.25 / 257, 44.25 / 241.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.25 / 256, 44.25 / 240.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.25 / 255, 44.25 / 239.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.5  / 257, 44.5  / 241.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.5  / 256, 44.5  / 240.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.5  / 255, 44.5  / 239.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.75 / 257, 44.75 / 241.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.75 / 256, 44.75 / 240.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(10.75 / 255, 44.75 / 239.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(11.   / 257, 45.   / 241.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(11.   / 256, 45.   / 240.) ).rgb, COL_WALL)); 
+            // debug_grid(check_count++, texture_coords, compare_normalized_colors(Texel(gameplay, vec2(11.   / 255, 45.   / 239.) ).rgb, COL_WALL));
+
+            COL_ERROR = COL_BLUNT_BLUE;
+            debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(80, 96) + vec2(1, 1)), COL_CLYDE)); 
+            debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(80, 96) + vec2(6, 1)), COL_WHITE)); 
+            debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(80, 96) + vec2(6, 6)), COL_CLYDE)); 
+            debug_grid(check_count++, texture_coords, compare_normalized_colors(normalized_color_at(vec2(80, 96) + vec2(1, 6)), COL_CLYDE)); 
 
             if (COL_DEBUG_GRID != COL_BLANK) {return COL_DEBUG_GRID;};
         }
@@ -309,14 +387,38 @@ vec4 effect( vec4 colour, Image texture, vec2 texture_coords, vec2 screen_coords
         // }
 
         // Horizontal
+        // THIS WORKS!!!
+        // float bso = 0;
+        // float pixel_offset = 0.5;
+        // if        (texture_coords.x < 1./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + 10.0  - 2 + texture_coords.y * 4, pixel_offset + 44) / gameplay_dims).rgb;
+        // } else if (texture_coords.x < 2./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + 13.0  - 2 + texture_coords.y * 4, pixel_offset + 44) / gameplay_dims).rgb;} else if (texture_coords.x < 2.5/5.) {tex.rgb = texture2D(gameplay, vec2(10.0 + pixel_offset, 44 + pixel_offset) / gameplay_dims).rgb;} else if (texture_coords.x < 3./5.) {tex.rgb = COL_WALL;
+        // } else if (texture_coords.x < 4./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + 170.0 - 2 + texture_coords.y * 4, pixel_offset + 44) / gameplay_dims).rgb;
+        // } else                               {tex.rgb = texture2D(gameplay, vec2(pixel_offset + 173.0 - 2 + texture_coords.y * 4, pixel_offset + 44) / gameplay_dims).rgb;
+        // }
         float bso = 0;
         float pixel_offset = 0.5;
-        if        (texture_coords.x < 1./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + 10.0  - 2 + texture_coords.y * 4, pixel_offset + 44) / gameplay_dims).rgb;
-        } else if (texture_coords.x < 2./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + 13.0  - 2 + texture_coords.y * 4, pixel_offset + 44) / gameplay_dims).rgb;} else if (texture_coords.x < 2.5/5.) {tex.rgb = texture2D(gameplay, vec2(10.0 + pixel_offset, 44 + pixel_offset) / gameplay_dims).rgb;} else if (texture_coords.x < 3./5.) {tex.rgb = COL_WALL;
-        } else if (texture_coords.x < 4./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + 170.0 - 2 + texture_coords.y * 4, pixel_offset + 44) / gameplay_dims).rgb;
-        } else                               {tex.rgb = texture2D(gameplay, vec2(pixel_offset + 173.0 - 2 + texture_coords.y * 4, pixel_offset + 44) / gameplay_dims).rgb;
-        }
+        vec2 focuses[4] = vec2[](
+            vec2(80, 96) + vec2(1, 1),
+            vec2(80, 96) + vec2(6, 1),
+            vec2(80, 96) + vec2(6, 6),
+            vec2(80, 96) + vec2(1, 6)
+        );
+        if        (texture_coords.x < 1./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + focuses[0].x - 2 + texture_coords.y * 4, pixel_offset + focuses[0].y) / gameplay_dims).rgb;
+        } else if (texture_coords.x < 2./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + focuses[1].x - 2 + texture_coords.y * 4, pixel_offset + focuses[1].y) / gameplay_dims).rgb;} else if (texture_coords.x < 2.5/5.) {tex.rgb = texture2D(gameplay, vec2(10.0 + pixel_offset, 44 + pixel_offset) / gameplay_dims).rgb;} else if (texture_coords.x < 3./5.) {tex.rgb = COL_BLINKY;
+        } else if (texture_coords.x < 4./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + focuses[2].x - 2 + texture_coords.y * 4, pixel_offset + focuses[2].y) / gameplay_dims).rgb;
+        } else                               {tex.rgb = texture2D(gameplay, vec2(pixel_offset + focuses[3].x - 2 + texture_coords.y * 4, pixel_offset + focuses[3].y) / gameplay_dims).rgb;
+        };
         
+        if      (texture_coords.x < 1.  / 10.) {tex.rgb = COL_BLACK           ;}
+        else if (texture_coords.x < 2.  / 10.) {tex.rgb = COL_CHERRY          ;}
+        else if (texture_coords.x < 3.  / 10.) {tex.rgb = COL_INKY            ;}
+        else if (texture_coords.x < 4.  / 10.) {tex.rgb = COL_PINKY           ;}
+        else if (texture_coords.x < 5.  / 10.) {tex.rgb = COL_CLYDE           ;}
+        else if (texture_coords.x < 6.  / 10.) {tex.rgb = COL_YELLOW          ;}
+        else if (texture_coords.x < 7.  / 10.) {tex.rgb = COL_WALL            ;}
+        else if (texture_coords.x < 8.  / 10.) {tex.rgb = COL_BLINKY          ;}
+        else if (texture_coords.x < 9.  / 10.) {tex.rgb = COL_TITLE_SCREEN_RED;}
+        else if (texture_coords.x < 10. / 10.) {tex.rgb = COL_WHITE           ;}
 
         if (
             normalized_to_card_pixel(texture_coords - draw_offset).x < 256/8 &&
@@ -330,6 +432,10 @@ vec4 effect( vec4 colour, Image texture, vec2 texture_coords, vec2 screen_coords
             //     }
             // }
             tex.rgb = processed_pixel_for(texture_coords-draw_offset);
+            tex.rgb = convert_palette(tex.rgb);
+            if (tex.rgb == vec3(0, 0, 0)) {
+                tex.a = 7 / 8.;
+            }
             
             // This is just because it *has* to do *something* with pac_man_screen_summary.
             // Theoretically it'll never actually affect anything.
