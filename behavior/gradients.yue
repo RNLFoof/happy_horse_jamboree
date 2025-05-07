@@ -1,0 +1,4 @@
+happy_horse_jamboree = SMODS.Gradient
+    key: "happy_horse_jamboree"
+    colours: {HEX("99867b"), HEX("9f4713"), HEX("443830")}
+SMODS.Mods.happy_horse_jamboree.badge_colour = happy_horse_jamboree

@@ -2,7 +2,7 @@
 	"id": "happy_horse_jamboree",
 	"name": "Happy Horse Jamboree",
 	"display_name": "Happy Horse Jamboree",
-	"author": ["Dust", "Reverie"],
+	"author": ["Dust", "Reverie", "Jupiter Icy Moons Explorer"],
 	"description": ":)",
 	"prefix": "hhj",
 	"main_file": "main.lua",

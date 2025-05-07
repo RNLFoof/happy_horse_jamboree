@@ -6,7 +6,11 @@ macro lua = (code) -> {
     type: "lua"
 }
 
-
+SMODS.Atlas
+    key: "modicon",
+    path: "modicon.png",
+    px: 32,
+    py: 32
 
 load_all_files_in = (directory) ->
     directory =  directory

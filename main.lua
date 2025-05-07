@@ -7,6 +7,10 @@ package.path = 'Mods\\balatro-unknown-mod\\libs\\LuaNES\\?.lua;' .. package.path
 
 
 
+SMODS.Atlas({ key = "modicon", path = 
+"modicon.png", px = 
+32, py = 
+32 })
 
 local load_all_files_in;load_all_files_in = function(directory)
 directory = directory;local files = 
