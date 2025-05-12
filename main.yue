@@ -12,6 +12,12 @@ SMODS.Atlas
     px: 32,
     py: 32
 
+extra_glyphs_font = love.graphics.newFont("Mods/" .. SMODS.current_mod.path::gsub("^.+Mods", "") .. "assets/glyphs/m6x11plus_extra_glyphs.ttf", G.TILESIZE*10)
+for font in *G.FONTS
+    font.FONT::setFallbacks(extra_glyphs_font)
+for language in *G.LANGUAGES
+    language.font::setFallbacks(extra_glyphs_font)
+
 load_all_files_in = (directory) ->
     directory =  directory
     local files = NFS.getDirectoryItems(SMODS.current_mod.path .. directory)
