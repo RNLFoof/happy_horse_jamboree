@@ -76,8 +76,8 @@ pac_man = SMODS.Joker
     -- Gets its own atlas because shaders use the entire atlas as the texture, so the provided coordinates aren't normalized within the context of drawing that one card
     -- This needs to be accounted for in the gameplay summary shader, because it needs normalized values within the context of this one card in order to check the right pixels in the gameplay
     -- But, if this one card *is* the whole atlas, then it *is* normalized within the context within the context of that one card 
-    atlas: "atlas_pac_man_joker"
-    pos: atlas_pac_man_joker_positions["pac_man_joker"]
+    atlas: "atlas_single_card"
+    pos: atlas_single_card_positions["single_card"]
 
     loc_txt:
         name: "Pac-Man"
@@ -101,7 +101,14 @@ pac_man = SMODS.Joker
             nes: spawn_a_nes()
             inputs: {}
             frames_per_frame: 1
+            cover_sprite: Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["hhj_atlas_jokers"], atlas_jokers_positions["pac_man"])
         }
+        card.doesnt_save.cover_sprite.states.hover = card.states.hover
+        card.doesnt_save.cover_sprite.states.click = card.states.click
+        card.doesnt_save.cover_sprite.states.drag =  card.states.drag
+        card.doesnt_save.cover_sprite.states.collide.can = false
+        card.doesnt_save.cover_sprite::set_role({major: card, role_type: 'Glued', draw_major: card})
+
         card.doesnt_save.nes.load({SMODS.Mods.happy_horse_jamboree.path .. "libs\\LuaNES\\roms\\Pac-Man.nes"})  -- TODO FUCK
         card.doesnt_save.nes.update() -- Update just once to spawn the image
 
@@ -138,6 +145,7 @@ pac_man = SMODS.Joker
         G.debug_size_offset ??= 99.0
         card.ARGS.send_to_shader.debug_size_offset = G.debug_size_offset
         center::draw_shader('hhj_pac_man_screen_summary', nil, card.ARGS.send_to_shader)
+        card.doesnt_save.cover_sprite::draw_shader('dissolve', nil, nil, nil, center)
 
         -- 71 is how wide, in pixels, cards are
         if false

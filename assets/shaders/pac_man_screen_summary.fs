@@ -234,25 +234,12 @@ vec4 dissolve_mask(vec4 tex, vec2 texture_coords, vec2 uv)
             COL_DEBUG_GRID = (vec4(COL_ERROR, 1) + vec4(0.35, 0.35, 0.35, 1) * 1) / 2;
         }
     }
-
-    //Source: https://github.com/tobspr/GLSL-Color-Spaces/blob/master/ColorSpaces.inc.glsl
-    #ifndef saturate
-    #define saturate(v) clamp(v,0.,1.)
-    //      clamp(v,0.,1.)
-    #endif
-
-    //HSV (hue, saturation, value) to RGB.
-    //Sources: https://gist.github.com/yiwenl/745bfea7f04c456e0101, https://gist.github.com/sugi-cho/6a01cae436acddd72bdf
-    vec3 hsv2rgb(vec3 c){
-        vec4 K=vec4(1.,2./3.,1./3.,3.);
-        return c.z*mix(K.xxx,saturate(abs(fract(c.x+K.xyz)*6.-K.w)-K.x),c.y);
-    }
 // New end
 
 vec4 effect( vec4 colour, Image texture, vec2 texture_coords, vec2 screen_coords )
 {
     // New
-        if (true) {
+        if (false) {
             highp float check_count = 0.0;
             vec4 COL_BLANK;
             // r, g, b of output
@@ -371,7 +358,7 @@ vec4 effect( vec4 colour, Image texture, vec2 texture_coords, vec2 screen_coords
             
         MY_HIGHP_OR_MEDIUMP vec4 tex = Texel( texture, texture_coords);
         MY_HIGHP_OR_MEDIUMP vec2 uv = (((texture_coords)*(image_details)) - texture_details.xy*texture_details.ba)/texture_details.ba;
-        vec2 draw_offset = card_pixel_to_normalized(vec2(4, 32)) + vec2(0, 2./8.);
+        vec2 draw_offset = card_pixel_to_normalized(vec2(19, 10));
 
         // Vertical
         // if (texture_coords.x < 1./5.) {
@@ -395,36 +382,36 @@ vec4 effect( vec4 colour, Image texture, vec2 texture_coords, vec2 screen_coords
         // } else if (texture_coords.x < 4./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + 170.0 - 2 + texture_coords.y * 4, pixel_offset + 44) / gameplay_dims).rgb;
         // } else                               {tex.rgb = texture2D(gameplay, vec2(pixel_offset + 173.0 - 2 + texture_coords.y * 4, pixel_offset + 44) / gameplay_dims).rgb;
         // }
-        float bso = 0;
-        float pixel_offset = 0.5;
-        vec2 focuses[4] = vec2[](
-            vec2(80, 96) + vec2(1, 1),
-            vec2(80, 96) + vec2(6, 1),
-            vec2(80, 96) + vec2(6, 6),
-            vec2(80, 96) + vec2(1, 6)
-        );
-        if        (texture_coords.x < 1./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + focuses[0].x - 2 + texture_coords.y * 4, pixel_offset + focuses[0].y) / gameplay_dims).rgb;
-        } else if (texture_coords.x < 2./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + focuses[1].x - 2 + texture_coords.y * 4, pixel_offset + focuses[1].y) / gameplay_dims).rgb;} else if (texture_coords.x < 2.5/5.) {tex.rgb = texture2D(gameplay, vec2(10.0 + pixel_offset, 44 + pixel_offset) / gameplay_dims).rgb;} else if (texture_coords.x < 3./5.) {tex.rgb = COL_BLINKY;
-        } else if (texture_coords.x < 4./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + focuses[2].x - 2 + texture_coords.y * 4, pixel_offset + focuses[2].y) / gameplay_dims).rgb;
-        } else                               {tex.rgb = texture2D(gameplay, vec2(pixel_offset + focuses[3].x - 2 + texture_coords.y * 4, pixel_offset + focuses[3].y) / gameplay_dims).rgb;
-        };
+        // float bso = 0;
+        // float pixel_offset = 0.5;
+        // vec2 focuses[4] = vec2[](
+        //     vec2(80, 96) + vec2(1, 1),
+        //     vec2(80, 96) + vec2(6, 1),
+        //     vec2(80, 96) + vec2(6, 6),
+        //     vec2(80, 96) + vec2(1, 6)
+        // );
+        // if        (texture_coords.x < 1./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + focuses[0].x - 2 + texture_coords.y * 4, pixel_offset + focuses[0].y) / gameplay_dims).rgb;
+        // } else if (texture_coords.x < 2./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + focuses[1].x - 2 + texture_coords.y * 4, pixel_offset + focuses[1].y) / gameplay_dims).rgb;} else if (texture_coords.x < 2.5/5.) {tex.rgb = texture2D(gameplay, vec2(10.0 + pixel_offset, 44 + pixel_offset) / gameplay_dims).rgb;} else if (texture_coords.x < 3./5.) {tex.rgb = COL_BLINKY;
+        // } else if (texture_coords.x < 4./5.) {tex.rgb = texture2D(gameplay, vec2(pixel_offset + focuses[2].x - 2 + texture_coords.y * 4, pixel_offset + focuses[2].y) / gameplay_dims).rgb;
+        // } else                               {tex.rgb = texture2D(gameplay, vec2(pixel_offset + focuses[3].x - 2 + texture_coords.y * 4, pixel_offset + focuses[3].y) / gameplay_dims).rgb;
+        // };
         
-        if      (texture_coords.x < 1.  / 10.) {tex.rgb = COL_BLACK           ;}
-        else if (texture_coords.x < 2.  / 10.) {tex.rgb = COL_CHERRY          ;}
-        else if (texture_coords.x < 3.  / 10.) {tex.rgb = COL_INKY            ;}
-        else if (texture_coords.x < 4.  / 10.) {tex.rgb = COL_PINKY           ;}
-        else if (texture_coords.x < 5.  / 10.) {tex.rgb = COL_CLYDE           ;}
-        else if (texture_coords.x < 6.  / 10.) {tex.rgb = COL_YELLOW          ;}
-        else if (texture_coords.x < 7.  / 10.) {tex.rgb = COL_WALL            ;}
-        else if (texture_coords.x < 8.  / 10.) {tex.rgb = COL_BLINKY          ;}
-        else if (texture_coords.x < 9.  / 10.) {tex.rgb = COL_TITLE_SCREEN_RED;}
-        else if (texture_coords.x < 10. / 10.) {tex.rgb = COL_WHITE           ;}
+        // if      (texture_coords.x < 1.  / 10.) {tex.rgb = COL_BLACK           ;}
+        // else if (texture_coords.x < 2.  / 10.) {tex.rgb = COL_CHERRY          ;}
+        // else if (texture_coords.x < 3.  / 10.) {tex.rgb = COL_INKY            ;}
+        // else if (texture_coords.x < 4.  / 10.) {tex.rgb = COL_PINKY           ;}
+        // else if (texture_coords.x < 5.  / 10.) {tex.rgb = COL_CLYDE           ;}
+        // else if (texture_coords.x < 6.  / 10.) {tex.rgb = COL_YELLOW          ;}
+        // else if (texture_coords.x < 7.  / 10.) {tex.rgb = COL_WALL            ;}
+        // else if (texture_coords.x < 8.  / 10.) {tex.rgb = COL_BLINKY          ;}
+        // else if (texture_coords.x < 9.  / 10.) {tex.rgb = COL_TITLE_SCREEN_RED;}
+        // else if (texture_coords.x < 10. / 10.) {tex.rgb = COL_WHITE           ;}
 
         if (
-            normalized_to_card_pixel(texture_coords - draw_offset).x < 256/8 &&
-            normalized_to_card_pixel(texture_coords - draw_offset).y < 240/8 &&
-            normalized_to_card_pixel(texture_coords - draw_offset).x > 0     &&
-            normalized_to_card_pixel(texture_coords - draw_offset).y > 0    
+            normalized_to_card_pixel(texture_coords - draw_offset).x <= 256/8 + 1 &&  // +-1s make the borders go a biiit wider, which covers the seams
+            normalized_to_card_pixel(texture_coords - draw_offset).y <= 240/8 + 1 &&
+            normalized_to_card_pixel(texture_coords - draw_offset).x >= 0     - 1 &&
+            normalized_to_card_pixel(texture_coords - draw_offset).y >= 0     - 1
         ) {
             // for(int x_plus=0; x_plus<8; x_plus++) {
             //     for(int y_plus=0; y_plus<8; y_plus++) {

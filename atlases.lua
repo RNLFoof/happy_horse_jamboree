@@ -137,19 +137,6 @@ atlas_jokers_positions = {
     },
 }
 
---- PAC_MAN_JOKER ---
-
-atlas_pac_man_joker = SMODS.Atlas {
-    key = "atlas_pac_man_joker",
-    path = "atlas_pac_man_joker.png",
-    px = 71,
-    py = 95
-}
-
-atlas_pac_man_joker_positions = {
-    ["pac_man_joker"] = {x=0, y=0},
-}
-
 --- PLANETS ---
 
 atlas_planets = SMODS.Atlas {
@@ -161,6 +148,19 @@ atlas_planets = SMODS.Atlas {
 
 atlas_planets_positions = {
     ["Haumea"] = {x=0, y=0},
+}
+
+--- SINGLE_CARD ---
+
+atlas_single_card = SMODS.Atlas {
+    key = "atlas_single_card",
+    path = "atlas_single_card.png",
+    px = 71,
+    py = 95
+}
+
+atlas_single_card_positions = {
+    ["single_card"] = {x=0, y=0},
 }
 
 --- TAGS ---

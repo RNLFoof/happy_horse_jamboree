@@ -76,8 +76,8 @@ SMODS.Joker({ key = "pac_man", atlas =
 
 
 
-"atlas_pac_man_joker", pos = 
-atlas_pac_man_joker_positions["pac_man_joker"], loc_txt = { name = 
+"atlas_single_card", pos = 
+atlas_single_card_positions["single_card"], loc_txt = { name = 
 
 
 "Pac-Man", text = { 
@@ -100,7 +100,14 @@ score_to_chips(card.ability.score) } }end, prepare_yourself = function(self, car
 
 card.doesnt_save = { nes = spawn_a_nes(), inputs = 
 {  }, frames_per_frame = 
-1 }
+1, cover_sprite = 
+Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["hhj_atlas_jokers"], atlas_jokers_positions["pac_man"]) }
+
+card.doesnt_save.cover_sprite.states.hover = card.states.hover
+card.doesnt_save.cover_sprite.states.click = card.states.click
+card.doesnt_save.cover_sprite.states.drag = card.states.drag
+card.doesnt_save.cover_sprite.states.collide.can = false
+card.doesnt_save.cover_sprite:set_role({ major = card, role_type = 'Glued', draw_major = card })
 
 card.doesnt_save.nes.load({ SMODS.Mods.happy_horse_jamboree.path .. "libs\\LuaNES\\roms\\Pac-Man.nes" })return 
 card.doesnt_save.nes.update()end, load = function(self, card, card_table, other_card)
@@ -137,7 +144,8 @@ card.doesnt_save.nes.update_image()local center =
 card.children.center;local _obj_0 = 
 G;if _obj_0.debug_size_offset == nil then _obj_0.debug_size_offset = 99.0 end
 card.ARGS.send_to_shader.debug_size_offset = G.debug_size_offset
-center:draw_shader('hhj_pac_man_screen_summary', nil, card.ARGS.send_to_shader)if 
+center:draw_shader('hhj_pac_man_screen_summary', nil, card.ARGS.send_to_shader)
+card.doesnt_save.cover_sprite:draw_shader('dissolve', nil, nil, nil, center)if 
 
 
 false then local screen_dims = { x = 
