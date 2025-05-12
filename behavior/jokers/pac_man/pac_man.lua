@@ -88,7 +88,7 @@ atlas_pac_man_joker_positions["pac_man_joker"], loc_txt = { name =
 "{s:0.8,C:inactive}for that number of frames (x" .. tostring(frame_multiplier) .. ")", 
 "{s:0.8,C:inactive}Faces and Aces just press their button", 
 "{s:0.8,C:inactive}The game doesn't run when no input is given", 
-"{C:attention}Score: #1# {}->{C:chips} Chips: #2#" } }, loc_vars = function(self, info_queue, card)return { vars = { 
+"{C:attention}Score: #1# {}→{C:chips} Chips: #2#" } }, loc_vars = function(self, info_queue, card)return { vars = { 
 
 
 
