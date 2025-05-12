@@ -25,4 +25,6 @@ G.localization.descriptions[self.set][self.key].text = target_text end, set_card
 badges[1] = create_badge(localize('k_dwarf_planet'), get_type_colour(self or card.config, card), nil, 1.2)end, config = { hand_type = 
 
 'hhj_low_card', softlock = 
-true } })
+true }, in_pool = function(self, args)return #
+
+SMODS.find_card("j_hhj_new_low", true) == 0 end })

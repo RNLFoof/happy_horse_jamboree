@@ -26,3 +26,5 @@ haumea = SMODS.Consumable
     config:
         hand_type: 'hhj_low_card'
         softlock: true
+    in_pool: (args) =>
+        return #SMODS.find_card("j_hhj_new_low", true) == 0
