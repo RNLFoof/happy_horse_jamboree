@@ -70,7 +70,54 @@ useful_things.round;local required_horse_name_count =
 
 
 local neigh;neigh = function()return 
-play_sound('hhj_neigh', 0.9 + math.random() * 0.2, 1)end;local index = 
+play_sound('hhj_neigh', 0.9 + math.random() * 0.2, 1)end;local base_horse_joker = 
+
+
+SMODS.Joker({ key = "horse_base", atlas = 
+"atlas_horses", pos = 
+atlas_horses_positions["base"], rarity = 
+1, cost = 
+1, update = function(self, card, dt)if not 
+
+card.area then
+return end;if 
+card.area.config.collection then
+return end;local new_horse = 
+
+SMODS.create_card({ set = "Joker", area = 
+G.jokers, rarity = 
+"hhj_horse", key_append = 
+"horse" })
+new_horse:add_to_deck()
+card.area:emplace(new_horse)
+new_horse:start_materialize()return 
+card:remove()end })local _anon_func_0 = function(owned, pairs, shop)local _tab_0 = 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{  }local _idx_0 = 1;for _key_0, _value_0 in pairs(owned) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;local _idx_1 = 1;for _key_0, _value_0 in pairs(shop) do if _idx_1 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_1 = _idx_1 + 1 else _tab_0[_key_0] = _value_0 end end;return _tab_0 end;local update_horse_negatives;update_horse_negatives = function()local owned = G.jokers and G.jokers.cards or {  }local shop = G.shop and G.shop_jokers.cards or {  }local owns_a_non_negative = false;local non_negative_index = nil;for joker_index, owned_joker in ipairs(owned) do if owned_joker.ability.is_horse and ((not owned_joker.edition) or (not (owned_joker.edition == "e_negative" or owned_joker.edition.negative))) then owns_a_non_negative = true;non_negative_index = joker_index;break end end;for joker_index, joker in ipairs(_anon_func_0(owned, pairs, shop)) do local _continue_0 = 
+false;repeat if not joker.ability.is_horse then
+_continue_0 = true;break end;if 
+owns_a_non_negative and non_negative_index ~= joker_index then
+joker:set_edition({ negative = true }, true)else
+
+joker:set_edition({ negative = false }, true)
+owns_a_non_negative = true end;_continue_0 = true until true;if not _continue_0 then break end end end;local index = 
+
 
 0;for bonus_1_index, bonus_1 in 
 ipairs(bonus_types) do for bonus_2_index, bonus_2 in 
@@ -121,8 +168,9 @@ bonus_1 .. bonus_2 .. bonus_3 .. jackstr;local horse_joker =
 SMODS.Joker({ key = "hhj_horse_" .. key, atlas = 
 "atlas_horses", pos = 
 atlas_horses_positions[key], rarity = 
-1, cost = 
-1, config = { is_horse = 
+"hhj_horse", cost = 
+1, discovered = 
+true, config = { is_horse = 
 
 true, key = 
 key, bonuses = 
@@ -143,12 +191,20 @@ G.GAME and G.GAME.probabilities.normal or 1 } }
 info_queue[#info_queue + 1] = G.P_TAGS.tag_hhj_horse_luck end;return { vars = { 
 
 
-G.GAME and G.GAME.probabilities.normal or 1 } }end, discovered = 
+G.GAME and G.GAME.probabilities.normal or 1 } }end, set_ability = function(self, card, initial, delay_sprites)
 
 
+card.rarity = 1;return 
+update_horse_negatives()end, add_to_deck = function(self, card, from_defuff)if 
 
-true, in_pool = function(self, args)return 
-true, { allow_duplicates = true }end, calculate = function(self, card, context)local horse = 
+from_defuff then
+return end;return 
+update_horse_negatives()end, remove_from_deck = function(self, card, from_defuff)if 
+
+from_defuff then
+return end;return 
+update_horse_negatives()end, calculate = function(self, card, context)local horse = 
+
 
 card.ability;if (((
 horse.jack == false) and context.joker_main and context.cardarea == G.jokers) or ((horse.jack == true) and context.individual and context.cardarea == G.play and context.other_card:get_id() == 11)) then local money_earned = 
@@ -205,13 +261,10 @@ output end end })end end end end
 
 
 
-useful_things = assert(SMODS.load_file("useful_things.lua"))()local _anon_func_0 = function(self)local _obj_0 = 
+useful_things = assert(SMODS.load_file("useful_things.lua"))()local _anon_func_1 = function(self)local _obj_0 = 
 
 
-self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;useful_things.wrap_method(Card, "hover", function(...)local self = ...if _anon_func_0(self) then return neigh()end end)local ref = 
-
-
-
+self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;useful_things.wrap_method(Card, "hover", function(...)local self = ...if _anon_func_1(self) then return neigh()end end)local ref = 
 
 
 
@@ -219,13 +272,16 @@ self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 
 
 
 
-Card.set_edition;local _anon_func_1 = function(self)local _obj_0 = 
+
+
+
+Card.set_edition;local _anon_func_2 = function(self)local _obj_0 = 
 
 
 
 
 
-self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;local wrapper;wrapper = function(self, edition, immediate, silent)ref(self, edition, immediate, silent)if _anon_func_1(self) ~= nil then local horse_joker = 
+self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;local wrapper;wrapper = function(self, edition, immediate, silent)ref(self, edition, immediate, silent)if _anon_func_2(self) ~= nil then local horse_joker = 
 self.config.center;local the_sprite_is_in_here = 
 self.children.center
 

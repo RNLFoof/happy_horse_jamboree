@@ -184,16 +184,16 @@ function CardArea:draw()
             -- Filled notches
             filled_notch_count = 0
             for _, card in ipairs(self.cards) do
-                for _=1, card.config.center.rarity do
+                for _=1, rarity_or_default(card.config.center.rarity) do
                     the_actual_bar[#the_actual_bar+1] = {
                         n=G.UIT.C, config={minh=notch_side+notch_padding}, nodes={{ -- Needs to be a row in a column because uuhhhhh bad
                             n=G.UIT.R,
                             config={
                                 align="cm",
                                 minw=(
-                                    notch_side*card.config.center.rarity
-                                    + notch_padding*(card.config.center.rarity-1)
-                                ) / card.config.center.rarity, 
+                                    notch_side*rarity_or_default(card.config.center.rarity)
+                                    + notch_padding*(rarity_or_default(card.config.center.rarity)-1)
+                                ) / rarity_or_default(card.config.center.rarity), 
                                 minh=notch_side,
                                 colour = filled_notch_count<effective_card_limit and G.C.RARITY[card.config.center.rarity] or danger_color, 
                                 emboss=notch_emboss, 
@@ -266,10 +266,14 @@ end
 --     force_notch_bar_update(self)
 -- end
 
+function rarity_or_default(rarity)
+    if type(rarity) == "number" then return rarity else return 2 end
+end
+
 function get_effective_card_count()
     effective_card_count = 0
     for _, card in ipairs(G.jokers.cards) do
-        effective_card_count = effective_card_count + card.config.center.rarity
+        effective_card_count = effective_card_count + rarity_or_default(card.config.center.rarity)
     end
     return effective_card_count
 end

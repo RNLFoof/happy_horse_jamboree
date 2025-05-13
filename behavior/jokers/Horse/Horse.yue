@@ -72,6 +72,53 @@ bonus_types = {
 neigh = ->
     play_sound('hhj_neigh', 0.9 + math.random()*0.2, 1)
 
+base_horse_joker = SMODS.Joker
+    key: "horse_base"
+    atlas: "atlas_horses"
+    pos: atlas_horses_positions["base"]
+    rarity: 1
+    cost: 1
+    update: (card, dt) =>
+        if not card.area
+            return
+        if card.area.config.collection
+            return
+        new_horse = SMODS.create_card
+            set: "Joker"
+            area: G.jokers
+            rarity: "hhj_horse"
+            key_append: "horse"
+        new_horse::add_to_deck()
+        card.area::emplace(new_horse)
+        new_horse::start_materialize()
+        card::remove()
+
+update_horse_negatives = ->
+    -- print("um")
+    -- for joker in *G.jokers.cards
+    --     print(joker)
+    --     joker::set_edition({negative: true}, true)
+    owned = G.jokers and G.jokers.cards or {}
+    shop = G.shop and G.shop_jokers.cards or {}
+
+    owns_a_non_negative = false
+    non_negative_index = nil
+    for joker_index, owned_joker in ipairs(owned)
+        if owned_joker.ability.is_horse and ((not owned_joker.edition) or (not (owned_joker.edition == "e_negative" or owned_joker.edition.negative)))
+            owns_a_non_negative = true
+            non_negative_index = joker_index
+            break
+    
+    for joker_index, joker in ipairs({...owned, ...shop})
+        unless joker.ability.is_horse
+            continue
+        if owns_a_non_negative and non_negative_index != joker_index
+            joker::set_edition({negative: true}, true)
+        else
+            joker::set_edition({negative: false}, true)
+            owns_a_non_negative = true
+
+
 index = 0
 for    bonus_1_index, bonus_1 in ipairs(bonus_types)                                                   do
  for   bonus_2_index, bonus_2 in ipairs([_ for _ in *bonus_types[bonus_1_index,                    ]]) do
@@ -121,8 +168,9 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
             key: "hhj_horse_" .. key
             atlas: "atlas_horses"
             pos: atlas_horses_positions[key]
-            rarity: 1
+            rarity: "hhj_horse"  -- They're "stored" in the horse rarity for easier polling, and changed to common in set_ability. This is a workaround bc I don't want to implement something better
             cost: 1
+            discovered: true,
             config: {
                 is_horse: true
                 key: key
@@ -145,10 +193,18 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
                 return vars: {
                     G.GAME and G.GAME.probabilities.normal or 1
                 }
-                
-
-            discovered: true,
-            in_pool: (args) => true, { allow_duplicates: true }
+            set_ability: (card, initial, delay_sprites) =>
+                card.rarity = 1 
+                update_horse_negatives()
+            add_to_deck: (card, from_defuff) =>
+                if from_defuff
+                    return
+                update_horse_negatives()
+            remove_from_deck: (card, from_defuff) =>
+                if from_defuff
+                    return
+                update_horse_negatives()
+            -- in_pool: (args) => false
             calculate: (card, context) =>
                 horse = card.ability
                 if (
