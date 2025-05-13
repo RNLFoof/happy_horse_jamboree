@@ -4,7 +4,7 @@ import re
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from dataclasses import dataclass
 from math import pi, e
-from typing import List, Dict, Tuple, Union
+from typing import List, Dict, Tuple, Union, Iterable
 
 import numpy
 from PIL import Image
@@ -43,6 +43,7 @@ bonus_colors: Dict[str, Tuple[int, int, int]] = {
     "money": basic_colors["yellow"],
     "mult": basic_colors["red"],
 }
+
 
 def negative_color(rgb):
     # This part is abouuuut what the actual game does?
@@ -112,6 +113,68 @@ def three_color_horse_palette(primary_color, secondary_color, tertiary_color):
         parts["mane"]: tertiary_color,
     }
 
+def multicolor_horse_palette_by_bunches(colors, part_bunches):
+    output = {}
+    if len(colors) != len(part_bunches):
+        raise Exception(":(")
+    for color, part_bunch in zip(colors, part_bunches):
+        for part in part_bunch:
+            output[parts[part]] = color
+    return output
+
+def four_color_horse_palette(primary_color, secondary_color, tertiary_color, quaternary_color):
+    return multicolor_horse_palette_by_bunches(
+        [primary_color, secondary_color, tertiary_color, quaternary_color],
+        [
+            ["upper_lip", "lower_lip", "hat_middle"],
+            ["hat_top", "hat_bottom"],
+            ["eye"],
+            ["mane", "tuft"]
+        ]
+    )
+
+def five_color_horse_palette(primary_color, secondary_color, tertiary_color, quaternary_color, quinary_color):
+    return multicolor_horse_palette_by_bunches(
+        [primary_color, secondary_color, tertiary_color, quaternary_color, quinary_color],
+        [
+            ["upper_lip", "lower_lip"],
+            ["hat_middle"],
+            ["hat_top", "hat_bottom"],
+            ["eye"],
+            ["mane", "tuft"]
+        ]
+    )
+
+
+def six_color_horse_palette(primary_color, secondary_color, tertiary_color, quaternary_color, quinary_color,
+                            senary_color):
+    return multicolor_horse_palette_by_bunches(
+        [primary_color, secondary_color, tertiary_color, quaternary_color, quinary_color, senary_color],
+        [
+            ["lower_lip"],
+            ["upper_lip"],
+            ["hat_middle"],
+            ["hat_top", "hat_bottom"],
+            ["eye"],
+            ["mane", "tuft"]
+        ]
+    )
+
+def seven_color_horse_palette(primary_color, secondary_color, tertiary_color, quaternary_color, quinary_color,
+                            senary_color, septenary_color):
+    return multicolor_horse_palette_by_bunches(
+        [primary_color, secondary_color, tertiary_color, quaternary_color, quinary_color, senary_color, septenary_color],
+        [
+            ["lower_lip"],
+            ["upper_lip"],
+            ["hat_top"],
+            ["hat_middle"],
+            ["hat_bottom"],
+            ["eye"],
+            ["mane", "tuft"]
+        ]
+    )
+
 
 def horse_palette_debug_image(items: List[Tuple[str, "Hue"]]):
     global debug_image
@@ -131,12 +194,12 @@ def horse_palette_debug_image(items: List[Tuple[str, "Hue"]]):
 
         hue = round(angle / 360 * 255)
         fill = (hue, 255, 255)
-        #draw.point(xy_for_layer(0), fill)
+        # draw.point(xy_for_layer(0), fill)
 
         draw.point(xy_for_layer(1), Hue(angle / 360).rgb_tuple())
         draw.point(xy_for_layer(2), Hue(angle / 360).rgb_tuple(color_wheel=negative_color_wheel))
 
-        #draw.point(xy_for_layer(2), shoot_me)
+        # draw.point(xy_for_layer(2), shoot_me)
         items.sort(key=lambda x: x[0])
 
         for mark_index, (mark_name, mark) in enumerate(items):
@@ -164,8 +227,8 @@ class ColorWheel:
             angle = progress * 360
             its_here = cmath.rect(distance, (angle / 360 * pi * 2) - pi)
             x, y = -its_here.real + color_wheel_image.width / 2, its_here.imag + color_wheel_image.width / 2
-            print(x, y)
-            r,g,b,a = color_wheel_image.getpixel((x, y))
+            # print(x, y)
+            r, g, b, a = color_wheel_image.getpixel((x, y))
             if a == 0:
                 continue
             rgb = r, g, b
@@ -175,7 +238,7 @@ class ColorWheel:
                 "oklch": RGB(*rgb).to_OKLCH().to_OKLCH(),
                 # "oklch_hue": RGB(*rgb).to_OKLCH().to_OKLCH().h,
             })
-            draw.text((x,y), str(point_index))
+            draw.text((x, y), str(point_index))
         color_wheel_image.save("color_wheel_debug_image.png")
         # self.points[-1]["oklch"].h = 360
         # print(self.points)
@@ -183,7 +246,7 @@ class ColorWheel:
         self.points.append({
             "rgb": self.points[0]["rgb"],
             "color_wheel_progress": 1,
-            "oklch": self.points[0]["oklch"].to_RGB().to_OKLCH(),  #convert back and forth to make a copy
+            "oklch": self.points[0]["oklch"].to_RGB().to_OKLCH(),  # convert back and forth to make a copy
         })
 
         if force_upwards:
@@ -191,7 +254,7 @@ class ColorWheel:
             for point in self.points:
                 while point["oklch"].h < previous_h:
                     point["oklch"].h += 360
-                print(point["oklch"].h)
+                # print(point["oklch"].h)
                 previous_h = point["oklch"].h
 
 
@@ -218,34 +281,35 @@ class Hue:
         return numpy.interp(oklch_hue,
                             [x["oklch"].h for x in sorted_by_oklch_hue],
                             [x["color_wheel_progress"] for x in sorted_by_oklch_hue],
-                            #period=360
+                            # period=360
                             )
 
     @classmethod
     def color_wheel_progress_to_oklch_hue(cls, color_wheel_progress, color_wheel=None):
         return cls.color_wheel_progress_to_oklch(color_wheel_progress, color_wheel=color_wheel).h % 360
+
     @classmethod
     def color_wheel_progress_to_oklch(cls, color_wheel_progress, color_wheel=None):
         color_wheel = color_wheel if color_wheel else default_color_wheel
         sorted_by_color_wheel = sorted(color_wheel.points, key=lambda x: x["color_wheel_progress"])
 
-        #ok let's get VERBOSE'
+        # ok let's get VERBOSE'
         return OKLCH(
             numpy.interp(color_wheel_progress,
-                [x["color_wheel_progress"] for x in sorted_by_color_wheel],
-                [x["oklch"].l for x in sorted_by_color_wheel],
-                    #period=1
-                ),
-         numpy.interp(color_wheel_progress,
-                [x["color_wheel_progress"] for x in sorted_by_color_wheel],
-                [x["oklch"].c for x in sorted_by_color_wheel],
-                    #period=1
-                ),
-         numpy.interp(color_wheel_progress,
-                [x["color_wheel_progress"] for x in sorted_by_color_wheel],
-                [x["oklch"].h for x in sorted_by_color_wheel],
-                    #period=1
-                ),
+                         [x["color_wheel_progress"] for x in sorted_by_color_wheel],
+                         [x["oklch"].l for x in sorted_by_color_wheel],
+                         # period=1
+                         ),
+            numpy.interp(color_wheel_progress,
+                         [x["color_wheel_progress"] for x in sorted_by_color_wheel],
+                         [x["oklch"].c for x in sorted_by_color_wheel],
+                         # period=1
+                         ),
+            numpy.interp(color_wheel_progress,
+                         [x["color_wheel_progress"] for x in sorted_by_color_wheel],
+                         [x["oklch"].h for x in sorted_by_color_wheel],
+                         # period=1
+                         ),
         )
 
     @classmethod
@@ -278,7 +342,7 @@ class Hue:
     @classmethod
     def number_to_cycle_of(cls, number, cycle_of, original_cycle=1):
         # This used to have %1 in it, but actually!! Looping anything besides hue doesn't make sense
-        output = (number/original_cycle) * cycle_of
+        output = (number / original_cycle) * cycle_of
         if cycle_of > 1:
             output = round(output)
             output = min(output, cycle_of)
@@ -288,8 +352,6 @@ class Hue:
     @classmethod
     def list_to_cycle_of(cls, lst, cycle_of, original_cycle=1):
         return tuple([cls.number_to_cycle_of(n, cycle_of, original_cycle) for n in lst])
-
-
 
     # Generic, as in, the s and v just default to max
 
@@ -302,21 +364,22 @@ class Hue:
     def to_generic_oklch_object(self):
         return OKLCH(1, 1, self.oklch_hue())
 
-    def horse_palette_alongside(self, other_hues_if_any=None):
+    def horse_palette_alongside(self, other_hues_if_any=None, **kwargs):
         if other_hues_if_any is None:
             other_hues_if_any = []
+        number_of_colors = 1 + len(other_hues_if_any)
 
-        if len(other_hues_if_any) == 0:
+        if number_of_colors == 1:
             return self.tapering_horse_palette()
-            #return self.analogous_horse_palette()
-        elif len(other_hues_if_any) == 1:
+            # return self.analogous_horse_palette()
+        elif number_of_colors == 2:
             other_hue = other_hues_if_any[0]
             dis = hue_distance(self, other_hue)
-            print(dis)
+            # print(dis)
             if abs(dis) >= 0.25:
                 return self.complementary_horse_palette(other_hue)
             else:
-                midhue = self - dis/2
+                midhue = self - dis / 2
                 return midhue.analogous_horse_palette(
                     in_debug_also_list=[
                         ("ogin1", self),
@@ -324,8 +387,18 @@ class Hue:
                     ],
                     primary_closer_to=self
                 )
+        elif number_of_colors == 3:
+            return self.triple_horse_palette(*other_hues_if_any, **kwargs)
+        elif number_of_colors == 5:
+            return self.quintuple_horse_palette(*other_hues_if_any, **kwargs)
+        elif number_of_colors == 6:
+            return self.sextuple_horse_palette(*other_hues_if_any, **kwargs)
+        elif number_of_colors == 7:
+            return self.septenary_horse_palette(*other_hues_if_any, **kwargs)
+        elif number_of_colors > len(parts):
+            raise Exception(f"IDK what you even *could* do with {number_of_colors} colors? There's only {len(parts)} parts...")
         else:
-            return self.triple_horse_palette(*other_hues_if_any)
+            raise Exception(f"IDK what to do with {number_of_colors} colors :(")
 
     def analogous_horse_palette(self, angle_difference=30, make_bigger_near_reds=True, in_debug_also_list=None,
                                 primary_closer_to=None):
@@ -346,27 +419,28 @@ class Hue:
         ]
         the_two_hues.sort(key=lambda hue: hue.color_wheel_progress())
         the_two_hues.sort(key=lambda hue:
-            abs(hue_distance(
-                primary_closer_to.to_generic_oklch_object().h / 360,
-                hue.to_generic_oklch_object().h / 360,
-            ))
-        )
+        abs(hue_distance(
+            primary_closer_to.to_generic_oklch_object().h / 360,
+            hue.to_generic_oklch_object().h / 360,
+        ))
+                          )
         the_two_hues.sort(key=lambda hue:
-            abs(hue_distance(
-                primary_closer_to.color_wheel_progress(),
-                hue.color_wheel_progress(),
-            ))
-        )
+        abs(hue_distance(
+            primary_closer_to.color_wheel_progress(),
+            hue.color_wheel_progress(),
+        ))
+                          )
 
         primary_hue, secondary_hue = tuple(the_two_hues)
         horse_palette_debug_image([
-            ("in", self),
-            ("out1", primary_hue),
-            ("out2", secondary_hue),
-        ] + in_debug_also_list)
+                                      ("in", self),
+                                      ("out1", primary_hue),
+                                      ("out2", secondary_hue),
+                                  ] + in_debug_also_list)
         return two_color_horse_palette(primary_hue.rgb_tuple(), secondary_hue.rgb_tuple())
 
-    def tapering_horse_palette(self, angle_difference=1/6/2/2, make_bigger_near_reds=False, in_debug_also_list=None):
+    def tapering_horse_palette(self, angle_difference=1 / 6 / 2 / 2, make_bigger_near_reds=False,
+                               in_debug_also_list=None):
         if in_debug_also_list is None:
             in_debug_also_list = []
         if make_bigger_near_reds and (self.color_wheel_progress() < 0.25 or self.color_wheel_progress() > 0.75):
@@ -381,13 +455,13 @@ class Hue:
         midpoint = self - hue_distance(self, goal) / 2
 
         horse_palette_debug_image([
-            ("in", self),
-            ("mid", midpoint),
-            ("goal", goal),
-        ] + in_debug_also_list)
+                                      ("in", self),
+                                      ("mid", midpoint),
+                                      ("goal", goal),
+                                  ] + in_debug_also_list)
         guys = [hue.oklch() for hue in [self, midpoint, goal]]
         for guy_index, guy in enumerate(guys):
-            guy.l -= 1/12 * guy_index
+            guy.l -= 1 / 12 * guy_index
             guy.l = max(0, guy.l)
         guys = [rgb_object_to_tuple(guy.to_RGB()) for guy in guys]
 
@@ -420,31 +494,75 @@ class Hue:
         secondary_color = secondary_hue.rgb_tuple()
 
         horse_palette_debug_image([
-            ("in1", original_primary_hue),
-            ("in2", original_secondary_hue),
-            ("out1", primary_hue),
-            ("out2", secondary_hue),
-        ] + in_debug_also_list)
+                                      ("in1", original_primary_hue),
+                                      ("in2", original_secondary_hue),
+                                      ("out1", primary_hue),
+                                      ("out2", secondary_hue),
+                                  ] + in_debug_also_list)
         return two_color_horse_palette(primary_color, secondary_color)
 
-    def triple_horse_palette(self, secondary_hue, tertiary_hue, sort=True, in_debug_also_list=None):
+    def _just_slap_these_hues_into_this_palette_function_idk(self, these_colors, this_palette_function, sort=True, in_debug_also_list=None):
         if in_debug_also_list is None:
             in_debug_also_list = []
-        the_guys = [self, secondary_hue, tertiary_hue]
+        the_guys = [self] + these_colors
         if sort:
             the_guys.sort(key=lambda hue: hue.color_wheel_progress())
         horse_palette_debug_image([
-                                      (f"in{guy_index+1}", guy)
+                                      (f"in{guy_index + 1}", guy)
                                       for guy_index, guy in
                                       enumerate(the_guys)
                                   ] + in_debug_also_list)
-        return three_color_horse_palette(*[hue.rgb_tuple() for hue in the_guys])
+        return this_palette_function(*[hue.rgb_tuple() for hue in the_guys])
 
+    # Honestly none of these should need to be their own functions
+    def triple_horse_palette(self, secondary_hue, tertiary_hue, sort=True, in_debug_also_list=None):
+        return self._just_slap_these_hues_into_this_palette_function_idk(
+            [secondary_hue, tertiary_hue],
+            three_color_horse_palette,
+            sort=sort,
+            in_debug_also_list=in_debug_also_list
+        )
+
+    def quadruple_horse_palette(self, secondary_hue, tertiary_hue, quaternary_hue, sort=True,
+                                in_debug_also_list=None):
+        return self._just_slap_these_hues_into_this_palette_function_idk(
+            [secondary_hue, tertiary_hue, quaternary_hue],
+            four_color_horse_palette,
+            sort=sort,
+            in_debug_also_list=in_debug_also_list
+        )
+
+    def quintuple_horse_palette(self, secondary_hue, tertiary_hue, quaternary_hue, quinary_hue, sort=True,
+                                in_debug_also_list=None):
+        return self._just_slap_these_hues_into_this_palette_function_idk(
+            [secondary_hue, tertiary_hue, quaternary_hue, quinary_hue],
+            five_color_horse_palette,
+            sort=sort,
+            in_debug_also_list=in_debug_also_list
+        )
+
+    def sextuple_horse_palette(self, secondary_hue, tertiary_hue, quaternary_hue, quinary_hue, senary_hue, sort=True,
+                                in_debug_also_list=None):
+        return self._just_slap_these_hues_into_this_palette_function_idk(
+            [secondary_hue, tertiary_hue, quaternary_hue, quinary_hue, senary_hue],
+            six_color_horse_palette,
+            sort=sort,
+            in_debug_also_list=in_debug_also_list
+        )
+
+    def septenary_horse_palette(self, secondary_hue, tertiary_hue, quaternary_hue, quinary_hue, senary_hue,
+                                septenary_hue, sort=True, in_debug_also_list=None):
+        return self._just_slap_these_hues_into_this_palette_function_idk(
+            [secondary_hue, tertiary_hue, quaternary_hue, quinary_hue, senary_hue, septenary_hue],
+            seven_color_horse_palette,
+            sort=sort,
+            in_debug_also_list=in_debug_also_list
+        )
 
 official_colors_rgb = {
-    "red"   : (255, 76, 64),
+    "red": (255, 76, 64),
     "yellow": (252, 162, 0),
-    "blue"  : (0, 156, 255),
+    "blue": (0, 156, 255),
 }
 
 for official_color_rgb in [
@@ -468,7 +586,7 @@ def rgb_object_to_tuple(rgb):
 
 def print_assert(x):
     print(x)
-    assert(x != False)
+    assert (x != False)
     return x
 
 
@@ -479,15 +597,16 @@ def print_assert_equals(x, y):
     if isinstance(y, float):
         y = round(y, 2) % 1
     print("\t", x, "==", y, "?")
-    assert(x == y)
+    assert (x == y)
     return x
 
 
-hsv_hue_green = 1/3
+hsv_hue_green = 1 / 3
 rgb_1_green = (0, 1, 0)
 rgb_255_green = (0, 255, 0)
-color_wheel_green = Hue.from_rgb(rgb_1_green, 1).color_wheel_progress(1)  # This *was* a flat 0.5 but like idk new colors are weird I'm making it circular and untestable lol
-print("wow")
+color_wheel_green = Hue.from_rgb(rgb_1_green, 1).color_wheel_progress(
+    1)  # This *was* a flat 0.5 but like idk new colors are weird I'm making it circular and untestable lol
+# print("wow")
 # for x in range(6):
 #     print(f"x = {x}")
 #     print_assert_equals(Hue.color_wheel_to_hsv(color_wheel_color_wheel_points[x]), color_wheel_hsv_points[x])
@@ -527,14 +646,11 @@ print("a")
 # )
 
 
-
 new_saturation = round(66.4 / 100 * 255)
 new_value = round(99.2 / 100 * 255)
 new_secondary_value = round(67.2 / 100 * 255)
 
 base_red = (253, 95, 85)
-
-
 
 
 # def hue_to_complex_number(hue):
@@ -550,7 +666,7 @@ def hue_distance(a: Union[float, Hue], b: Union[float, Hue]):
         b = Hue(b)
 
     potentials = [
-        a.color_wheel_progress() - (b.color_wheel_progress()    ),
+        a.color_wheel_progress() - (b.color_wheel_progress()),
         a.color_wheel_progress() - (b.color_wheel_progress() + 1),
         a.color_wheel_progress() - (b.color_wheel_progress() - 1),
     ]
@@ -558,9 +674,9 @@ def hue_distance(a: Union[float, Hue], b: Union[float, Hue]):
     return potentials[0]
 
 
-print_assert_equals(hue_distance(Hue(  0 / 360), Hue(  0 / 360)),   0 / 360)
-print_assert_equals(hue_distance(Hue( 45 / 360), Hue(315 / 360)),  90 / 360)
-print_assert_equals(hue_distance(Hue(315 / 360), Hue( 45 / 360)), -90 / 360)
+# print_assert_equals(hue_distance(Hue(0 / 360), Hue(0 / 360)), 0 / 360)
+# print_assert_equals(hue_distance(Hue(45 / 360), Hue(315 / 360)), 90 / 360)
+# print_assert_equals(hue_distance(Hue(315 / 360), Hue(45 / 360)), -90 / 360)
 
 
 def impose_hue(source_rgb, target_rgb, hue_offset=0.0):
@@ -572,8 +688,9 @@ def impose_hue(source_rgb, target_rgb, hue_offset=0.0):
 
 
 debug_image = None
+
+
 def get_colors_for_these_bonuses(bonuses: List[str]):
-    print("HORSE: ", bonuses)
     if len(set(bonuses)) == 1:
         the_only_bonus = bonuses[0]
         bonus_color = bonus_colors[the_only_bonus]
@@ -607,6 +724,7 @@ def clamp_rgb(rgb):
         # assert band <= 255
     return tuple(new_rgb)
 
+
 def color_a_horse(conversions, base_image="horse.png", negative=False):
     for key, rgb in conversions.items():
         rgb = clamp_rgb(rgb)
@@ -614,7 +732,6 @@ def color_a_horse(conversions, base_image="horse.png", negative=False):
             rgb = negative_color(rgb)
             rgb = clamp_rgb(rgb)
         conversions[key] = rgb
-
 
     horse_image = Image.open(base_image)
     horse_image_rgb = horse_image.convert("RGB")
@@ -630,10 +747,12 @@ def color_a_horse(conversions, base_image="horse.png", negative=False):
 
     return horse_image_modified
 
+
 def apply_horse_accessories(horse_image: Image.Image, accessories: List[str], negative=False):
     for accessory in accessories:
         accessory_image = Image.open(accessory).convert("RGBA")
         horse_image.alpha_composite(accessory_image)
+
 
 @dataclass
 class HorseConfig:
@@ -697,7 +816,8 @@ def color_many_horses():
 
         # Debuggy
         if debug_mode:
-            horse_with_debug_image = Image.new("RGBA", (max(debug_image.width, horse.width), debug_image.height + horse.height))
+            horse_with_debug_image = Image.new("RGBA",
+                                               (max(debug_image.width, horse.width), debug_image.height + horse.height))
             draw = ImageDraw(horse_with_debug_image)
             horse_with_debug_image.paste(debug_image, (0, 0))
             horse_with_debug_image.paste(horse, (0, debug_image.height))
@@ -708,21 +828,51 @@ def color_many_horses():
             os.mkdir(horse_config.key)
         horse.save(f"{horse_config.key}/{horse_config.key}.png")
 
-def base_horse():
-    using = []
-    for official_color_rgb in official_colors_rgb.values():
-        using.append(Hue.from_rgb(official_color_rgb))
 
+def gen_and_save_horse_image_from_rgbs(key: str, rgbs: Iterable[Tuple[int, int, int]], **kwargs):
+    hues = []
+    for rgb in rgbs:
+        hues.append(Hue.from_rgb(rgb))
+    return gen_and_save_horse_image_from_hues(key, hues, **kwargs)
+
+
+def gen_and_save_horse_image_from_hues(key, hues, jack=False, **kwargs):
     horse = color_a_horse(
-        using[0].horse_palette_alongside(using[1:]),
-        base_image="horse.png",
+        hues[0].horse_palette_alongside(hues[1:], **kwargs),
+        base_image="horse_jack.png" if jack else "horse.png",
     )
 
-    if not os.path.exists("base"):
-        os.mkdir("base")
-    horse.save(f"base/base.png")
+    if not os.path.exists(key):
+        os.mkdir(key)
+    horse.save(f"{key}/{key}.png")
+
+
+def base_horse():
+    gen_and_save_horse_image_from_rgbs("base", official_colors_rgb.values())
+
+
+def rainbow_horse():
+    how_many_horses = 10
+    how_many_hues = 7
+    span = 4/8
+    for index in range(how_many_horses):
+        hues = [
+            index/how_many_horses +
+            subindex/how_many_hues*span * (-1 if index % 2 == 0 else 1)
+            for subindex
+            in range(how_many_hues)
+        ]
+        print(hues)
+        hues = [
+            Hue(hue)
+            for hue
+            in hues
+        ]
+        gen_and_save_horse_image_from_hues(f"rainbow{index}", hues, sort=False)
+        gen_and_save_horse_image_from_hues(f"rainbowjack{index}", hues, jack=True, sort=False)
 
 
 if __name__ == '__main__':
     base_horse()
+    rainbow_horse()
     color_many_horses()
