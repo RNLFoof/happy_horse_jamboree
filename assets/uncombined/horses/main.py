@@ -441,9 +441,15 @@ class Hue:
         return three_color_horse_palette(*[hue.rgb_tuple() for hue in the_guys])
 
 
+official_colors_rgb = {
+    "red"   : (255, 76, 64),
+    "yellow": (252, 162, 0),
+    "blue"  : (0, 156, 255),
+}
+
 for official_color_rgb in [
-    (252, 162, 0),  # Yellow
-    (0, 156, 255),  # Blue
+    official_colors_rgb["yellow"],
+    official_colors_rgb["blue"],
 ]:
     default_color_wheel.points.append({
         "rgb": official_color_rgb,
@@ -702,9 +708,21 @@ def color_many_horses():
             os.mkdir(horse_config.key)
         horse.save(f"{horse_config.key}/{horse_config.key}.png")
 
+def base_horse():
+    using = []
+    for official_color_rgb in official_colors_rgb.values():
+        using.append(Hue.from_rgb(official_color_rgb))
 
-# Press the green button in the gutter to run the script.
+    horse = color_a_horse(
+        using[0].horse_palette_alongside(using[1:]),
+        base_image="horse.png",
+    )
+
+    if not os.path.exists("base"):
+        os.mkdir("base")
+    horse.save(f"base/base.png")
+
+
 if __name__ == '__main__':
+    base_horse()
     color_many_horses()
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
