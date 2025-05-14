@@ -72,27 +72,6 @@ bonus_types = {
 neigh = ->
     play_sound('hhj_neigh', 0.9 + math.random()*0.2, 1)
 
-base_horse_joker = SMODS.Joker
-    key: "horse_base"
-    atlas: "atlas_horses"
-    pos: atlas_horses_positions["base"]
-    rarity: 1
-    cost: 1
-    update: (card, dt) =>
-        if not card.area
-            return
-        if card.area.config.collection
-            return
-        new_horse = SMODS.create_card
-            set: "Joker"
-            area: G.jokers
-            rarity: "hhj_horse"
-            key_append: "horse"
-        new_horse::add_to_deck()
-        card.area::emplace(new_horse)
-        new_horse::start_materialize()
-        card::remove()
-
 update_horse_negatives = ->
     -- print("um")
     -- for joker in *G.jokers.cards
@@ -120,11 +99,13 @@ update_horse_negatives = ->
 
 
 index = 0
+total_horse_count = 0
 for    bonus_1_index, bonus_1 in ipairs(bonus_types)                                                   do
  for   bonus_2_index, bonus_2 in ipairs([_ for _ in *bonus_types[bonus_1_index,                    ]]) do
   for  _,             bonus_3 in ipairs([_ for _ in *bonus_types[bonus_1_index + bonus_2_index - 1,]]) do 
     for _,             jack    in ipairs({false, true}                                                ) do 
         index += 1
+        total_horse_count = index
         bonuses_as_list = {bonus_1, bonus_2, bonus_3}
         bonuses_for_this_horse = {
             chips:  round(8 / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "chips"]) -- This *was* 8, 17, 25, and was going to become 10, 15, 25, but a plain 8*n was more consistent and close enough
@@ -255,6 +236,52 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
             --             text: {"desc"}
             --     }
 
+scale = "s:0.75"
+base_horse_joker = SMODS.Joker
+    key: "horse_base"
+    atlas: "atlas_horses"
+    pos: atlas_horses_positions["base"]
+    rarity: 1
+    cost: 1
+    loc_txt: {
+        name: "Horse",
+        text: {
+            "There are {C:attention}#{total_horse_count}{} distinct {C:attention}Horse Jokers{}"
+            "They activate either per {C:attention}Jack{} scored or each {C:blue}Hand{} played,"
+            "and have three of the following bonuses, with repetitions allowed:"
+            "{#{scale},C:chips}+8{#{scale}} chips"
+            "{#{scale},C:mult}+4{#{scale}} Mult"
+            "{#{scale},C:attention}1{#{scale},C:green} #1#/2{#{scale}} chance for {#{scale},C:money}$1{}"
+            "{#{scale},C:green}HORSE LUCK X1{#{scale}}"
+        }
+    },
+    
+    loc_vars: (info_queue, card) => 
+        info_queue[] = {
+            key: "horse_luck"
+            set: "Other"
+            vars: { G.GAME and G.GAME.probabilities.normal or 1 }
+        }
+        info_queue[] = G.P_TAGS.tag_hhj_horse_luck
+        
+        return vars: {
+            G.GAME and G.GAME.probabilities.normal or 1
+        }
+
+    update: (card, dt) =>
+        if not card.area
+            return
+        if card.area.config.collection
+            return
+        new_horse = SMODS.create_card
+            set: "Joker"
+            area: G.jokers
+            rarity: "hhj_horse"
+            key_append: "horse"
+        new_horse::add_to_deck()
+        card.area::emplace(new_horse)
+        new_horse::start_materialize()
+        card::remove()
 
 macro lua = (code) -> {
   :code

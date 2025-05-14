@@ -70,28 +70,7 @@ useful_things.round;local required_horse_name_count =
 
 
 local neigh;neigh = function()return 
-play_sound('hhj_neigh', 0.9 + math.random() * 0.2, 1)end;local base_horse_joker = 
-
-
-SMODS.Joker({ key = "horse_base", atlas = 
-"atlas_horses", pos = 
-atlas_horses_positions["base"], rarity = 
-1, cost = 
-1, update = function(self, card, dt)if not 
-
-card.area then
-return end;if 
-card.area.config.collection then
-return end;local new_horse = 
-
-SMODS.create_card({ set = "Joker", area = 
-G.jokers, rarity = 
-"hhj_horse", key_append = 
-"horse" })
-new_horse:add_to_deck()
-card.area:emplace(new_horse)
-new_horse:start_materialize()return 
-card:remove()end })local _anon_func_0 = function(owned, pairs, shop)local _tab_0 = 
+play_sound('hhj_neigh', 0.9 + math.random() * 0.2, 1)end;local _anon_func_0 = function(owned, pairs, shop)local _tab_0 = 
 
 
 
@@ -119,12 +98,14 @@ joker:set_edition({ negative = false }, true)
 owns_a_non_negative = true end;_continue_0 = true until true;if not _continue_0 then break end end end;local index = 
 
 
+0;local total_horse_count = 
 0;for bonus_1_index, bonus_1 in 
 ipairs(bonus_types) do for bonus_2_index, bonus_2 in 
 ipairs((function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = bonus_1_index, #bonus_types do local _ = bonus_types[_index_0]_accum_0[_len_0] = _;_len_0 = _len_0 + 1 end;return _accum_0 end)()) do for _, bonus_3 in 
 ipairs((function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = bonus_1_index + bonus_2_index - 1, #bonus_types do local _ = bonus_types[_index_0]_accum_0[_len_0] = _;_len_0 = _len_0 + 1 end;return _accum_0 end)()) do for _, jack in 
 ipairs({ false, true }) do
-index = index + 1;local bonuses_as_list = { 
+index = index + 1
+total_horse_count = index;local bonuses_as_list = { 
 bonus_1, bonus_2, bonus_3 }local bonuses_for_this_horse = { chips = 
 
 round(8 / 1 * # (function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "chips" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end)()), mult = 
@@ -247,7 +228,7 @@ money_earned }for key, value in
 
 pairs(output) do
 output[key] = value ~= 0 and value or nil end;return 
-output end end })end end end end
+output end end })end end end end;local scale = 
 
 
 
@@ -255,6 +236,52 @@ output end end })end end end end
 
 
 
+"s:0.75"local base_horse_joker = 
+
+SMODS.Joker({ key = "horse_base", atlas = 
+"atlas_horses", pos = 
+atlas_horses_positions["base"], rarity = 
+1, cost = 
+1, loc_txt = { name = 
+
+"Horse", text = { 
+
+"There are {C:attention}" .. tostring(total_horse_count) .. "{} distinct {C:attention}Horse Jokers{}", 
+"They activate either per {C:attention}Jack{} scored or each {C:blue}Hand{} played,", 
+"and have three of the following bonuses, with repetitions allowed:", 
+"{" .. tostring(scale) .. ",C:chips}+8{" .. tostring(scale) .. "} chips", 
+"{" .. tostring(scale) .. ",C:mult}+4{" .. tostring(scale) .. "} Mult", 
+"{" .. tostring(scale) .. ",C:attention}1{" .. tostring(scale) .. ",C:green} #1#/2{" .. tostring(scale) .. "} chance for {" .. tostring(scale) .. ",C:money}$1{}", 
+"{" .. tostring(scale) .. ",C:green}HORSE LUCK X1{" .. tostring(scale) .. "}" } }, loc_vars = function(self, info_queue, card)
+
+
+
+
+
+info_queue[#info_queue + 1] = { key = "horse_luck", set = 
+"Other", vars = { 
+G.GAME and G.GAME.probabilities.normal or 1 } }
+
+info_queue[#info_queue + 1] = G.P_TAGS.tag_hhj_horse_luck;return { vars = { 
+
+
+G.GAME and G.GAME.probabilities.normal or 1 } }end, update = function(self, card, dt)if not 
+
+
+
+card.area then
+return end;if 
+card.area.config.collection then
+return end;local new_horse = 
+
+SMODS.create_card({ set = "Joker", area = 
+G.jokers, rarity = 
+"hhj_horse", key_append = 
+"horse" })
+new_horse:add_to_deck()
+card.area:emplace(new_horse)
+new_horse:start_materialize()return 
+card:remove()end })
 
 
 
