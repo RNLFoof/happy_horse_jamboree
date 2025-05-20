@@ -1,5 +1,6 @@
 /scripts
 /.vs
+/.releases
 /assets/uncombined/horses/*/*
 !/assets/uncombined/horses/oklch*
 **/__pycache__
