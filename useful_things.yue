@@ -1,9 +1,20 @@
-export wrap_method = (class_, method_name, before = (-> nil), after = (-> nil)) ->
+import "yue_macros" as {
+    $
+}
+
+export wrap_method = (class_, method_name, before = (-> nil), after = ((original_outputs)=>original_outputs)) ->
+    if class_ == nil then error("CLASS IS NIL :(")
+    if class_[method_name] == nil then error("METHOD IS NIL :(")
     ref = class_[method_name]
     class_[method_name] = (...) ->
         before(...)
-        ref(...)
-        after(...)
+        original_outputs = {ref(...)}
+        args = {...}
+        return after(
+            args[1],  -- self, which is always first
+            original_outputs,  -- This feels like it should be last, but it has to go here because the original args could have ended in ..., which prevents one last arg here 
+            unpack [x for x in *args[2,]]
+        )
 
 export round = (num, numDecimalPlaces) ->
     mult = 10^(numDecimalPlaces or 0)
@@ -22,3 +33,88 @@ export normalize = (min, mid, max) ->
     delta = max-min
     adjusted_mid = mid - min
     return adjusted_mid / delta
+
+export field_replace_context = (object, field_name, value, do_this) ->
+    original_value = object[field_name]  -- Does this instead of dividing it back bc of floating point inaccuracy
+    object[field_name] = value
+    output = do_this()
+    object[field_name] = original_value
+    return output
+
+export field_operation_context = (object, field_name, operation, do_this) ->
+    field_replace_context(object, field_name, operation(object[field_name]), do_this)
+
+export field_addition_context = (object, field_name, the_guy_you_add_idk, do_this) ->
+    field_operation_context(object, field_name, ((x) -> x+the_guy_you_add_idk), do_this)
+
+export field_multiplication_context = (object, field_name, multiplier, do_this) ->
+    field_operation_context(object, field_name, ((x) -> x*multiplier), do_this)
+
+wrap_method(_G, "get_current_pool", nil, (original_outputs, args) =>
+    pool, pool_key = unpack original_outputs
+
+    unavalibilities = 0
+    its_unavaliable = () ->
+        unavalibilities += 1
+        "UNAVAILABLE"
+    if G.hhj_pool_filter
+        pool = $taut[==[
+            [
+                (
+                    item != "UNAVAILABLE"
+                    and G.hhj_pool_filter(G.P_CENTERS[item])
+                )
+                and item
+                or its_unavaliable()
+                for item
+                in *pool
+            ]
+        ]==]
+
+    -- Without accounting for this, the vanilla behavior just infinite loops and crashes
+    if unavalibilities >= #pool
+        if hhj_pool_fallback
+            return hhj_pool_fallback
+        error("The filter resulted in no valid centers, and a fallback wasn't provided :(")
+
+    return pool, pool_key
+)
+
+--- New kwargs:
+--- @field filter? fun(center: SMODS.Center): boolean Function called to determine if a center is allowed to be chosen or not
+--- @field fallback? string Center key to be used if every center is filtered out
+export create_card_filtered = (kwargs={}) ->
+    return field_replace_context(G, "hhj_pool_filter", kwargs.filter, ->
+        return field_replace_context(G, "hhj_pool_fallback", kwargs.fallback, ->
+            return SMODS.create_card(kwargs)
+        )
+    )
+
+    -- Pretty sure this function called with a filter that approvs everything would produce different RNG results than plain old SMODS.create_card
+    -- Which like
+    -- Kind of sucks but also doesn't matter at all (probably)
+
+    -- Works by putting everything from a pool that matches a given filter function (in kwargs.filter) into a new pool, which is then pulled from
+    -- kwargs.filter ??= (card) -> true
+    -- temp_pool = "hhj_temp_filtered_pool"
+    -- G.P_CENTER_POOLS[temp_pool] = {}
+
+    -- -- Because kwargs.set is going to be replaced for the final pull, everything that *would* be handled based on kwargs.set in create_card needs to be handled here
+    -- -- Also kwargs.set is _type in the Balatro source
+    -- if kwargs.soulable
+    --     error("kwargs.soulable isn't supported bc it's unnecessary at time of writing")
+    -- if kwargs.set == 'Base'
+    --     kwargs.key = 'c_base'
+    
+    -- -- Populate temp pool
+    -- pool, pool_key = get_current_pool(kwargs.set, kwargs.rarity, kwargs.legendary, kwargs.key_append)
+    -- for center_key in *pool
+    --     print(center_key)
+    --     if kwargs.filter(G.P_CENTERS[center_key])
+    --         G.P_CENTER_POOLS[temp_pool][] = center_key
+    -- print(G.P_CENTER_POOLS[temp_pool])
+    
+    -- kwargs.set = temp_pool
+    -- output = SMODS.create_card(kwargs)
+    -- -- G.P_CENTER_POOLS[temp_pool] = nil
+    -- return output

@@ -1,0 +1,11 @@
+--[[
+    It's an acronym:
+        The original name i came up with was too edgy for a game where the edgiest thing is 
+        Acknowledging drinking but it was a lot more clever than everything else im coming 
+        Up with so im just going to pretend that thats what 
+        This says
+    Also, it removes line breaks from the passed code. Makes it into one straight line. Makes it taut, if you will.
+    Added because Yue is a whitespace significant language and you can't use line breaks in list or table comprehensions :(
+    You *can* multiline comment out all the line breaks, which miiiight look nicer, since it keeps syntax highlighting? idk man
+]]
+export macro taut = (code) -> code::gsub("\n", " ")

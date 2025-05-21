@@ -53,21 +53,6 @@ add_to_drawhash(center)
 center:draw_boundingrect()if 
 center.shader_tab then return love.graphics.setShader()end end
 
-local field_replace_context;field_replace_context = function(object, field_name, value, do_this)local original_value = 
-object[field_name]
-object[field_name] = value
-do_this()
-object[field_name] = original_value end
-
-local field_operation_context;field_operation_context = function(object, field_name, operation, do_this)return 
-field_replace_context(object, field_name, operation(object[field_name]), do_this)end
-
-local field_addition_context;field_addition_context = function(object, field_name, the_guy_you_add_idk, do_this)return 
-field_operation_context(object, field_name, (function(x)return x + the_guy_you_add_idk end), do_this)end
-
-local field_multiplication_context;field_multiplication_context = function(object, field_name, multiplier, do_this)return 
-field_operation_context(object, field_name, (function(x)return x * multiplier end), do_this)end
-
 local score_to_chips;score_to_chips = function(score)return math.floor(score / 10)end;local pac_man = 
 
 
@@ -144,28 +129,28 @@ card.doesnt_save.nes.update_image()local center =
 card.children.center;local _obj_0 = 
 G;if _obj_0.debug_size_offset == nil then _obj_0.debug_size_offset = 99.0 end
 card.ARGS.send_to_shader.debug_size_offset = G.debug_size_offset
-center:draw_shader('hhj_pac_man_screen_summary', nil, card.ARGS.send_to_shader)
-card.doesnt_save.cover_sprite:draw_shader('dissolve', nil, nil, nil, center)if 
+center:draw_shader('hhj_pac_man_screen_summary', nil, card.ARGS.send_to_shader)return 
+card.doesnt_save.cover_sprite:draw_shader('dissolve', nil, nil, nil, center)end, update = function(self, card, dt)if 
 
 
-false then local screen_dims = { x = 
 
-10, y = 
-10, w = 
-51, h = 
-46 }local screen_size_multiplier_x = 
 
-256 / screen_dims.w;local screen_size_multiplier_y = 
-240 / screen_dims.h;local multiply_your_pixels_by_this_for_movement = 
-G.CARD_W / 71;return 
-field_multiplication_context(center.scale, "x", screen_size_multiplier_x, function()return 
-field_multiplication_context(center.scale, "y", screen_size_multiplier_y, function()return 
-field_addition_context(center.VT, "x", (screen_dims.x - 1) * multiply_your_pixels_by_this_for_movement, function()return 
-field_addition_context(center.VT, "y", (screen_dims.y) * multiply_your_pixels_by_this_for_movement, function()return 
-pretend_youre_a_center(center, function()
-love.graphics.setShader(G.SHADERS['dissolve'])
-love.graphics.draw(card.doesnt_save.nes.image, 0, 0)return 
-love.graphics.setShader()end)end)end)end)end)end end, update = function(self, card, dt)if 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

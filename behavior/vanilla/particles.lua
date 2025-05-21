@@ -3,16 +3,7 @@ local _module_0 = {  }local useful_things = assert(SMODS.load_file("useful_thing
 
 
 
-
-
-
-
-
-
-
-
-
-local init_after;init_after = function(self, X, Y, W, H, config)if config == nil then config = {  }end;local default_hhj_config = { update_initially_until = 
+local init_after;init_after = function(self, original_output, X, Y, W, H, config)if config == nil then config = {  }end;local default_hhj_config = { update_initially_until = 
 
 
 function()end, update_initially_until_out_of_starting_range = 
@@ -48,7 +39,7 @@ error("starting_range." .. tostring(min) .. "(" .. tostring(self.hhj_config.star
 
 useful_things.wrap_method(Particles, "init", nil, init_after)
 
-useful_things.wrap_method(Particles, "update", nil, function(self, dt)local _list_0 = 
+useful_things.wrap_method(Particles, "update", nil, function(self, original_output, dt)local _list_0 = 
 self.particles;for _index_0 = 1, #_list_0 do local particle = _list_0[_index_0]local _continue_0 = 
 false;repeat if particle.applied_initial_hhj_junk then
 _continue_0 = true;break end
@@ -101,7 +92,7 @@ particle.fixed_scale = self.hhj_config.fixed_scale else
 particle.fixed_scale = self.hhj_config.fixed_scale.min + (self.hhj_config.fixed_scale.max - self.hhj_config.fixed_scale.min) * math.random()end end;_continue_0 = true until true;if not _continue_0 then break end end end)
 
 
-useful_things.wrap_method(Particles, "move", nil, function(self, dt)if 
+useful_things.wrap_method(Particles, "move", nil, function(self, original_output, dt)if 
 self.timer_type ~= 'REAL' then dt = dt * G.SPEEDFACTOR end;local _list_0 = 
 
 self.particles;for _index_0 = 1, #_list_0 do local particle = _list_0[_index_0]if 

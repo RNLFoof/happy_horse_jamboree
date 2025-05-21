@@ -1,18 +1,9 @@
 useful_things = assert(SMODS.load_file("useful_things.lua"))()
+import "yue_macros" as {
+    $
+}
 
---[[
-    It's an acronym:
-        The original name i came up with was too edgy for a game where the edgiest thing is 
-        Acknowledging drinking but it was a lot more clever than everything else im coming 
-        Up with so im just going to pretend that thats what 
-        This says
-    Also, it removes line breaks from the passed code. Makes it into one straight line. Makes it taut, if you will.
-    Added because Yue is a whitespace significant language and you can't use line breaks in list or table comprehensions :(
-    You *can* multiline comment out all the line breaks, which miiiight look nicer, since it keeps syntax highlighting? idk man
-]]
-macro taut = (code) -> code::gsub("\n", " ")
-
-export init_after = (X, Y, W, H, config={}) =>
+export init_after = (original_output, X, Y, W, H, config={}) =>
     -- Config
     default_hhj_config = {
         update_initially_until: ->
@@ -48,7 +39,7 @@ export init_after = (X, Y, W, H, config={}) =>
 
 useful_things.wrap_method(Particles, "init", nil, init_after)
 
-useful_things.wrap_method(Particles, "update", nil, (dt) =>
+useful_things.wrap_method(Particles, "update", nil, (original_output, dt) =>
     for particle in *@particles
         if particle.applied_initial_hhj_junk
             continue
@@ -101,7 +92,7 @@ useful_things.wrap_method(Particles, "update", nil, (dt) =>
                 particle.fixed_scale = @hhj_config.fixed_scale.min + (@hhj_config.fixed_scale.max - @hhj_config.fixed_scale.min) * math.random()
 )
 
-useful_things.wrap_method(Particles, "move", nil, (dt) =>
+useful_things.wrap_method(Particles, "move", nil, (original_output, dt) =>
     if self.timer_type ~= 'REAL' then dt = dt*G.SPEEDFACTOR
 
     for particle in *@particles

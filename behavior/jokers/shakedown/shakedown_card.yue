@@ -1,7 +1,7 @@
 useful_things = assert(SMODS.load_file("useful_things.lua"))()
 adjust_add = (rot_amount) -> rot_amount * 2
 
-useful_things.wrap_method(Card, "juice_up", nil, (scale, rot_amount) =>
+useful_things.wrap_method(Card, "juice_up", nil, (original_output, scale, rot_amount) =>
     if G.SETTINGS.paused
         return
     

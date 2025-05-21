@@ -16,6 +16,7 @@ horse_names = {
     "Lucky"
     "Special Week"
     "Mr. Felony"
+    "Geronimo"
 
     "Hemmingway"
     "Whiskey"
@@ -32,7 +33,7 @@ horse_names = {
 
     "Sprinkletoes"
 
-    "Old ale"
+    "Old Ale"
     "Kettle Sour"
 
     "Clarence"
@@ -149,7 +150,7 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
             key: "hhj_horse_" .. key
             atlas: "atlas_horses"
             pos: atlas_horses_positions[key]
-            rarity: "hhj_horse"  -- They're "stored" in the horse rarity for easier polling, and changed to common in set_ability. This is a workaround bc I don't want to implement something better
+            rarity: 1
             cost: 1
             discovered: true,
             config: {
@@ -185,7 +186,7 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
                 if from_defuff
                     return
                 update_horse_negatives()
-            -- in_pool: (args) => false
+            in_pool: (args) => G.hhj_allow_horses
             calculate: (card, context) =>
                 horse = card.ability
                 if (
@@ -273,19 +274,24 @@ base_horse_joker = SMODS.Joker
             return
         if card.area.config.collection
             return
-        new_horse = SMODS.create_card
-            set: "Joker"
-            area: G.jokers
-            rarity: "hhj_horse"
-            key_append: "horse"
-        new_horse::add_to_deck()
-        card.area::emplace(new_horse)
-        new_horse::start_materialize()
+        
+        useful_things.field_replace_context(G, "hhj_allow_horses", true, ->
+            new_horse = useful_things.create_card_filtered({
+                set: "Joker"
+                area: G.jokers
+                rarity: 0
+                key_append: "horse"
+                filter: (center) -> center.config?.is_horse
+            })
+            new_horse::add_to_deck()
+            card.area::emplace(new_horse)
+            new_horse::start_materialize()
+        )
         card::remove()
 
 macro lua = (code) -> {
-  :code
-  type: "lua"
+    :code
+    type: "lua"
 }
 
 useful_things = assert(SMODS.load_file("useful_things.lua"))()

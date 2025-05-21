@@ -16,6 +16,7 @@ useful_things.round;local required_horse_name_count =
 "Lucky", 
 "Special Week", 
 "Mr. Felony", 
+"Geronimo", 
 
 "Hemmingway", 
 "Whiskey", 
@@ -32,7 +33,7 @@ useful_things.round;local required_horse_name_count =
 
 "Sprinkletoes", 
 
-"Old ale", 
+"Old Ale", 
 "Kettle Sour", 
 
 "Clarence", 
@@ -149,7 +150,7 @@ bonus_1 .. bonus_2 .. bonus_3 .. jackstr;local horse_joker =
 SMODS.Joker({ key = "hhj_horse_" .. key, atlas = 
 "atlas_horses", pos = 
 atlas_horses_positions[key], rarity = 
-"hhj_horse", cost = 
+1, cost = 
 1, discovered = 
 true, config = { is_horse = 
 
@@ -184,8 +185,8 @@ update_horse_negatives()end, remove_from_deck = function(self, card, from_defuff
 
 from_defuff then
 return end;return 
-update_horse_negatives()end, calculate = function(self, card, context)local horse = 
-
+update_horse_negatives()end, in_pool = function(self, args)return 
+G.hhj_allow_horses end, calculate = function(self, card, context)local horse = 
 
 card.ability;if (((
 horse.jack == false) and context.joker_main and context.cardarea == G.jokers) or ((horse.jack == true) and context.individual and context.cardarea == G.play and context.other_card:get_id() == 11)) then local money_earned = 
@@ -272,15 +273,20 @@ G.GAME and G.GAME.probabilities.normal or 1 } }end, update = function(self, card
 card.area then
 return end;if 
 card.area.config.collection then
-return end;local new_horse = 
+return end
 
-SMODS.create_card({ set = "Joker", area = 
+useful_things.field_replace_context(G, "hhj_allow_horses", true, function()local new_horse = 
+
+useful_things.create_card_filtered({ set = "Joker", area = 
 G.jokers, rarity = 
-"hhj_horse", key_append = 
-"horse" })
+0, key_append = 
+"horse", filter = function(center)local _obj_0 = 
+center.config;if _obj_0 ~= nil then return _obj_0.is_horse end;return nil end })
+
 new_horse:add_to_deck()
-card.area:emplace(new_horse)
-new_horse:start_materialize()return 
+card.area:emplace(new_horse)return 
+new_horse:start_materialize()end)return 
+
 card:remove()end })
 
 

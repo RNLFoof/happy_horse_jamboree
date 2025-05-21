@@ -1,7 +1,7 @@
 local useful_things = assert(SMODS.load_file("useful_things.lua"))()
 local adjust_add;adjust_add = function(rot_amount)return rot_amount * 2 end;return 
 
-useful_things.wrap_method(Card, "juice_up", nil, function(self, scale, rot_amount)if 
+useful_things.wrap_method(Card, "juice_up", nil, function(self, original_output, scale, rot_amount)if 
 G.SETTINGS.paused then
 return end;local _list_0 = 
 
