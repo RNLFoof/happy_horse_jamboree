@@ -282,6 +282,7 @@ base_horse_joker = SMODS.Joker
                 rarity: 0
                 key_append: "horse"
                 filter: (center) -> center.config?.is_horse
+                fallback: "j_joker"
             })
             new_horse::add_to_deck()
             card.area::emplace(new_horse)

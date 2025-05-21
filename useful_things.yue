@@ -2,19 +2,30 @@ import "yue_macros" as {
     $
 }
 
-export wrap_method = (class_, method_name, before = (-> nil), after = ((original_outputs)=>original_outputs)) ->
+-- Be careful with this, if you don't call the original mnethod manually, it won't be called at all
+export wrap_method_with_manual_calling = (class_, method_name, do_this) ->
     if class_ == nil then error("CLASS IS NIL :(")
     if class_[method_name] == nil then error("METHOD IS NIL :(")
-    ref = class_[method_name]
+    function_wrapped_at = debug.getinfo(2)  -- This is so that it appears in the debug info. hard to track down otherwise
+    original_method = class_[method_name]
     class_[method_name] = (...) ->
-        before(...)
-        original_outputs = {ref(...)}
+        will_it_let_me_do_this = "Wrap defined at #{function_wrapped_at.source}:#{function_wrapped_at.linedefined}."
         args = {...}
+        do_this(original_method, args)
+
+
+export wrap_method = (class_, method_name, before = (-> nil), after = ((original_outputs)=>original_outputs)) ->
+    function_wrapped_at = debug.getinfo(2)  -- This is so that it appears in the debug info. hard to track down otherwise
+    wrap_method_with_manual_calling(class_, method_name, (original_method, args) ->
+        will_it_let_me_do_this = "Wrap defined at #{function_wrapped_at.source}:#{function_wrapped_at.linedefined}."
+        before(unpack args)
+        original_outputs = {original_method(unpack args)}
         return after(
             args[1],  -- self, which is always first
             original_outputs,  -- This feels like it should be last, but it has to go here because the original args could have ended in ..., which prevents one last arg here 
             unpack [x for x in *args[2,]]
         )
+    )
 
 export round = (num, numDecimalPlaces) ->
     mult = 10^(numDecimalPlaces or 0)
@@ -50,44 +61,59 @@ export field_addition_context = (object, field_name, the_guy_you_add_idk, do_thi
 export field_multiplication_context = (object, field_name, multiplier, do_this) ->
     field_operation_context(object, field_name, ((x) -> x*multiplier), do_this)
 
-wrap_method(_G, "get_current_pool", nil, (original_outputs, args) =>
-    pool, pool_key = unpack original_outputs
+export pool_filter_context = (filter, fallback, do_this) ->
+    return field_replace_context(G, "hhj_pool_filter", filter, ->
+        return field_replace_context(G, "hhj_pool_fallback", fallback, ->
+            return do_this()
+        )
+    )
 
+export filtered_pool = (pool, filter=nil, fallback=nil) ->
+    original_pool = pool
+    if not filter
+        return original_pool
     unavalibilities = 0
     its_unavaliable = () ->
         unavalibilities += 1
         "UNAVAILABLE"
-    if G.hhj_pool_filter
-        pool = $taut[==[
-            [
-                (
-                    item != "UNAVAILABLE"
-                    and G.hhj_pool_filter(G.P_CENTERS[item])
-                )
-                and item
-                or its_unavaliable()
-                for item
-                in *pool
-            ]
-        ]==]
+    
+    new_pool = $taut[==[
+        [
+            (
+                item != "UNAVAILABLE"
+                and filter(G.P_CENTERS[item])
+            )
+            and item
+            or its_unavaliable()
+            for item
+            in *original_pool
+        ]
+    ]==]
 
     -- Without accounting for this, the vanilla behavior just infinite loops and crashes
-    if unavalibilities >= #pool
-        if hhj_pool_fallback
-            return hhj_pool_fallback
-        error("The filter resulted in no valid centers, and a fallback wasn't provided :(")
+    if unavalibilities >= #new_pool
+        if fallback == "UNFILTERED"
+            return original_pool
+        else if fallback
+            return {fallback}
+        else
+            filter_info = debug.getinfo(filter)
+            error("The filter(defined at #{filter_info.source}) resulted in no valid centers, and a fallback wasn't provided :(")
+    
+    return new_pool
 
+wrap_method(_G, "get_current_pool", nil, (original_outputs, args) =>
+    pool, pool_key = unpack original_outputs
+    pool = filtered_pool(pool, G.hhj_pool_filter, G.hhj_pool_fallback)
     return pool, pool_key
 )
 
 --- New kwargs:
 --- @field filter? fun(center: SMODS.Center): boolean Function called to determine if a center is allowed to be chosen or not
---- @field fallback? string Center key to be used if every center is filtered out
+--- @field fallback? string Center key to be used if every center is filtered out, set to "UNFILTERED" to make the fallback ignoring the filter entirely
 export create_card_filtered = (kwargs={}) ->
-    return field_replace_context(G, "hhj_pool_filter", kwargs.filter, ->
-        return field_replace_context(G, "hhj_pool_fallback", kwargs.fallback, ->
-            return SMODS.create_card(kwargs)
-        )
+    return pool_filter_context(kwargs.filter, kwargs.fallback, ->
+        return SMODS.create_card(kwargs)
     )
 
     -- Pretty sure this function called with a filter that approvs everything would produce different RNG results than plain old SMODS.create_card

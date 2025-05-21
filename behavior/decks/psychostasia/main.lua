@@ -1,6 +1,3 @@
-assert(SMODS.load_file('atlases.lua'))()
-assert(atlas_decks)
-
 mig_psychostasia_atlas = atlas_decks
 
 mig_psychostasia = SMODS.Back{

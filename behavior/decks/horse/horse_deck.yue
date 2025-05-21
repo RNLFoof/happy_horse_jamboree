@@ -1,0 +1,49 @@
+useful_things = assert(SMODS.load_file("useful_things.lua"))()
+
+extra_appearance_rate = 15/16
+
+SMODS.Back
+    name: "Horse Deck"
+    key: "horse"
+    atlas: "atlas_horses"
+    pos: atlas_horses_positions["base"]
+    loc_txt: {
+        name: "Horse Deck"
+        text: {
+            "Cards from"
+            "{C:white,B:1,E:1}Happy Horse Jamboree{}"
+            "appear significantly more often"
+            "{s:0.5,C:inactive}I mostly just wanted a faster way"
+            "{s:0.5,C:inactive}to see how this stuff feels to play with"
+        }
+    }
+    loc_vars: (info_queue, card) => {
+        vars: {
+            colours: {
+                SMODS.Gradients.hhj_happy_horse_jamboree
+            }
+        }
+    }
+    apply: (back)=>
+        G.E_MANAGER::add_event(Event({
+            func: ()->
+                G.GAME.starting_params.hhj_extra_appearance_rate = extra_appearance_rate
+                return true
+        }))
+
+useful_things.wrap_method(_G, "get_current_pool", nil, (original_outputs) =>
+    pool, pool_key = unpack original_outputs
+
+    if (
+        G.GAME?.starting_params?.hhj_extra_appearance_rate and
+        pseudorandom(pseudoseed("horse_deck")) <= G.GAME.starting_params.hhj_extra_appearance_rate
+    )
+        pool = useful_things.filtered_pool(pool, ((center)->
+            print(center.mod?.id == "happy_horse_jamboree")
+            center.mod?.id == "happy_horse_jamboree"
+        ), "UNFILTERED")
+        print(pool)
+    
+    return pool, pool_key
+)
+

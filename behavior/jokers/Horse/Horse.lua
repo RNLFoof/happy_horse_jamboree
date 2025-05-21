@@ -281,7 +281,8 @@ useful_things.create_card_filtered({ set = "Joker", area =
 G.jokers, rarity = 
 0, key_append = 
 "horse", filter = function(center)local _obj_0 = 
-center.config;if _obj_0 ~= nil then return _obj_0.is_horse end;return nil end })
+center.config;if _obj_0 ~= nil then return _obj_0.is_horse end;return nil end, fallback = 
+"j_joker" })
 
 new_horse:add_to_deck()
 card.area:emplace(new_horse)return 

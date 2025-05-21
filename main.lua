@@ -1,10 +1,6 @@
 assert(SMODS.load_file("libs\\string_util.lua"))()
+assert(SMODS.load_file("atlases.lua"))()
 package.path = 'Mods\\balatro-unknown-mod\\libs\\LuaNES\\?.lua;' .. package.path
-
-
-
-
-
 
 
 SMODS.Atlas({ key = "modicon", path = 
