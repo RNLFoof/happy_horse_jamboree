@@ -61,7 +61,11 @@ useful_things.round;local required_horse_name_count =
 "Currant", 
 "Clementine", 
 "Nectarine", 
-"Dewberry" }local bonus_types = { 
+"Dewberry" }local set_horse_names = { [
+
+
+"lucluckmult"] = "Strawberry", [
+"luckluckluck"] = "Lucky" }local bonus_types = { 
 
 
 "chips", 
@@ -273,7 +277,7 @@ G.GAME and G.GAME.probabilities.normal or 1 } }end, update = function(self, card
 card.area then
 return end;if 
 card.area.config.collection then
-return end
+return end;return 
 
 useful_things.field_replace_context(G, "hhj_allow_horses", true, function()local new_horse = 
 
@@ -282,13 +286,10 @@ G.jokers, rarity =
 0, key_append = 
 "horse", filter = function(center)local _obj_0 = 
 center.config;if _obj_0 ~= nil then return _obj_0.is_horse end;return nil end, fallback = 
-"j_joker" })
+"j_joker" })return 
 
-new_horse:add_to_deck()
-card.area:emplace(new_horse)return 
-new_horse:start_materialize()end)return 
+card:set_ability(new_horse.center, true)end)end })
 
-card:remove()end })
 
 
 

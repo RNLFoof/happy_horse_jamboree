@@ -63,6 +63,10 @@ horse_names = {
     "Nectarine"
     "Dewberry"
 }
+set_horse_names = {
+    "lucluckmult": "Strawberry"
+    "luckluckluck": "Lucky"
+}
 bonus_types = {
     "chips"
     "luck"
@@ -284,11 +288,8 @@ base_horse_joker = SMODS.Joker
                 filter: (center) -> center.config?.is_horse
                 fallback: "j_joker"
             })
-            new_horse::add_to_deck()
-            card.area::emplace(new_horse)
-            new_horse::start_materialize()
+            card::set_ability(new_horse.center, true)
         )
-        card::remove()
 
 macro lua = (code) -> {
     :code
