@@ -1,5 +1,9 @@
 {
     "files.readonlyInclude": {
         "*lua": true
-    }
+    },
+    "Lua.diagnostics.globals": [
+        "SMODS",
+        "G"
+    ]
 }
