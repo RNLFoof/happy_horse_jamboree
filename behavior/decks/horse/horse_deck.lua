@@ -39,9 +39,7 @@ G.GAME;if _obj_0 ~= nil then local _obj_1 = _obj_0.starting_params;if _obj_1 ~= 
 
 
 
-center.mod;if _obj_0 ~= nil then return _obj_0.id end;return nil end;local _anon_func_2 = function(center)local _obj_0 = 
-center.mod;if _obj_0 ~= nil then return _obj_0.id end;return nil end;return useful_things.wrap_method(_G, "get_current_pool", nil, function(self, original_outputs)local pool,pool_key = unpack(original_outputs)if (_anon_func_0(G) and pseudorandom(pseudoseed("horse_deck")) <= G.GAME.starting_params.hhj_extra_appearance_rate) then pool = useful_things.filtered_pool(pool, (function(center)print(_anon_func_1(center) == "happy_horse_jamboree")return _anon_func_2(center) == "happy_horse_jamboree"end), "UNFILTERED")
+center.mod;if _obj_0 ~= nil then return _obj_0.id end;return nil end;return useful_things.wrap_method(_G, "get_current_pool", nil, function(self, original_outputs)local pool,pool_key = unpack(original_outputs)if (_anon_func_0(G) and pseudorandom(pseudoseed("horse_deck")) <= G.GAME.starting_params.hhj_extra_appearance_rate) then pool = useful_things.filtered_pool(pool, (function(center)return _anon_func_1(center) == "happy_horse_jamboree"end), "UNFILTERED")end;return 
 
-print(pool)end;return 
 
 pool, pool_key end)

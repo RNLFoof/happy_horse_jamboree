@@ -89,10 +89,6 @@ play_sound('hhj_neigh', 0.9 + math.random() * 0.2, 1)end;local _anon_func_0 = fu
 
 
 
-
-
-
-
 {  }local _idx_0 = 1;for _key_0, _value_0 in pairs(owned) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;local _idx_1 = 1;for _key_0, _value_0 in pairs(shop) do if _idx_1 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_1 = _idx_1 + 1 else _tab_0[_key_0] = _value_0 end end;return _tab_0 end;local update_horse_negatives;update_horse_negatives = function()local owned = G.jokers and G.jokers.cards or {  }local shop = G.shop and G.shop_jokers.cards or {  }local owns_a_non_negative = false;local non_negative_index = nil;for joker_index, owned_joker in ipairs(owned) do if owned_joker.ability.is_horse and ((not owned_joker.edition) or (not (owned_joker.edition == "e_negative" or owned_joker.edition.negative))) then owns_a_non_negative = true;non_negative_index = joker_index;break end end;for joker_index, joker in ipairs(_anon_func_0(owned, pairs, shop)) do local _continue_0 = 
 false;repeat if not joker.ability.is_horse then
 _continue_0 = true;break end;if 
@@ -144,8 +140,7 @@ local horse_name;if
 index <= #horse_names then
 horse_name = horse_names[index]else
 
-horse_name = "Unnamed Horse (" .. tostring(index) .. ")"end
-print("Added horse", index, bonus_types)local jackstr = 
+horse_name = "Unnamed Horse (" .. tostring(index) .. ")"end;local jackstr = 
 
 jack and "jack" or ""local key = 
 bonus_1 .. bonus_2 .. bonus_3 .. jackstr;local horse_joker = 
@@ -235,12 +230,6 @@ pairs(output) do
 output[key] = value ~= 0 and value or nil end;return 
 output end end })end end end end;local scale = 
 
-
-
-
-
-
-
 "s:0.75"local base_horse_joker = 
 
 SMODS.Joker({ key = "horse_base", atlas = 
@@ -279,16 +268,9 @@ return end;if
 card.area.config.collection then
 return end;return 
 
-useful_things.field_replace_context(G, "hhj_allow_horses", true, function()local new_horse = 
-
-useful_things.create_card_filtered({ set = "Joker", area = 
-G.jokers, rarity = 
-0, key_append = 
-"horse", filter = function(center)local _obj_0 = 
-center.config;if _obj_0 ~= nil then return _obj_0.is_horse end;return nil end, fallback = 
-"j_joker" })return 
-
-card:set_ability(new_horse.center, true)end)end })
+useful_things.field_replace_context(G, "hhj_allow_horses", true, function()local new_horse_center = 
+useful_things.pseudorandom_center(get_current_pool("Joker", 1, false, "horse"), "horse")return 
+card:set_ability(new_horse_center)end)end })
 
 
 
@@ -314,28 +296,17 @@ Card.set_edition;local _anon_func_2 = function(self)local _obj_0 =
 
 
 
-
-
 self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;local wrapper;wrapper = function(self, edition, immediate, silent)ref(self, edition, immediate, silent)if _anon_func_2(self) ~= nil then local horse_joker = 
 self.config.center;local the_sprite_is_in_here = 
 self.children.center
-
-
-
 local change_pos_to;if (
 edition ~= nil and (edition == "e_negative" or edition.negative)) then
 change_pos_to = atlas_horses_positions[horse_joker.config.key .. "neg"]else
 
-
 change_pos_to = atlas_horses_positions[horse_joker.config.key]end
-
-
-
-
 change_pos_to = atlas_horses_positions[horse_joker.config.key .. "neg"]if 
 horse_joker.pos ~= change_pos_to then
 horse_joker.pos = change_pos_to;return 
-
 the_sprite_is_in_here:set_sprite_pos(horse_joker.pos)end end end;do function 
 
 

@@ -32,4 +32,12 @@ testing.assert_eq(useful_things.normalize(0, 0.5, 1), 0.5)
 testing.assert_eq(useful_things.normalize(0, 2, 4), 0.5)
 testing.assert_eq(useful_things.normalize(1, 3, 5), 0.5)
 testing.assert_eq(useful_things.normalize(1, 1, 5), 0)return 
-testing.assert_eq(useful_things.normalize(1, 5, 5), 1)end }) })
+testing.assert_eq(useful_things.normalize(1, 5, 5), 1)end }), 
+
+
+
+testing.Test("judgement_after_filtering", (function()local _tab_0 = {  }local _obj_1 = testing.create_state_steps()local _idx_0 = 1;for _key_0, _value_0 in pairs(_obj_1) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end
+_tab_0[#_tab_0 + 1] = function()local judgement = 
+SMODS.create_card({ set = "Tarot", key = "c_judgement" })
+judgement:use_consumeable(judgement.area)return 
+true end;return _tab_0 end)()) })

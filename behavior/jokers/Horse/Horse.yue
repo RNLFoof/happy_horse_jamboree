@@ -78,10 +78,6 @@ neigh = ->
     play_sound('hhj_neigh', 0.9 + math.random()*0.2, 1)
 
 update_horse_negatives = ->
-    -- print("um")
-    -- for joker in *G.jokers.cards
-    --     print(joker)
-    --     joker::set_edition({negative: true}, true)
     owned = G.jokers and G.jokers.cards or {}
     shop = G.shop and G.shop_jokers.cards or {}
 
@@ -145,7 +141,6 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
             horse_name = horse_names[index]
         else
             horse_name = "Unnamed Horse (#{index})"
-        print("Added horse", index, bonus_types)
 
         jackstr = jack and "jack" or ""
         key = bonus_1 .. bonus_2 .. bonus_3 .. jackstr
@@ -234,12 +229,6 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
                     for key, value in pairs(output)
                         output[key] = value != 0 and value or nil
                     return output
-            -- loc_vars: (info_queue, card) => 
-            --     print(card)
-            --     info_queue[] = {
-            --             name: "Horse?"
-            --             text: {"desc"}
-            --     }
 
 scale = "s:0.75"
 base_horse_joker = SMODS.Joker
@@ -280,15 +269,8 @@ base_horse_joker = SMODS.Joker
             return
         
         useful_things.field_replace_context(G, "hhj_allow_horses", true, ->
-            new_horse = useful_things.create_card_filtered({
-                set: "Joker"
-                area: G.jokers
-                rarity: 0
-                key_append: "horse"
-                filter: (center) -> center.config?.is_horse
-                fallback: "j_joker"
-            })
-            card::set_ability(new_horse.center, true)
+            new_horse_center = useful_things.pseudorandom_center(get_current_pool("Joker", 1, false, "horse"), "horse")
+            card::set_ability(new_horse_center)
         )
 
 macro lua = (code) -> {
@@ -314,28 +296,17 @@ ref = Card.set_edition
 wrapper = (self, edition, immediate, silent) -> 
     ref(self, edition, immediate, silent)
 
-    -- print(self.config.center)
-    -- print(self.config.center?.config)
     if self.config.center?.config?.is_horse != nil then
         horse_joker = self.config.center
         the_sprite_is_in_here = self.children.center
-        -- print(the_sprite_is_in_here)
-        -- print(edition)
-        -- print(edition == "e_negative")
         local change_pos_to
         if (edition != nil and (edition == "e_negative" or edition.negative)) then
             change_pos_to = atlas_horses_positions[horse_joker.config.key .. "neg"]
-            -- print() -- horse_joker.pos = atlas_horses_positions[horse_joker.config.key]
         else
             change_pos_to = atlas_horses_positions[horse_joker.config.key]
-        -- print(atlas_horses_positions)
-        -- print(horse_joker.config.key)
-        -- print(change_pos_to)
-        -- print(atlas_horses_positions[horse_joker.config.key])
         change_pos_to = atlas_horses_positions[horse_joker.config.key .. "neg"]
         if horse_joker.pos != change_pos_to then
             horse_joker.pos = change_pos_to
-            -- print(the_sprite_is_in_here.sprite_pos)
             the_sprite_is_in_here\set_sprite_pos(horse_joker.pos)
             
 

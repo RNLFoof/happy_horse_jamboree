@@ -39,10 +39,8 @@ useful_things.wrap_method(_G, "get_current_pool", nil, (original_outputs) =>
         pseudorandom(pseudoseed("horse_deck")) <= G.GAME.starting_params.hhj_extra_appearance_rate
     )
         pool = useful_things.filtered_pool(pool, ((center)->
-            print(center.mod?.id == "happy_horse_jamboree")
             center.mod?.id == "happy_horse_jamboree"
         ), "UNFILTERED")
-        print(pool)
     
     return pool, pool_key
 )

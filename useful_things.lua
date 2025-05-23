@@ -7,11 +7,13 @@ local wrap_method_with_manual_calling;wrap_method_with_manual_calling = function
 class_ == nil then error("CLASS IS NIL :(")end;if 
 class_[method_name] == nil then error("METHOD IS NIL :(")end;local function_wrapped_at = 
 debug.getinfo(2)local original_method = 
-class_[method_name]
+class_[method_name]local so_that_it_keeps_the_original_name = 
+{  }
+so_that_it_keeps_the_original_name[method_name] = do_this
 class_[method_name] = function(...)local will_it_let_me_do_this = 
 "Wrap defined at " .. tostring(function_wrapped_at.source) .. ":" .. tostring(function_wrapped_at.linedefined) .. "."local args = { 
 ... }return 
-do_this(original_method, args)end end;_module_0["wrap_method_with_manual_calling"] = wrap_method_with_manual_calling;local _anon_func_0 = function(args)local _accum_0 = 
+so_that_it_keeps_the_original_name[method_name](original_method, args)end end;_module_0["wrap_method_with_manual_calling"] = wrap_method_with_manual_calling;local _anon_func_0 = function(args)local _accum_0 = 
 
 
 
@@ -143,4 +145,15 @@ SMODS.create_card(kwargs)end)end
 
 
 
-_module_0["create_card_filtered"] = create_card_filtered;return _module_0;
+_module_0["create_card_filtered"] = create_card_filtered
+
+local pseudorandom_center_key;pseudorandom_center_key = function(pool, pool_key)if pool_key == nil then pool_key = ""end;local center = 
+
+pseudorandom_element(pool, pseudoseed(pool_key))local it = 
+1;while 
+center == 'UNAVAILABLE' do
+it = it + 1
+center = pseudorandom_element(pool, pseudoseed(pool_key .. '_resample' .. it))end;return 
+center end;_module_0["pseudorandom_center_key"] = pseudorandom_center_key
+
+local pseudorandom_center;pseudorandom_center = function(pool, pool_key)if pool_key == nil then pool_key = ""end;return G.P_CENTERS[pseudorandom_center_key(pool, pool_key)]end;_module_0["pseudorandom_center"] = pseudorandom_center;return _module_0;

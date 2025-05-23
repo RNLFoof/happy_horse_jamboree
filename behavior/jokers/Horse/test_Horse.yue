@@ -1,4 +1,5 @@
 testing = assert(SMODS.load_file("libs\\steamodded_test\\main.lua"))()
+useful_things = assert(SMODS.load_file("useful_things.lua"))()
 
 G.steamodded_tests.tests[] = testing.TestBundle("horses", {
 
@@ -55,6 +56,32 @@ G.steamodded_tests.tests[] = testing.TestBundle("horses", {
             "j_oops",
         }}),
         -> testing.assert_dollars(4+(3*6))
+    }),
+
+    testing.Test("judgement_test_for_the_next_test", {
+        ...testing.create_state_steps(),
+        -> 
+            useful_things.pool_filter_context(((center) -> center.key=="j_hhj_horse_base"), nil, ->
+                G.P_JOKER_RARITY_POOLS[1] = {G.P_CENTERS["j_joker"]}
+                G.P_JOKER_RARITY_POOLS[2] = {G.P_CENTERS["j_joker"]}
+                G.P_JOKER_RARITY_POOLS[3] = {G.P_CENTERS["j_joker"]}
+                judgement = SMODS.create_card({set: "Tarot", key: "c_judgement"})
+                judgement::use_consumeable(judgement.area)
+            )
+        -> false
+    }),
+
+    testing.Test("judgement_spawning_base_horse", {
+        ...testing.create_state_steps(),
+        -> 
+            useful_things.pool_filter_context(((center) -> center.key=="j_hhj_horse_base"), nil, ->
+                G.P_JOKER_RARITY_POOLS[1] = {G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"]}
+                G.P_JOKER_RARITY_POOLS[2] = {G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"]}
+                G.P_JOKER_RARITY_POOLS[3] = {G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"]}
+                judgement = SMODS.create_card({set: "Tarot", key: "c_judgement"})
+                judgement::use_consumeable(judgement.area)
+            )
+        -> false
     }),
 
 })
