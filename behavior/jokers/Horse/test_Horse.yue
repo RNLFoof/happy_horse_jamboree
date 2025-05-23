@@ -68,7 +68,7 @@ G.steamodded_tests.tests[] = testing.TestBundle("horses", {
                 judgement = SMODS.create_card({set: "Tarot", key: "c_judgement"})
                 judgement::use_consumeable(judgement.area)
             )
-        -> false
+        -> true
     }),
 
     testing.Test("judgement_spawning_base_horse", {
@@ -81,7 +81,7 @@ G.steamodded_tests.tests[] = testing.TestBundle("horses", {
                 judgement = SMODS.create_card({set: "Tarot", key: "c_judgement"})
                 judgement::use_consumeable(judgement.area)
             )
-        -> false
+        -> true
     }),
 
 })

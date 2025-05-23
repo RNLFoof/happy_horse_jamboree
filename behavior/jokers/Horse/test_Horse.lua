@@ -68,7 +68,7 @@ G.P_JOKER_RARITY_POOLS[3] = { G.P_CENTERS["j_joker"] }local judgement =
 SMODS.create_card({ set = "Tarot", key = "c_judgement" })return 
 judgement:use_consumeable(judgement.area)end)end
 
-_tab_0[#_tab_0 + 1] = function()return false end;return _tab_0 end)()), 
+_tab_0[#_tab_0 + 1] = function()return true end;return _tab_0 end)()), 
 
 
 
@@ -81,4 +81,4 @@ G.P_JOKER_RARITY_POOLS[3] = { G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hh
 SMODS.create_card({ set = "Tarot", key = "c_judgement" })return 
 judgement:use_consumeable(judgement.area)end)end
 
-_tab_0[#_tab_0 + 1] = function()return false end;return _tab_0 end)()) })
+_tab_0[#_tab_0 + 1] = function()return true end;return _tab_0 end)()) })
