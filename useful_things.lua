@@ -7,13 +7,11 @@ local wrap_method_with_manual_calling;wrap_method_with_manual_calling = function
 class_ == nil then error("CLASS IS NIL :(")end;if 
 class_[method_name] == nil then error("METHOD IS NIL :(")end;local function_wrapped_at = 
 debug.getinfo(2)local original_method = 
-class_[method_name]local so_that_it_keeps_the_original_name = 
-{  }
-so_that_it_keeps_the_original_name[method_name] = do_this
+class_[method_name]
 class_[method_name] = function(...)local will_it_let_me_do_this = 
 "Wrap defined at " .. tostring(function_wrapped_at.source) .. ":" .. tostring(function_wrapped_at.linedefined) .. "."local args = { 
 ... }return 
-so_that_it_keeps_the_original_name[method_name](original_method, args)end end;_module_0["wrap_method_with_manual_calling"] = wrap_method_with_manual_calling;local _anon_func_0 = function(args)local _accum_0 = 
+do_this(original_method, args)end end;_module_0["wrap_method_with_manual_calling"] = wrap_method_with_manual_calling;local _anon_func_0 = function(args)local _accum_0 = 
 
 
 
@@ -50,9 +48,22 @@ adjusted_mid / delta end;_module_0["normalize"] = normalize
 local field_replace_context;field_replace_context = function(object, field_name, value, do_this)local original_value = 
 object[field_name]
 object[field_name] = value;local output = 
-do_this()
-object[field_name] = original_value;return 
+nil;local result,error_message = 
+pcall(function()output = do_this()end)
+object[field_name] = original_value;if not 
+result then
+error(error_message)end;return 
 output end;_module_0["field_replace_context"] = field_replace_context
+
+local multi_field_replace_context;multi_field_replace_context = function(list_of_object_field_values, do_this)local object,field_name,value = 
+unpack(list_of_object_field_values[1])
+local remaining_object_field_values;do local _accum_0 = {  }local _len_0 = 1;for _index_0 = 2, #list_of_object_field_values do local x = list_of_object_field_values[_index_0]_accum_0[_len_0] = x;_len_0 = _len_0 + 1 end;remaining_object_field_values = _accum_0 end;return 
+field_replace_context(object, field_name, value, function()if #
+remaining_object_field_values == 0 then return 
+do_this()else return 
+
+multi_field_replace_context(remaining_object_field_values, do_this)end end)end
+_module_0["multi_field_replace_context"] = multi_field_replace_context
 
 local field_operation_context;field_operation_context = function(object, field_name, operation, do_this)return 
 field_replace_context(object, field_name, operation(object[field_name]), do_this)end;_module_0["field_operation_context"] = field_operation_context

@@ -35,6 +35,52 @@ G.steamodded_tests.tests[] = testing.TestBundle("useful_things", {
             testing.assert_eq(useful_things.normalize(1, 5,   5), 1  )
     }),
 
+    testing.Test("field_replace_context", {
+        ->
+            object = {"a"}
+            testing.assert_eq(object[1], "a")
+            useful_things.field_replace_context(object, 1, "b", ->
+                testing.assert_eq(object[1], "b")
+            )
+            testing.assert_eq(object[1], "a")
+    })
+
+    testing.Test("field_replace_context_with_error", {
+        ->
+            object = {"a"}
+            testing.assert_eq(object[1], "a")
+            original_error_message = ":)"
+            response, error_message = pcall(() ->
+                useful_things.field_replace_context(object, 1, "b", ->
+                    testing.assert_eq(object[1], "b")
+                    error(original_error_message)
+                )
+            )
+            testing.assert_eq(response, false)
+            assert(error_message::endswith(original_error_message))
+            testing.assert_eq(object[1], "a")
+    })
+
+    testing.Test("multi_field_replace_context", {
+        ->
+            object = {"a", "b", "c"}
+            testing.assert_eq(object[1], "a")
+            testing.assert_eq(object[2], "b")
+            testing.assert_eq(object[3], "c")
+            useful_things.multi_field_replace_context({
+                {object, 1, "d"},
+                {object, 2, "e"},
+                {object, 3, "f"},
+            }, ->
+                testing.assert_eq(object[1], "d")
+                testing.assert_eq(object[2], "e")
+                testing.assert_eq(object[3], "f")
+            )
+            testing.assert_eq(object[1], "a")
+            testing.assert_eq(object[2], "b")
+            testing.assert_eq(object[3], "c")
+    })
+
     testing.Test("judgement_after_filtering", {
         ...testing.create_state_steps(),
         -> 

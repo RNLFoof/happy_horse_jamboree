@@ -48,9 +48,22 @@ export normalize = (min, mid, max) ->
 export field_replace_context = (object, field_name, value, do_this) ->
     original_value = object[field_name]  -- Does this instead of dividing it back bc of floating point inaccuracy
     object[field_name] = value
-    output = do_this()
+    output = nil
+    result, error_message = pcall(()-> output = do_this()) -- Done in a pcall so that even if the entire thing is wrapped in a pcall it'll still reset the value at the end
     object[field_name] = original_value
+    if not result
+        error(error_message)
     return output
+
+export multi_field_replace_context = (list_of_object_field_values, do_this) ->
+    object, field_name, value = unpack list_of_object_field_values[1]
+    remaining_object_field_values = [x for x in *list_of_object_field_values[2,]]
+    field_replace_context(object, field_name, value, ->
+        if #remaining_object_field_values == 0
+            do_this()
+        else
+            multi_field_replace_context(remaining_object_field_values, do_this)
+    )
 
 export field_operation_context = (object, field_name, operation, do_this) ->
     field_replace_context(object, field_name, operation(object[field_name]), do_this)
