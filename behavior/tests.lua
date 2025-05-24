@@ -66,19 +66,22 @@ testing.Test("multi_field_replace_context", { function()local object = {
 "a", "b", "c" }
 testing.assert_eq(object[1], "a")
 testing.assert_eq(object[2], "b")
-testing.assert_eq(object[3], "c")
+testing.assert_eq(object[3], "c")local got_in = 
+false
 
 useful_things.multi_field_replace_context({ { object, 1, "d" }, { 
 object, 2, "e" }, { 
 object, 3, "f" } }, function()
 
+got_in = true
 testing.assert_eq(object[1], "d")
 testing.assert_eq(object[2], "e")return 
 testing.assert_eq(object[3], "f")end)
 
 testing.assert_eq(object[1], "a")
-testing.assert_eq(object[2], "b")return 
-testing.assert_eq(object[3], "c")end }), 
+testing.assert_eq(object[2], "b")
+testing.assert_eq(object[3], "c")return 
+assert(got_in)end }), 
 
 
 

@@ -45,36 +45,61 @@ max - min;local adjusted_mid =
 mid - min;return 
 adjusted_mid / delta end;_module_0["normalize"] = normalize
 
-local field_replace_context;field_replace_context = function(object, field_name, value, do_this)local original_value = 
+local field_replace_context_halves;field_replace_context_halves = function(object, field_name, value)local original_value = 
 object[field_name]
-object[field_name] = value;local output = 
+local start_context;start_context = function()object[field_name] = value end
+local end_context;end_context = function()object[field_name] = original_value end;return 
+start_context, end_context end
+
+local field_replace_context_manual_end;field_replace_context_manual_end = function(object, field_name, value)local start_context,end_context = 
+field_replace_context_halves(object, field_name, value)
+start_context()return 
+end_context end;_module_0["field_replace_context_manual_end"] = field_replace_context_manual_end
+
+local multi_field_replace_context_manual_end;multi_field_replace_context_manual_end = function(list_of_object_field_values)
+local endings;do local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #list_of_object_field_values do local object_field_value = list_of_object_field_values[_index_0]_accum_0[_len_0] = field_replace_context_manual_end(unpack(object_field_value))_len_0 = _len_0 + 1 end;endings = _accum_0 end;return function()local _accum_0 = 
+{  }local _len_0 = 1;for _index_0 = 1, #endings do local ending = endings[_index_0]_accum_0[_len_0] = ending()_len_0 = _len_0 + 1 end;return _accum_0 end end;_module_0["multi_field_replace_context_manual_end"] = multi_field_replace_context_manual_end
+
+local safely_do_this_and_end;safely_do_this_and_end = function(do_this, end_context)local output = 
 nil;local result,error_message = 
 pcall(function()output = do_this()end)
-object[field_name] = original_value;if not 
+end_context()if not 
 result then
 error(error_message)end;return 
-output end;_module_0["field_replace_context"] = field_replace_context
+output end
 
-local multi_field_replace_context;multi_field_replace_context = function(list_of_object_field_values, do_this)local object,field_name,value = 
-unpack(list_of_object_field_values[1])
-local remaining_object_field_values;do local _accum_0 = {  }local _len_0 = 1;for _index_0 = 2, #list_of_object_field_values do local x = list_of_object_field_values[_index_0]_accum_0[_len_0] = x;_len_0 = _len_0 + 1 end;remaining_object_field_values = _accum_0 end;return 
-field_replace_context(object, field_name, value, function()if #
-remaining_object_field_values == 0 then return 
-do_this()else return 
+local field_replace_context;field_replace_context = function(object, field_name, value, do_this)if do_this == nil then do_this = function()end end;local end_context = 
+field_replace_context_manual_end(object, field_name, value)return 
+safely_do_this_and_end(do_this, end_context)end;_module_0["field_replace_context"] = field_replace_context
 
-multi_field_replace_context(remaining_object_field_values, do_this)end end)end
+local multi_field_replace_context;multi_field_replace_context = function(list_of_object_field_values, do_this)if do_this == nil then do_this = function()end end;local end_context = 
+multi_field_replace_context_manual_end(list_of_object_field_values)return 
+safely_do_this_and_end(do_this, end_context)end
+
+
+
+
+
+
+
 _module_0["multi_field_replace_context"] = multi_field_replace_context
 
-local field_operation_context;field_operation_context = function(object, field_name, operation, do_this)return 
+local field_operation_context;field_operation_context = function(object, field_name, operation, do_this)if do_this == nil then do_this = function()end end;return 
 field_replace_context(object, field_name, operation(object[field_name]), do_this)end;_module_0["field_operation_context"] = field_operation_context
 
-local field_addition_context;field_addition_context = function(object, field_name, the_guy_you_add_idk, do_this)return 
+local field_addition_context;field_addition_context = function(object, field_name, the_guy_you_add_idk, do_this)if do_this == nil then do_this = function()end end;return 
 field_operation_context(object, field_name, (function(x)return x + the_guy_you_add_idk end), do_this)end;_module_0["field_addition_context"] = field_addition_context
 
-local field_multiplication_context;field_multiplication_context = function(object, field_name, multiplier, do_this)return 
+local field_multiplication_context;field_multiplication_context = function(object, field_name, multiplier, do_this)if do_this == nil then do_this = function()end end;return 
 field_operation_context(object, field_name, (function(x)return x * multiplier end), do_this)end;_module_0["field_multiplication_context"] = field_multiplication_context
 
-local pool_filter_context;pool_filter_context = function(filter, fallback, do_this)return 
+local pool_filter_context_manual_end;pool_filter_context_manual_end = function(filter, fallback, do_this)if do_this == nil then do_this = function()end end;return 
+
+multi_field_replace_context_manual_end({ { G, "hhj_pool_filter", filter }, { 
+G, "hhj_pool_fallback", fallback } }, 
+do_this)end;_module_0["pool_filter_context_manual_end"] = pool_filter_context_manual_end
+
+local pool_filter_context;pool_filter_context = function(filter, fallback, do_this)if do_this == nil then do_this = function()end end;return 
 field_replace_context(G, "hhj_pool_filter", filter, function()return 
 field_replace_context(G, "hhj_pool_fallback", fallback, function()return 
 do_this()end)end)end
