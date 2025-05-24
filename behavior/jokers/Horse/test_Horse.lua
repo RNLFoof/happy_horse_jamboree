@@ -1,5 +1,7 @@
 local testing = assert(SMODS.load_file("libs\\steamodded_test\\main.lua"))()local useful_things = 
-assert(SMODS.load_file("useful_things.lua"))()local _obj_0 = 
+assert(SMODS.load_file("useful_things.lua"))()local outside_influence = 
+
+{  }local _obj_0 = 
 
 G.steamodded_tests.tests
 
@@ -60,25 +62,35 @@ testing.assert_dollars(4 + (3 * 6))end }),
 
 
 testing.Test("judgement_test_for_the_next_test", (function()local _tab_0 = {  }local _obj_1 = testing.create_state_steps()local _idx_0 = 1;for _key_0, _value_0 in pairs(_obj_1) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end
-_tab_0[#_tab_0 + 1] = function()return 
-useful_things.pool_filter_context((function(center)return center.key == "j_hhj_horse_base"end), nil, function()
-G.P_JOKER_RARITY_POOLS[1] = { G.P_CENTERS["j_joker"] }
-G.P_JOKER_RARITY_POOLS[2] = { G.P_CENTERS["j_joker"] }
-G.P_JOKER_RARITY_POOLS[3] = { G.P_CENTERS["j_joker"] }local judgement = 
-SMODS.create_card({ set = "Tarot", key = "c_judgement" })return 
-judgement:use_consumeable(judgement.area)end)end
+_tab_0[#_tab_0 + 1] = function()
 
-_tab_0[#_tab_0 + 1] = function()return true end;return _tab_0 end)()), 
+outside_influence["end"] = useful_things.multi_field_replace_context_manual_end({ { G.P_JOKER_RARITY_POOLS, 1, { G.P_CENTERS["j_joker"] } }, { 
+G.P_JOKER_RARITY_POOLS, 2, { G.P_CENTERS["j_joker"] } }, { 
+G.P_JOKER_RARITY_POOLS, 3, { G.P_CENTERS["j_joker"] } } })end
+
+_tab_0[#_tab_0 + 1] = function()local judgement = 
+SMODS.add_card({ set = "Tarot", key = "c_judgement" })
+judgement:use_consumeable(judgement.area)return 
+print(G.P_JOKER_RARITY_POOLS[1])end
+_tab_0[#_tab_0 + 1] = function()return 
+outside_influence["end"]()end
+_tab_0[#_tab_0 + 1] = function()return 
+testing.assert_eq(G.jokers.cards[1].config.center.key, "j_joker")end;return _tab_0 end)()), 
 
 
 
 testing.Test("judgement_spawning_base_horse", (function()local _tab_0 = {  }local _obj_1 = testing.create_state_steps()local _idx_0 = 1;for _key_0, _value_0 in pairs(_obj_1) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end
-_tab_0[#_tab_0 + 1] = function()return 
-useful_things.pool_filter_context((function(center)return center.key == "j_hhj_horse_base"end), nil, function()
-G.P_JOKER_RARITY_POOLS[1] = { G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"] }
-G.P_JOKER_RARITY_POOLS[2] = { G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"] }
-G.P_JOKER_RARITY_POOLS[3] = { G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"] }local judgement = 
-SMODS.create_card({ set = "Tarot", key = "c_judgement" })return 
-judgement:use_consumeable(judgement.area)end)end
+_tab_0[#_tab_0 + 1] = function()
 
-_tab_0[#_tab_0 + 1] = function()return true end;return _tab_0 end)()) })
+outside_influence["end"] = useful_things.multi_field_replace_context_manual_end({ { G.P_JOKER_RARITY_POOLS, 1, { G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"] } }, { 
+G.P_JOKER_RARITY_POOLS, 2, { G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"] } }, { 
+G.P_JOKER_RARITY_POOLS, 3, { G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"] } } })end
+
+_tab_0[#_tab_0 + 1] = function()local judgement = 
+SMODS.add_card({ set = "Tarot", key = "c_judgement" })
+judgement:use_consumeable(judgement.area)return 
+print(G.P_JOKER_RARITY_POOLS[1])end
+_tab_0[#_tab_0 + 1] = function()return 
+outside_influence["end"]()end
+_tab_0[#_tab_0 + 1] = function()return 
+testing.assert_eq(G.jokers.cards[1].config.center.key, "j_hhj_horse_chipschipschips")end;return _tab_0 end)()) })
