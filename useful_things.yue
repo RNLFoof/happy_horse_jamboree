@@ -94,10 +94,12 @@ export field_multiplication_context = (object, field_name, multiplier, do_this =
     field_operation_context(object, field_name, ((x) -> x*multiplier), do_this)
 
 export pool_filter_context_manual_end = (filter, fallback, do_this = ->) ->
-    return multi_field_replace_context_manual_end({
-        {G, "hhj_pool_filter", filter},
-        {G, "hhj_pool_fallback", fallback},
-    }, do_this)
+    return safely_do_this_and_end(
+        multi_field_replace_context_manual_end({
+            {G, "hhj_pool_filter", filter},
+            {G, "hhj_pool_fallback", fallback},
+        }),
+    do_this)
 
 export pool_filter_context = (filter, fallback, do_this = ->) ->
     return field_replace_context(G, "hhj_pool_filter", filter, ->

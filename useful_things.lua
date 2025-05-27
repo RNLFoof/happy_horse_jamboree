@@ -95,8 +95,10 @@ field_operation_context(object, field_name, (function(x)return x * multiplier en
 
 local pool_filter_context_manual_end;pool_filter_context_manual_end = function(filter, fallback, do_this)if do_this == nil then do_this = function()end end;return 
 
-multi_field_replace_context_manual_end({ { G, "hhj_pool_filter", filter }, { 
-G, "hhj_pool_fallback", fallback } }, 
+
+safely_do_this_and_end(multi_field_replace_context_manual_end({ { G, "hhj_pool_filter", filter }, { 
+G, "hhj_pool_fallback", fallback } }), 
+
 do_this)end;_module_0["pool_filter_context_manual_end"] = pool_filter_context_manual_end
 
 local pool_filter_context;pool_filter_context = function(filter, fallback, do_this)if do_this == nil then do_this = function()end end;return 
