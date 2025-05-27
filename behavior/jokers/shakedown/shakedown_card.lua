@@ -32,8 +32,7 @@ draw_layer, align =
 
 
 G.UIT.ROOT, config = { major = 
-self, align = 
-"cm", draw_layer = 
+self, draw_layer = 
 draw_layer, align = 
 'cm', minw = (args.cover and args.cover.T.w or 0.001) + (args.cover_padding or 0), minh = (args.cover and args.cover.T.h or 0.001) + (args.cover_padding or 0), padding = 0.03, r = 0.1, emboss = args.emboss, colour = G.C.CLEAR }, nodes = {  } } })local scale_variance = 
 
@@ -48,8 +47,7 @@ self.childParts2 = Particles(G.CARD_W / 2, G.CARD_H / 2, 0, 0, { timer_type = 'T
 math.max(add * 10, 1), max = 
 0, align = 
 "cm", lifespan = 
-5, attach = 
-self, colours = { 
+5, colours = { 
 G.C.CHIPS }, fill = 
 true, attach = 
 attach_to, draw_layer = 

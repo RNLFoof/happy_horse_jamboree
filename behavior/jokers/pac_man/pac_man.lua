@@ -45,7 +45,7 @@ center.sprite_pos.x ~= center.sprite_pos_copy.x or center.sprite_pos.y ~= center
 center:set_sprite_pos(center.sprite_pos)end
 prep_draw(center, 1)
 love.graphics.scale(1 / (center.scale.x / center.VT.w), 1 / (center.scale.y / center.VT.h))
-love.graphics.setColor(overlay or G.BRUTE_OVERLAY or G.C.WHITE)
+love.graphics.setColor(G.BRUTE_OVERLAY or G.C.WHITE)
 and_do_this()
 
 love.graphics.pop()

@@ -338,7 +338,7 @@ function CardArea:align_cards()
         -- It's a little scuffed, but it assumes that, if the card is roughly straight up (within an 8th of a rotation), then it needs to be sideways instead
         -- This means the rest of the code can do whatever to it and it'll be accounted for
         -- at the cost of this obviously being jank as hell 
-        if big_guy(card) and (math.modf(math.abs(card.T.r), math.pi * 2) < math.pi/4 ) then
+        if big_guy(card) and ((math.abs(card.T.r) % math.pi * 2) < math.pi/4 ) then
             card.T.r = card.T.r + math.pi / 2
             card.VT.r = card.T.r
         end
