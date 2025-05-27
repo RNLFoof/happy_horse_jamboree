@@ -1,11 +1,11 @@
-mig_psychostasia_atlas = atlas_decks
+hhj_psychostasia_atlas = atlas_decks
 
-mig_psychostasia = SMODS.Back{
+hhj_psychostasia = SMODS.Back{
     name = "Psychostasia Deck",
-    key = "mig_psychostasia",
+    key = "hhj_psychostasia",
     atlas = "atlas_decks",
     pos = atlas_decks_positions["Psychostasia Deck"],
-    config = {mig_psychostasia = true, joker_slot = 5},
+    config = {hhj_psychostasia = true, joker_slot = 5},
     loc_txt = {
         name = "Psychostasia Deck",
         text ={
@@ -24,7 +24,7 @@ mig_psychostasia = SMODS.Back{
     apply = function()
         G.E_MANAGER:add_event(Event({
             func = function()
-                G.GAME.starting_params.mig_psychostasia = true
+                G.GAME.starting_params.hhj_psychostasia = true
                 return true
             end
         }))
@@ -38,7 +38,7 @@ mig_psychostasia = SMODS.Back{
 }
 
 function psychostasia_enabled()
-    return G.GAME.starting_params.mig_psychostasia
+    return G.GAME.starting_params.hhj_psychostasia
 end
 
 function overburdened()
@@ -78,7 +78,7 @@ function alert_too_heavy(card, area)
 
 local ref = G.FUNCS.check_for_buy_space
 G.FUNCS.check_for_buy_space = function(card)
-    if G.GAME.starting_params.mig_psychostasia and card.ability.set == 'Joker' and #G.jokers.cards + card.config.center.rarity > G.jokers.config.card_limit then 
+    if G.GAME.starting_params.hhj_psychostasia and card.ability.set == 'Joker' and #G.jokers.cards + card.config.center.rarity > G.jokers.config.card_limit then 
         alert_too_heavy(card, G.jokers)
         return false
     end
@@ -92,7 +92,7 @@ function Card:init(X, Y, W, H, card, center, params)
     -- This seems to trigger before the deck is known when loading. Doing it as an event makes it trigger afterwards.
     G.E_MANAGER:add_event(Event({
         func = function()
-            if G.GAME.starting_params.mig_psychostasia then
+            if G.GAME.starting_params.hhj_psychostasia then
                 if self.ability and self.ability.set == 'Joker' then
                     new_scale = self.config.center.rarity * 0.5
                     if not big_guy(self) then
@@ -114,7 +114,7 @@ end
 
 local ref = Card.add_to_deck
 function Card:add_to_deck() 
-    if G.GAME.starting_params.mig_psychostasia then
+    if G.GAME.starting_params.hhj_psychostasia then
         if not self.added_to_deck then
             if self.ability and self.ability.set == 'Joker' then
                 if not G.OVERLAY_MENU then
@@ -154,9 +154,9 @@ function CardArea:draw()
     local notch_emboss=0.1
     local notch_inactive_emboss_ratio=0.5
     local notch_r = 0.05
-    local danger_color = G.C.MIG_OVERBURDENED
+    local danger_color = G.C.HHJ_OVERBURDENED
 
-    if      G.GAME.starting_params.mig_psychostasia
+    if      G.GAME.starting_params.hhj_psychostasia
         and self.children
         and self.children.area_uibox
         and self.children.area_uibox.definition.nodes 
@@ -253,7 +253,7 @@ function CardArea:draw()
                 }}}
             self.children.area_uibox = UIBox{definition=self.children.area_uibox.definition, config=self.children.area_uibox.config}
         end
-        -- it_goes_in_here.mig_psychostasia_bar:draw()
+        -- it_goes_in_here.hhj_psychostasia_bar:draw()
     end
     ref(self)
 end
@@ -287,7 +287,7 @@ function CardArea:align_cards()
     if not psychostasia_enabled() then
         return
     end
-    assert(G.GAME.starting_params.mig_psychostasia)
+    assert(G.GAME.starting_params.hhj_psychostasia)
     
     -- Aligns jokers while taking their size into account. Based on the actual joker alignment code
     -- Checks for rarity because the consumable area is also type joker 
@@ -327,11 +327,11 @@ function CardArea:align_cards()
         table.sort(self.cards, function (a, b) return a.T.x + a.T.w/2 < b.T.x + b.T.w/2 end)
         positions = ""
         for _,card in ipairs(self.cards) do positions = positions .. (card.ability and card.ability.name or 'idk') end
-        if positions ~= self.mig_previousJokerPositions then
+        if positions ~= self.hhj_previousJokerPositions then
             print(positions)
             force_notch_bar_update(G.jokers)
         end
-        self.mig_previousJokerPositions = positions
+        self.hhj_previousJokerPositions = positions
     end
     
     -- Make the big guys turn sideways
@@ -366,7 +366,7 @@ function Card:calculate_joker(context)
                             text = "Overburdened!",
                             scale = 0.6,
                             hold = 0.65 - 0.2,
-                            backdrop_colour = G.C.MIG_OVERBURDENED,
+                            backdrop_colour = G.C.HHJ_OVERBURDENED,
                             align = "bm",
                             major = self,
                             offset = {x = 0, y = 0.05*self.T.h}
@@ -388,11 +388,11 @@ end
 local ref = Game.update
 function Game:update(dt)
     ref(self, dt)
-    if not G.C.MIG_OVERBURDENED then
-        self.C.MIG_OVERBURDENED = {1,1,1,1}
+    if not G.C.HHJ_OVERBURDENED then
+        self.C.HHJ_OVERBURDENED = {1,1,1,1}
     end
         dif = 1/8
-        G.C.MIG_OVERBURDENED[1] = (1-dif)+dif*(1+math.sin(self.TIMERS.REAL*3))
-        G.C.MIG_OVERBURDENED[2] = (1-3*dif)+dif*(1+math.sin(self.TIMERS.REAL*4.5))
-        G.C.MIG_OVERBURDENED[3] = (1-5*dif)
+        G.C.HHJ_OVERBURDENED[1] = (1-dif)+dif*(1+math.sin(self.TIMERS.REAL*3))
+        G.C.HHJ_OVERBURDENED[2] = (1-3*dif)+dif*(1+math.sin(self.TIMERS.REAL*4.5))
+        G.C.HHJ_OVERBURDENED[3] = (1-5*dif)
 end
