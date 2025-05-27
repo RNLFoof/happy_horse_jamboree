@@ -1,96 +1,110 @@
 local testing = assert(SMODS.load_file("libs\\steamodded_test\\main.lua"))()local useful_things = 
 assert(SMODS.load_file("useful_things.lua"))()local outside_influence = 
 
-{  }local _obj_0 = 
-
-G.steamodded_tests.tests
-
-_obj_0[#_obj_0 + 1] = testing.TestBundle("horses", { 
-testing.Test("chipschipschips", { testing.create_state_steps(), function()return 
-testing.play_hand({ "A" }, { centers = "j_hhj_horse_chipschipschips" })end, function()return 
-testing.assert_hand_scored(11 + 5 + 24)end }), 
+{  }local _anon_func_0 = function()local _accum_0 = 
 
 
 
-testing.Test("chipschipschipsjack on a jack", { testing.create_state_steps(), function()return 
-testing.play_hand({ "J" }, { centers = "j_hhj_horse_chipschipschipsjack" })end, function()return 
-testing.assert_hand_scored(10 + 5 + 24)end }), 
 
 
 
-testing.Test("chipschipschipsjack not on a jack", { testing.create_state_steps(), function()return 
-testing.play_hand({ "T" }, { centers = "j_hhj_horse_chipschipschipsjack" })end, function()return 
-testing.assert_hand_scored(10 + 5)end }), 
 
 
 
-testing.Test("multmultmult", { testing.create_state_steps(), function()return 
-testing.play_hand({ "A" }, { centers = "j_hhj_horse_multmultmult" })end, function()return 
-testing.assert_hand_scored((11 + 5) * (1 + (4 * 3)))end }), 
 
 
 
-testing.Test("moneymoneymoney", { testing.create_state_steps(), function()return 
-testing.play_hand({ "A" }, { centers = { 
-"j_hhj_horse_moneymoneymoney", 
-"j_hhj_horse_moneymoneymoney", 
-"j_hhj_horse_moneymoneymoney", 
-
-"j_hhj_horse_moneymoneymoney", 
-"j_hhj_horse_moneymoneymoney", 
-"j_hhj_horse_moneymoneymoney" } })end, function()return 
-
-testing.assert_dollars_gt(4)end, function()return 
-testing.assert_dollars_lt(4 + (3 * 6))end }), 
 
 
 
-testing.Test("moneymoneymoney with Oops! All 6s", { testing.create_state_steps(), function()return 
-testing.play_hand({ "A" }, { centers = { 
-"j_hhj_horse_moneymoneymoney", 
-"j_hhj_horse_moneymoneymoney", 
-"j_hhj_horse_moneymoneymoney", 
-
-"j_hhj_horse_moneymoneymoney", 
-"j_hhj_horse_moneymoneymoney", 
-"j_hhj_horse_moneymoneymoney", 
-
-"j_oops" } })end, function()return 
-
-testing.assert_dollars(4 + (3 * 6))end }), 
 
 
 
-testing.Test("judgement_test_for_the_next_test", (function()local _tab_0 = {  }local _obj_1 = testing.create_state_steps()local _idx_0 = 1;for _key_0, _value_0 in pairs(_obj_1) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end
-_tab_0[#_tab_0 + 1] = function()
-
-outside_influence["end"] = useful_things.multi_field_replace_context_manual_end({ { G.P_JOKER_RARITY_POOLS, 1, { G.P_CENTERS["j_joker"] } }, { 
-G.P_JOKER_RARITY_POOLS, 2, { G.P_CENTERS["j_joker"] } }, { 
-G.P_JOKER_RARITY_POOLS, 3, { G.P_CENTERS["j_joker"] } } })end
-
-_tab_0[#_tab_0 + 1] = function()local judgement = 
-SMODS.add_card({ set = "Tarot", key = "c_judgement" })
-judgement:use_consumeable(judgement.area)return 
-print(G.P_JOKER_RARITY_POOLS[1])end
-_tab_0[#_tab_0 + 1] = function()return 
-outside_influence["end"]()end
-_tab_0[#_tab_0 + 1] = function()return 
-testing.assert_eq(G.jokers.cards[1].config.center.key, "j_joker")end;return _tab_0 end)()), 
 
 
 
-testing.Test("judgement_spawning_base_horse", (function()local _tab_0 = {  }local _obj_1 = testing.create_state_steps()local _idx_0 = 1;for _key_0, _value_0 in pairs(_obj_1) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end
-_tab_0[#_tab_0 + 1] = function()
 
-outside_influence["end"] = useful_things.multi_field_replace_context_manual_end({ { G.P_JOKER_RARITY_POOLS, 1, { G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"] } }, { 
-G.P_JOKER_RARITY_POOLS, 2, { G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"] } }, { 
-G.P_JOKER_RARITY_POOLS, 3, { G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"] } } })end
 
-_tab_0[#_tab_0 + 1] = function()local judgement = 
-SMODS.add_card({ set = "Tarot", key = "c_judgement" })
-judgement:use_consumeable(judgement.area)return 
-print(G.P_JOKER_RARITY_POOLS[1])end
-_tab_0[#_tab_0 + 1] = function()return 
-outside_influence["end"]()end
-_tab_0[#_tab_0 + 1] = function()return 
-testing.assert_eq(G.jokers.cards[1].config.center.key, "j_hhj_horse_chipschipschips")end;return _tab_0 end)()) })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{  }local _len_0 = 1;for i = 1, 6 do _accum_0[_len_0] = "j_hhj_horse_base"_len_0 = _len_0 + 1 end;return _accum_0 end;local _anon_func_2 = function(joker)local _obj_1 = 
+joker.edition;if _obj_1 ~= nil then return _obj_1.negative end;return nil end;local _anon_func_1 = function(G)local _accum_0 = {  }local _len_0 = 1;local _list_0 = G.jokers.cards;for _index_0 = 1, #_list_0 do local joker = _list_0[_index_0]if _anon_func_2(joker) then _accum_0[_len_0] = joker;_len_0 = _len_0 + 1 end end;return _accum_0 end;local _obj_0 = G.steamodded_tests.tests;_obj_0[#_obj_0 + 1] = testing.TestBundle("horses", { testing.Test("chipschipschips", { testing.create_state_steps(), function()return testing.play_hand({ "A" }, { centers = "j_hhj_horse_chipschipschips" })end, function()return testing.assert_hand_scored(11 + 5 + 24)end }), testing.Test("chipschipschipsjack on a jack", { testing.create_state_steps(), function()return testing.play_hand({ "J" }, { centers = "j_hhj_horse_chipschipschipsjack" })end, function()return testing.assert_hand_scored(10 + 5 + 24)end }), testing.Test("chipschipschipsjack not on a jack", { testing.create_state_steps(), function()return testing.play_hand({ "T" }, { centers = "j_hhj_horse_chipschipschipsjack" })end, function()return testing.assert_hand_scored(10 + 5)end }), testing.Test("multmultmult", { testing.create_state_steps(), function()return testing.play_hand({ "A" }, { centers = "j_hhj_horse_multmultmult" })end, function()return testing.assert_hand_scored((11 + 5) * (1 + (4 * 3)))end }), testing.Test("moneymoneymoney", { testing.create_state_steps(), function()return testing.play_hand({ "A" }, { centers = { "j_hhj_horse_moneymoneymoney", "j_hhj_horse_moneymoneymoney", "j_hhj_horse_moneymoneymoney", "j_hhj_horse_moneymoneymoney", "j_hhj_horse_moneymoneymoney", "j_hhj_horse_moneymoneymoney" } })end, function()return testing.assert_dollars_gt(4)end, function()return testing.assert_dollars_lt(4 + (3 * 6))end }), testing.Test("moneymoneymoney with Oops! All 6s", { testing.create_state_steps(), function()return testing.play_hand({ "A" }, { centers = { "j_hhj_horse_moneymoneymoney", "j_hhj_horse_moneymoneymoney", "j_hhj_horse_moneymoneymoney", "j_hhj_horse_moneymoneymoney", "j_hhj_horse_moneymoneymoney", "j_hhj_horse_moneymoneymoney", "j_oops" } })end, function()return testing.assert_dollars(4 + (3 * 6))end }), testing.TestBundle("judgement_bug", { testing.Test("control", (function()local _tab_0 = {  }local _obj_1 = testing.create_state_steps()local _idx_0 = 1;for _key_0, _value_0 in pairs(_obj_1) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;_tab_0[#_tab_0 + 1] = function()outside_influence["end"] = useful_things.multi_field_replace_context_manual_end({ { G.P_JOKER_RARITY_POOLS, 1, { G.P_CENTERS["j_joker"] } }, { G.P_JOKER_RARITY_POOLS, 2, { G.P_CENTERS["j_joker"] } }, { G.P_JOKER_RARITY_POOLS, 3, { G.P_CENTERS["j_joker"] } } })end;_tab_0[#_tab_0 + 1] = function()local judgement = SMODS.add_card({ set = "Tarot", key = "c_judgement" })judgement:use_consumeable(judgement.area)return print(G.P_JOKER_RARITY_POOLS[1])end;_tab_0[#_tab_0 + 1] = function()return outside_influence["end"]()end;_tab_0[#_tab_0 + 1] = function()return testing.assert_eq(G.jokers.cards[1].config.center.key, "j_joker")end;return _tab_0 end)()), testing.Test("base_horse", (function()local _tab_0 = {  }local _obj_1 = testing.create_state_steps()local _idx_0 = 1;for _key_0, _value_0 in pairs(_obj_1) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;_tab_0[#_tab_0 + 1] = function()outside_influence["end"] = useful_things.multi_field_replace_context_manual_end({ { G.P_JOKER_RARITY_POOLS, 1, { G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"] } }, { G.P_JOKER_RARITY_POOLS, 2, { G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"] } }, { G.P_JOKER_RARITY_POOLS, 3, { G.P_CENTERS["j_hhj_horse_base"], G.P_CENTERS["j_hhj_horse_chipschipschips"] } } })end;_tab_0[#_tab_0 + 1] = function()local judgement = SMODS.add_card({ set = "Tarot", key = "c_judgement" })return judgement:use_consumeable(judgement.area)end;_tab_0[#_tab_0 + 1] = function()return outside_influence["end"]()end;_tab_0[#_tab_0 + 1] = function()return testing.assert_eq(G.jokers.cards[1].config.center.key, "j_hhj_horse_chipschipschips")end;return _tab_0 end)()) }), testing.Test("base_horse_replacement", (function()local _tab_0 = {  }local _obj_1 = testing.create_state_steps()local _idx_0 = 1;for _key_0, _value_0 in pairs(_obj_1) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;_tab_0[#_tab_0 + 1] = function()return testing.add_centers({ "j_hhj_horse_base" })end;_tab_0[#_tab_0 + 1] = function()return assert(G.jokers.cards[1].is_horse)end;_tab_0[#_tab_0 + 1] = function()return testing.assert_ne(G.jokers.cards[1].config.center.key, "j_hhj_horse_base")end;return _tab_0 end)()), testing.Test("horse_negatives", (function()local _tab_0 = {  }local _obj_1 = testing.create_state_steps()local _idx_0 = 1;for _key_0, _value_0 in pairs(_obj_1) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;_tab_0[#_tab_0 + 1] = function()return testing.add_centers(_anon_func_0())end;_tab_0[#_tab_0 + 1] = function()return testing.assert_eq(#_anon_func_1(G), 5)end;return _tab_0 end)()) })
