@@ -75,7 +75,10 @@ useful_things.round;local required_horse_name_count =
 
 
 local neigh;neigh = function()return 
-play_sound('hhj_neigh', 0.9 + math.random() * 0.2, 1)end;local _anon_func_0 = function(owned, pairs, shop)local _tab_0 = 
+play_sound('hhj_neigh', 0.9 + math.random() * 0.2, 1)end
+
+local joker_isnt_negative;joker_isnt_negative = function(joker)return ((not joker.edition) or (not (joker.edition == "e_negative" or joker.edition.negative)))end
+local joker_is_negative;joker_is_negative = function(joker)return not joker_isnt_negative(joker)end;local _anon_func_0 = function(owned, pairs, shop)local _tab_0 = 
 
 
 
@@ -89,14 +92,18 @@ play_sound('hhj_neigh', 0.9 + math.random() * 0.2, 1)end;local _anon_func_0 = fu
 
 
 
-{  }local _idx_0 = 1;for _key_0, _value_0 in pairs(owned) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;local _idx_1 = 1;for _key_0, _value_0 in pairs(shop) do if _idx_1 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_1 = _idx_1 + 1 else _tab_0[_key_0] = _value_0 end end;return _tab_0 end;local update_horse_negatives;update_horse_negatives = function()local owned = G.jokers and G.jokers.cards or {  }local shop = G.shop and G.shop_jokers.cards or {  }local owns_a_non_negative = false;local non_negative_index = nil;for joker_index, owned_joker in ipairs(owned) do if owned_joker.ability.is_horse and ((not owned_joker.edition) or (not (owned_joker.edition == "e_negative" or owned_joker.edition.negative))) then owns_a_non_negative = true;non_negative_index = joker_index;break end end;for joker_index, joker in ipairs(_anon_func_0(owned, pairs, shop)) do local _continue_0 = 
+
+{  }local _idx_0 = 1;for _key_0, _value_0 in pairs(owned) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;local _idx_1 = 1;for _key_0, _value_0 in pairs(shop) do if _idx_1 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_1 = _idx_1 + 1 else _tab_0[_key_0] = _value_0 end end;return _tab_0 end;local update_horse_negatives;update_horse_negatives = function()local owned = G.jokers and G.jokers.cards or {  }local shop = G.shop and G.shop_jokers.cards or {  }local owns_a_non_negative = false;local non_negative_index = nil;for joker_index, owned_joker in ipairs(owned) do if owned_joker.ability.is_horse and joker_isnt_negative(owned_joker) then owns_a_non_negative = true;non_negative_index = joker_index;break end end;print("---")for joker_index, joker in ipairs(_anon_func_0(owned, pairs, shop)) do local _continue_0 = 
 false;repeat if not joker.ability.is_horse then
-_continue_0 = true;break end;if 
-owns_a_non_negative and non_negative_index ~= joker_index then
-joker:set_edition({ negative = true }, true)else
-
-joker:set_edition({ negative = false }, true)
-owns_a_non_negative = true end;_continue_0 = true until true;if not _continue_0 then break end end end;local index = 
+_continue_0 = true;break end
+print(joker_is_negative(joker))if 
+owns_a_non_negative and non_negative_index ~= joker_index and joker_isnt_negative(joker) then
+print("becoming negative!")
+joker:set_edition({ negative = true }, false)else if 
+joker_is_negative(joker) and not owns_a_non_negative then
+print("becoming negativnt! :(")
+joker:set_edition({ negative = false }, false)
+owns_a_non_negative = true end end;_continue_0 = true until true;if not _continue_0 then break end end end;local index = 
 
 
 0;local total_horse_count = 
@@ -268,9 +275,11 @@ return end;if
 card.area.config.collection then
 return end;return 
 
-useful_things.field_replace_context(G, "hhj_allow_horses", true, function()local new_horse_center = 
-useful_things.pseudorandom_center(get_current_pool("Joker", 1, false, "horse"), "horse")return 
-card:set_ability(new_horse_center)end)end })
+useful_things.field_replace_context(G, "hhj_allow_horses", true, function()return 
+useful_things.pool_filter_context((function(center)return center.config.is_horse end), "hhj_j_horse_chipschipschips", function()local new_horse_center = 
+useful_things.pseudorandom_center(get_current_pool("Joker", 0, false, "horse"), "horse")return 
+card:set_ability(new_horse_center)end)end)end })
+
 
 
 

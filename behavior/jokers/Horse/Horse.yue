@@ -77,6 +77,9 @@ bonus_types = {
 neigh = ->
     play_sound('hhj_neigh', 0.9 + math.random()*0.2, 1)
 
+joker_isnt_negative = (joker) -> ((not joker.edition) or (not (joker.edition == "e_negative" or joker.edition.negative)))
+joker_is_negative = (joker) -> not joker_isnt_negative(joker)
+
 update_horse_negatives = ->
     owned = G.jokers and G.jokers.cards or {}
     shop = G.shop and G.shop_jokers.cards or {}
@@ -84,7 +87,7 @@ update_horse_negatives = ->
     owns_a_non_negative = false
     non_negative_index = nil
     for joker_index, owned_joker in ipairs(owned)
-        if owned_joker.ability.is_horse and ((not owned_joker.edition) or (not (owned_joker.edition == "e_negative" or owned_joker.edition.negative)))
+        if owned_joker.ability.is_horse and joker_isnt_negative(owned_joker)
             owns_a_non_negative = true
             non_negative_index = joker_index
             break
@@ -92,10 +95,10 @@ update_horse_negatives = ->
     for joker_index, joker in ipairs({...owned, ...shop})
         unless joker.ability.is_horse
             continue
-        if owns_a_non_negative and non_negative_index != joker_index
-            joker::set_edition({negative: true}, true)
-        else
-            joker::set_edition({negative: false}, true)
+        if owns_a_non_negative and non_negative_index != joker_index and joker_isnt_negative(joker)
+            joker::set_edition({negative: true}, false)
+        else if joker_is_negative(joker) and not owns_a_non_negative
+            joker::set_edition({negative: false}, false)
             owns_a_non_negative = true
 
 
@@ -269,8 +272,10 @@ base_horse_joker = SMODS.Joker
             return
         
         useful_things.field_replace_context(G, "hhj_allow_horses", true, ->
-            new_horse_center = useful_things.pseudorandom_center(get_current_pool("Joker", 1, false, "horse"), "horse")
-            card::set_ability(new_horse_center)
+            useful_things.pool_filter_context(((center) -> center.config.is_horse), "hhj_j_horse_chipschipschips", ->
+                new_horse_center = useful_things.pseudorandom_center(get_current_pool("Joker", 0, false, "horse"), "horse")
+                card::set_ability(new_horse_center)
+            )
         )
 
 macro lua = (code) -> {
