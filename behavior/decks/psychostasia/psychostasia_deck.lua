@@ -156,7 +156,8 @@ function CardArea:draw()
     local notch_r = 0.05
     local danger_color = G.C.MIG_OVERBURDENED
 
-    if      self.children
+    if      G.GAME.starting_params.mig_psychostasia
+        and self.children
         and self.children.area_uibox
         and self.children.area_uibox.definition.nodes 
         and self.children.area_uibox.definition.nodes[2]
