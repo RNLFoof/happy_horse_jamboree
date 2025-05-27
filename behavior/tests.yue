@@ -1,5 +1,6 @@
 testing = assert(SMODS.load_file("libs\\steamodded_test\\main.lua"))()
 useful_things = assert(SMODS.load_file("useful_things.lua"))()
+assert(SMODS.load_file("libs\\steamodded_test\\test_main.lua"))()
 
 G.steamodded_tests.tests[] = testing.TestBundle("useful_things", {
 

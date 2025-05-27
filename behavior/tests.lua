@@ -1,5 +1,6 @@
 local testing = assert(SMODS.load_file("libs\\steamodded_test\\main.lua"))()local useful_things = 
-assert(SMODS.load_file("useful_things.lua"))()local _obj_0 = 
+assert(SMODS.load_file("useful_things.lua"))()
+assert(SMODS.load_file("libs\\steamodded_test\\test_main.lua"))()local _obj_0 = 
 
 G.steamodded_tests.tests
 
