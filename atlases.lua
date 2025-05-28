@@ -12,7 +12,8 @@ atlas_decks = SMODS.Atlas {
 }
 
 atlas_decks_positions = {
-    ["psychostasia"] = {x=0, y=0},
+    ["horse"] = {x=0, y=0},
+    ["psychostasia"] = {x=1, y=0},
 }
 
 --- HORSES ---

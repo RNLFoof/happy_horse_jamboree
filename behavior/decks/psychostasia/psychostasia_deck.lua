@@ -4,7 +4,7 @@ hhj_psychostasia = SMODS.Back{
     name = "Psychostasia Deck",
     key = "hhj_psychostasia",
     atlas = "atlas_decks",
-    pos = atlas_decks_positions["Psychostasia Deck"],
+    pos = atlas_decks_positions["psychostasia"],
     config = {hhj_psychostasia = true, joker_slot = 5},
     loc_txt = {
         name = "Psychostasia Deck",

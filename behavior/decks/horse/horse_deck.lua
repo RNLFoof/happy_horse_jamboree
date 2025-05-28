@@ -5,8 +5,8 @@ local useful_things = assert(SMODS.load_file("useful_things.lua"))()local extra_
 
 SMODS.Back({ name = "Horse Deck", key = 
 "horse", atlas = 
-"atlas_horses", pos = 
-atlas_horses_positions["base"], loc_txt = { name = 
+"atlas_decks", pos = 
+atlas_decks_positions["horse"], loc_txt = { name = 
 
 "Horse Deck", text = { 
 
