@@ -17,6 +17,30 @@ testing.assert_eq(table.concat(buildup, "_"), "before_middle_after")end }),
 
 
 
+testing.TestBundle("flatten", { 
+testing.Test("strings", { function()
+testing.assert_eq(table.concat({ "a", "b" }), "ab")
+testing.assert_eq(table.concat(useful_things.flatten({ "a", "b" })), "ab")
+testing.assert_eq(table.concat(useful_things.flatten({ "a", { "b" } })), "ab")
+testing.assert_eq(table.concat(useful_things.flatten({ "a", { "b", "c" } })), "abc")return 
+testing.assert_eq(table.concat(useful_things.flatten({ "a", { "b", { "c" } } })), "abc")end }), 
+
+
+
+testing.Test("dicts", { function()local test_on = 
+useful_things.flatten({ "a", { ["b"] = "c" } })
+testing.assert_eq(test_on[1], "a")return 
+testing.assert_eq(test_on[2]["b"], "c")end }) }), 
+
+
+
+
+testing.Test("table_is_list", { function()
+assert(useful_things.table_is_list({ "q", "w", "e" }))return 
+assert(not useful_things.table_is_list({ ["q"] = "q", ["w"] = "w", ["e"] = "e" }))end }), 
+
+
+
 testing.Test("lerp", { function()
 testing.assert_eq(useful_things.lerp(0, 1, 0), 0)
 testing.assert_eq(useful_things.lerp(0, 1, 1), 1)

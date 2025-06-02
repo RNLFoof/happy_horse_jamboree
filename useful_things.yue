@@ -27,6 +27,20 @@ export wrap_method = (class_, method_name, before = (-> nil), after = ((original
         )
     )
 
+
+export table_is_list = (table) -> #([x for x in pairs(table)]) == #table
+
+export flatten = (list) ->
+    output = {}
+    for item in *list
+        if type(item) == "table" and table_is_list(item)
+            output = {...output, ...flatten(item)}
+        else
+            output[] = item
+    return output
+
+export for_each = (list, callable) -> [callable(item) for item in *list]
+
 export round = (num, numDecimalPlaces) ->
     mult = 10^(numDecimalPlaces or 0)
     return math.floor(num * mult + 0.5) / mult

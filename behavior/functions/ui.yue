@@ -1,0 +1,39 @@
+_optional_config_wrapper = (config_or_nodes, nodes) -> nodes != nil and {config_or_nodes, nodes} or {{}, config_or_nodes}
+_container_node = (node_type, config_or_nodes, nodes) ->
+    config, nodes = unpack _optional_config_wrapper(config_or_nodes, nodes)
+    return {
+        n: node_type
+        config: config
+        nodes: nodes
+    }
+
+_row_or_column = (config, nodes, node_type, opposite_node_type_function, node_type_name, opposite_node_type_name) ->
+    if nodes.n ~= nil then
+        nodes = {nodes}
+    
+    config.align ??= "cm"
+    config.padding ??= 0.1
+    config.colour  ??= G.C.CLEAR
+
+    if ui_debugging_enabled then
+        config.padding        = 0.1
+        config.outline_colour = G.C.RED
+        config.outline        = 0.2
+        config.debug_name ??= "some "..node_type_name
+        config.tooltip    ??= {title: config.debug_name, text: ""}
+    
+
+    ok_uh = #nodes
+    for node_index=1,ok_uh do
+        node = nodes[node_index]
+        if node.n == node_type then
+            nodes[node_index] = opposite_node_type_function({debug_name:"automatic correction "..opposite_node_type_name, padding: 0}, node)
+            
+    for _, node in pairs(nodes) do
+        assert(node.n ~= node_type)
+    
+    return _container_node(node_type, config, nodes)
+
+row = (config_or_nodes, nodes) -> _row_or_column(unpack _optional_config_wrapper(config_or_nodes, nodes), G.UIT.R, column, "row", "column")
+column = (config_or_nodes, nodes) -> _row_or_column(unpack _optional_config_wrapper(config_or_nodes, nodes), G.UIT.C, row, "column", "row")
+text = (config_or_nodes, nodes) -> _container_node(node_type, config, nodes)

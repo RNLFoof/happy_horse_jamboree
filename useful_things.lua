@@ -25,7 +25,21 @@ do_this(original_method, args)end end;_module_0["wrap_method_with_manual_calling
 
 {  }local _len_0 = 1;for _index_0 = 2, #args do local x = args[_index_0]_accum_0[_len_0] = x;_len_0 = _len_0 + 1 end;return _accum_0 end;local wrap_method;wrap_method = function(class_, method_name, before, after)if before == nil then before = (function()return nil end)end;if after == nil then after = (function(self, original_outputs)return original_outputs end)end;local function_wrapped_at = debug.getinfo(2)return wrap_method_with_manual_calling(class_, method_name, function(original_method, args)local will_it_let_me_do_this = "Wrap defined at " .. tostring(function_wrapped_at.source) .. ":" .. tostring(function_wrapped_at.linedefined) .. "."before(unpack(args))local original_outputs = { original_method(unpack(args)) }return 
 after(args[1], original_outputs, unpack(_anon_func_0(args)))end)end
-_module_0["wrap_method"] = wrap_method
+_module_0["wrap_method"] = wrap_method;local _anon_func_1 = function(pairs, table)local _accum_0 = 
+
+
+{  }local _len_0 = 1;for x in pairs(table) do _accum_0[_len_0] = x;_len_0 = _len_0 + 1 end;return _accum_0 end;local table_is_list;table_is_list = function(table)return # (_anon_func_1(pairs, table)) == #table end;_module_0["table_is_list"] = table_is_list
+
+local flatten;flatten = function(list)local output = 
+{  }for _index_0 = 
+1, #list do local item = list[_index_0]if 
+type(item) == "table" and table_is_list(item) then local _tab_0 = 
+{  }local _idx_0 = 1;for _key_0, _value_0 in pairs(output) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;local _obj_0 = flatten(item)local _idx_1 = 1;for _key_0, _value_0 in pairs(_obj_0) do if _idx_1 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_1 = _idx_1 + 1 else _tab_0[_key_0] = _value_0 end end;output = _tab_0 else
+
+output[#output + 1] = item end end;return 
+output end;_module_0["flatten"] = flatten
+
+local for_each;for_each = function(list, callable)local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #list do local item = list[_index_0]_accum_0[_len_0] = callable(item)_len_0 = _len_0 + 1 end;return _accum_0 end;_module_0["for_each"] = for_each
 
 local round;round = function(num, numDecimalPlaces)local mult = 
 10 ^ (numDecimalPlaces or 0)return 
