@@ -41,6 +41,36 @@ export flatten = (list) ->
 
 export for_each = (list, callable) -> [callable(item) for item in *list]
 
+_traverse_default_key_not_found = (object, path, output_thus_far, step_index) ->
+    entire_path = "ORIGINAL_OBJECT"
+    path_until_error = "uhhhhhhhhhhhhh you probably shouldn't be seeing this :]"
+    for internal_step_index, step in ipairs(path)
+        if type(step) == "number"
+            entire_path += "[#{step}]"
+        else
+            entire_path += ".#{step}"
+        if internal_step_index < step_index
+            path_until_error = entire_path
+    error("Unable to follow the path of #{entire_path}: #{path_until_error} is #{SMODS.inspect(output_thus_far)}", 3)
+
+export traverse = (object, path, on_key_not_found=_traverse_default_key_not_found) -> 
+    output = object
+    for step_index, step in ipairs(path)
+        if output[step] == nil
+            return on_key_not_found(object, path, output, step_index)
+        output = output[step]
+    return output
+
+export traverse_allowing_final_nil = (object, path) ->
+    traverse(object, path, (object, path, output_thus_far, step_index) ->
+        if step_index == #path
+            return nil
+        else
+            _traverse_default_key_not_found(object, path, output_thus_far, step_index)
+    )
+
+export traverse_blindly = (object, path) -> traverse(object, path, -> nil)
+
 export round = (num, numDecimalPlaces) ->
     mult = 10^(numDecimalPlaces or 0)
     return math.floor(num * mult + 0.5) / mult

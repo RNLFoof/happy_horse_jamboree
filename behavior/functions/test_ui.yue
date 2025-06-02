@@ -1,0 +1,25 @@
+testing = assert(SMODS.load_file("libs\\steamodded_test\\main.lua"))()
+ui      = assert(SMODS.load_file("behavior/functions/ui.lua"))()
+
+Test            = testing.Test
+TestBundle      = testing.TestBundle
+assert_eq       = testing.assert_eq
+assert_valid_ui = testing.assert_valid_ui
+
+G.steamodded_tests.tests[] = TestBundle "ui"
+    * Test "_optional_config_wrapper"
+        * -> 
+            assert_eq(ui._optional_config_wrapper({}), {{}, {}})
+            assert_eq(ui._optional_config_wrapper({}, {}), {{}, {}})
+            assert_eq(ui._optional_config_wrapper({"burp"}), {{}, {"burp"}})
+            assert_eq(ui._optional_config_wrapper("burp"), {{}, "burp"})
+            assert_eq(ui._optional_config_wrapper({"okay"}, {"burp"}), {{"okay"}, {"burp"}})
+    
+    * TestBundle "column"
+        * Test "runs_without_erroring"
+            * ->
+                assert_valid_ui ui.column()
+                assert_valid_ui ui.column({})
+                assert_valid_ui ui.column(ui.text("lol"))
+                assert_valid_ui ui.column({ui.text("lol")})
+                return true

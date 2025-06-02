@@ -1,6 +1,9 @@
-_optional_config_wrapper = (config_or_nodes, nodes) -> nodes != nil and {config_or_nodes, nodes} or {{}, config_or_nodes}
+-- Only exported to test
+export _optional_config_wrapper = (config_or_additional_args, ...) -> (...) != nil and {config_or_additional_args, ...} or {{}, config_or_additional_args}
 _container_node = (node_type, config_or_nodes, nodes) ->
     config, nodes = unpack _optional_config_wrapper(config_or_nodes, nodes)
+    if #nodes == 0
+        nodes = nil
     return {
         n: node_type
         config: config
@@ -8,32 +11,50 @@ _container_node = (node_type, config_or_nodes, nodes) ->
     }
 
 _row_or_column = (config, nodes, node_type, opposite_node_type_function, node_type_name, opposite_node_type_name) ->
-    if nodes.n ~= nil then
+    nodes ??= {}
+    if nodes.n ~= nil
         nodes = {nodes}
     
     config.align ??= "cm"
     config.padding ??= 0.1
     config.colour  ??= G.C.CLEAR
 
-    if ui_debugging_enabled then
+    if SMODS.Mods.happy_horse_jamboree.config["Debug Mode"] then
         config.padding        = 0.1
-        config.outline_colour = G.C.RED
+        config.outline_colour = node_type_name == "column" and G.C.RED or G.C.BLUE
         config.outline        = 0.2
         config.debug_name ??= "some "..node_type_name
-        config.tooltip    ??= {title: config.debug_name, text: ""}
+        config.tooltip    ??= {title: config.debug_name, text: {"(contains #{#nodes} nodes)"}}
     
 
     ok_uh = #nodes
-    for node_index=1,ok_uh do
+    for node_index=1,ok_uh
         node = nodes[node_index]
         if node.n == node_type then
             nodes[node_index] = opposite_node_type_function({debug_name:"automatic correction "..opposite_node_type_name, padding: 0}, node)
             
-    for _, node in pairs(nodes) do
+    for _, node in pairs(nodes)
         assert(node.n ~= node_type)
     
     return _container_node(node_type, config, nodes)
 
-row = (config_or_nodes, nodes) -> _row_or_column(unpack _optional_config_wrapper(config_or_nodes, nodes), G.UIT.R, column, "row", "column")
-column = (config_or_nodes, nodes) -> _row_or_column(unpack _optional_config_wrapper(config_or_nodes, nodes), G.UIT.C, row, "column", "row")
-text = (config_or_nodes, nodes) -> _container_node(node_type, config, nodes)
+export row = (config_or_nodes, nodes) -> 
+    config, nodes = unpack(_optional_config_wrapper(config_or_nodes, nodes))
+    return _row_or_column(config, nodes, G.UIT.R, column, "row", "column")
+export column = (config_or_nodes, nodes) -> 
+    config, nodes = unpack(_optional_config_wrapper(config_or_nodes, nodes))
+    return _row_or_column(config, nodes, G.UIT.C, row, "column", "row")
+
+export text = (config_or_text, text) -> 
+    config, text = unpack _optional_config_wrapper(config_or_text, text)
+    config = {
+        scale: 1
+        text: text
+        colour: G.C.WHITE
+        ...config
+    }
+    output = row({
+        n: G.UIT.T
+        config: config
+    })
+    return output

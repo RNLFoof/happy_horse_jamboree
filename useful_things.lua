@@ -41,6 +41,36 @@ output end;_module_0["flatten"] = flatten
 
 local for_each;for_each = function(list, callable)local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #list do local item = list[_index_0]_accum_0[_len_0] = callable(item)_len_0 = _len_0 + 1 end;return _accum_0 end;_module_0["for_each"] = for_each
 
+local _traverse_default_key_not_found;_traverse_default_key_not_found = function(object, path, output_thus_far, step_index)local entire_path = 
+"ORIGINAL_OBJECT"local path_until_error = 
+"uhhhhhhhhhhhhh you probably shouldn't be seeing this :]"for internal_step_index, step in 
+ipairs(path) do if 
+type(step) == "number" then
+entire_path = entire_path + "[" .. tostring(step) .. "]"else
+
+entire_path = entire_path + "." .. tostring(step)end;if 
+internal_step_index < step_index then
+path_until_error = entire_path end end;return 
+error("Unable to follow the path of " .. tostring(entire_path) .. ": " .. tostring(path_until_error) .. " is " .. tostring(SMODS.inspect(output_thus_far)), 3)end
+
+local traverse;traverse = function(object, path, on_key_not_found)if on_key_not_found == nil then on_key_not_found = _traverse_default_key_not_found end;local output = 
+object;for step_index, step in 
+ipairs(path) do if 
+output[step] == nil then return 
+on_key_not_found(object, path, output, step_index)end
+output = output[step]end;return 
+output end;_module_0["traverse"] = traverse
+
+local traverse_allowing_final_nil;traverse_allowing_final_nil = function(object, path)return 
+traverse(object, path, function(object, path, output_thus_far, step_index)if 
+step_index == #path then return 
+nil else return 
+
+_traverse_default_key_not_found(object, path, output_thus_far, step_index)end end)end
+_module_0["traverse_allowing_final_nil"] = traverse_allowing_final_nil
+
+local traverse_blindly;traverse_blindly = function(object, path)return traverse(object, path, function()return nil end)end;_module_0["traverse_blindly"] = traverse_blindly
+
 local round;round = function(num, numDecimalPlaces)local mult = 
 10 ^ (numDecimalPlaces or 0)return 
 math.floor(num * mult + 0.5) / mult end;_module_0["round"] = round

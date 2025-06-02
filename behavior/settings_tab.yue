@@ -2,6 +2,7 @@ import "yue_macros" as {
     $
 }
 useful_things = assert(SMODS.load_file("useful_things.lua"))()
+ui = assert(SMODS.load_file("behavior/functions/ui.lua"))()
 
 for_each = useful_things.for_each
 flatten  = useful_things.flatten
@@ -10,6 +11,9 @@ config = SMODS.current_mod.config
 
 indent = (string, indent_count=1) -> "    "::rep(indent_count) .. string
 indent_all = (list_of_strings, indent_count=1) -> [indent(string, indent_count) for string in *list_of_strings]
+print_and_out = (o) ->
+    -- print(o)
+    o
 
 class ConfigPart
     new: (@name) =>
@@ -37,8 +41,8 @@ class OptionBundle extends ConfigPart
             option._path_without_self = @_path_with_self()
     
     as_nodes: => {
-
-        ...(@options |> for_each((option)->option::as_nodes()) |> flatten)
+        ui.text({scale: 0.5}, @name)
+        ui.column({scale: 0.75}, @options |> for_each((option)->option::as_nodes()) |> flatten)
     }
 
     _config_file_lines: => {
@@ -64,6 +68,7 @@ class ConfigRoot extends OptionBundle
     _path_with_self: => {}
     _lines_start: => "return "
     _lines_end: => "}"
+    as_nodes: => {ui.row(ui.column(@options |> for_each((option)->option::as_nodes()) |> flatten))}
 
 class Option extends ConfigPart
     new: (@name, @default) => super(@name)
@@ -74,12 +79,13 @@ class BooleanOption extends Option
 
 
 
-config_structure = ConfigRoot({
-    OptionBundle("HHJ Aces", {
-        BooleanOption("In Main Menu", true)
-        BooleanOption("Everywhere Else", true)
-    })
-})
+export config_structure = ConfigRoot
+    * OptionBundle "HHJ Aces"
+        * BooleanOption("In Main Menu", true)
+        * BooleanOption("Everywhere Else", true)
+    * BooleanOption("Debug Mode", false)
+    
+
 
 print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 print(config_structure::as_config_file())

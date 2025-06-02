@@ -1,0 +1,18 @@
+testing = assert(SMODS.load_file("libs\\steamodded_test\\main.lua"))()
+-- useful_things = assert(SMODS.load_file("useful_things.lua"))()
+settings_tab = assert(SMODS.load_file("behavior\\settings_tab.lua"))()
+
+Test            = testing.Test
+TestBundle      = testing.TestBundle
+assert_eq       = testing.assert_eq
+assert_valid_ui = testing.assert_valid_ui
+
+G.steamodded_tests.tests[] = TestBundle "settings_tab"
+    * Test "as_nodes"
+        * -> 
+            assert_valid_ui settings_tab.config_structure::as_nodes()[1]
+            true
+    * Test "actual_values"
+        * ->
+            assert_valid_ui SMODS.Mods.happy_horse_jamboree.config_tab
+            true
