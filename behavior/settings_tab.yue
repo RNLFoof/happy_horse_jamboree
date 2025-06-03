@@ -96,7 +96,7 @@ class BooleanOption extends Option
 
 
 export config_structure = ConfigRoot
-    * BooleanOption("Show Horse Variants In Gallery", false)
+    * BooleanOption("Show Horse Variants In Collection (requires restart)", false)
     * OptionBundle "HHJ Aces"
         * BooleanOption("In Main Menu", true)
         * BooleanOption("Everywhere Else", true)

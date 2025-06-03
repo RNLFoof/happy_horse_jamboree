@@ -2,6 +2,8 @@ import "yue_macros" as {
     $
 }
 
+export config = SMODS.current_mod.config
+
 -- Be careful with this, if you don't call the original mnethod manually, it won't be called at all
 export wrap_method_with_manual_calling = (class_, method_name, do_this) ->
     if class_ == nil then error("CLASS IS NIL :(")

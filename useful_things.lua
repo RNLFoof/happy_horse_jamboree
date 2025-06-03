@@ -1,6 +1,8 @@
-local _module_0 = {  }
+local _module_0 = {  }local config = 
 
 
+
+SMODS.current_mod.config;_module_0["config"] = config
 
 
 local wrap_method_with_manual_calling;wrap_method_with_manual_calling = function(class_, method_name, do_this)if 

@@ -153,8 +153,8 @@ SMODS.Joker({ key = "hhj_horse_" .. key, atlas =
 "atlas_horses", pos = 
 atlas_horses_positions[key], rarity = 
 1, cost = 
-1, discovered = 
-true, config = { is_horse = 
+1, no_collection = not 
+useful_things.config["Show Horse Variants In Collection (requires restart)"], config = { is_horse = 
 
 true, key = 
 key, bonuses = 

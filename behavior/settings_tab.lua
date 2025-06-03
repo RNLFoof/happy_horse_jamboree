@@ -96,7 +96,7 @@ self.name, scale = self:_scale(), label_scale = self:_text_scale() }local _obj_0
 
 
 
-ConfigRoot({ BooleanOption("Show Horse Variants In Gallery", false), 
+ConfigRoot({ BooleanOption("Show Horse Variants In Collection (requires restart)", false), 
 
 OptionBundle("HHJ Aces", { BooleanOption("In Main Menu", true), 
 BooleanOption("Everywhere Else", true) }), 
