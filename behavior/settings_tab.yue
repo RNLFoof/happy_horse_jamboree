@@ -104,8 +104,6 @@ export config_structure = ConfigRoot
     
 
 
-print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-print(config_structure::as_config_file())
 config_structure::update_config_file()
 
 SMODS.current_mod.config_tab = -> {

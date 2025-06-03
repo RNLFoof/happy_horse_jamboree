@@ -104,8 +104,6 @@ BooleanOption("Debug Mode", false) })_module_0["config_structure"] = config_stru
 
 
 
-print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-print(config_structure:as_config_file())
 config_structure:update_config_file()
 
 SMODS.current_mod.config_tab = function()return { n = 
