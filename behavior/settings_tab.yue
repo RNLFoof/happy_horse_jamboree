@@ -21,6 +21,8 @@ class ConfigPart
     as_config_file: => @_config_file_lines() |> table.concat("\n")
         -- useful_things.for_each((s)->s::endswith("{") and s or s..",") |> 
     as_nodes: => error("Not implemented!")
+    _scale: => 0.75 ^ #@_path_without_self
+    _text_scale: => 0.4 * @_scale()
     _lines_start: => "[\"#{@name}\"] = "
     _lines_end: => ","
     _path_with_self: => {...@_path_without_self, @name}
@@ -34,6 +36,12 @@ class ConfigPart
             output = output[step]
         return output
 
+    update_config_file: =>
+        file = io.open("#{SMODS.Mods.happy_horse_jamboree.path}config.lua", "w")
+        io.output(file)
+        io.write(@as_config_file())
+        io.close(file)
+
 class OptionBundle extends ConfigPart
     new: (@name, @options) =>
         super(@name)
@@ -41,8 +49,16 @@ class OptionBundle extends ConfigPart
             option._path_without_self = @_path_with_self()
     
     as_nodes: => {
-        ui.text({scale: 0.5}, @name)
-        ui.column({scale: 0.75}, @options |> for_each((option)->option::as_nodes()) |> flatten)
+        ui.text({scale: @_text_scale()}, @name)
+        ui.column({
+            outline: 1.2
+            outline_colour: G.C.JOKER_GREY
+            r: 0.1
+            colour: {0, 0, 0, 0.2}
+            -- hover: true
+            -- shadow: true
+        },
+        @options |> for_each((option)->option::as_nodes()) |> flatten)
     }
 
     _config_file_lines: => {
@@ -75,11 +91,12 @@ class Option extends ConfigPart
     _config_file_lines: => {"#{@_lines_start()} #{@default}#{@_lines_end()}"}
 
 class BooleanOption extends Option
-    as_nodes: => {create_toggle({label: @name, ...@_ref()})}
+    as_nodes: => {create_toggle({label: @name, scale: @_scale(), label_scale: @_text_scale(), ...@_ref()})}
 
 
 
 export config_structure = ConfigRoot
+    * BooleanOption("Show Horse Variants In Gallery", false)
     * OptionBundle "HHJ Aces"
         * BooleanOption("In Main Menu", true)
         * BooleanOption("Everywhere Else", true)
@@ -89,10 +106,13 @@ export config_structure = ConfigRoot
 
 print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 print(config_structure::as_config_file())
+config_structure::update_config_file()
 
 SMODS.current_mod.config_tab = -> {
     n: G.UIT.ROOT
-    config: {}
+    config: {
+        colour: G.C.CLEAR
+    }
     nodes: config_structure::as_nodes()
 }
 
