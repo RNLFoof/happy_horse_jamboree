@@ -122,9 +122,11 @@ Input(keys.A, 1),
 Input(keys.START, 1), 
 Input(keys.NOTHING, 60 * 4.5) }for _index_0 = 
 1, #_list_0 do local input = _list_0[_index_0]
-self:add_input(card, input)end end, draw = function(self, card, layer)
+self:add_input(card, input)end end, draw = function(self, card, layer)if not 
 
 
+self.discovered then
+return end
 card.doesnt_save.nes.update_image()local center = 
 card.children.center;local _obj_0 = 
 G;if _obj_0.debug_size_offset == nil then _obj_0.debug_size_offset = 99.0 end
@@ -165,7 +167,7 @@ card.doesnt_save.just_reloaded = nil end;local cpu =
 card.doesnt_save.nes:get_actual_internal_nes_object().cpu;local ram = 
 
 cpu.ram;if 
-ram then
+ram and self.discovered then
 self:process_inputs(card)local score = 
 
 ""
