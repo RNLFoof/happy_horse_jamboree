@@ -146,7 +146,6 @@ function ROM.load(conf, cpu, ppu)
     local filename = conf.romfile
     local path, basename, extension = string.match(filename, "(.-)([^\\]-([^\\%.]+))$")
 
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", filename)
     local inp = assert(io.open(filename, "rb"))
     local str = inp:read("*all")
     assert(inp:close())

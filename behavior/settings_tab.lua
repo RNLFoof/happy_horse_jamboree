@@ -104,8 +104,6 @@ BooleanOption("Debug Mode", false) })_module_0["config_structure"] = config_stru
 
 
 
-print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-print(config_structure:as_config_file())
 config_structure:update_config_file()
 
 SMODS.current_mod.config_tab = function()return { n = 
@@ -113,7 +111,5 @@ G.UIT.ROOT, config = { colour =
 
 G.C.CLEAR }, nodes = 
 
-config_structure:as_nodes() }end
-
-
-print(config_structure:as_nodes())return _module_0;
+config_structure:as_nodes() }end;return 
+_module_0;

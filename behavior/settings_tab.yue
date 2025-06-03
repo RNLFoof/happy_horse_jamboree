@@ -104,16 +104,12 @@ export config_structure = ConfigRoot
     
 
 
-print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-print(config_structure::as_config_file())
 config_structure::update_config_file()
 
 SMODS.current_mod.config_tab = -> {
     n: G.UIT.ROOT
-    config: {
+    config: { 
         colour: G.C.CLEAR
     }
     nodes: config_structure::as_nodes()
 }
-
-print(config_structure::as_nodes())
