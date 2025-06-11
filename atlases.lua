@@ -159,6 +159,19 @@ atlas_jokers_positions = {
     },
 }
 
+--- MISC_CARDS ---
+
+atlas_misc_cards = SMODS.Atlas {
+    key = "atlas_misc_cards",
+    path = "atlas_misc_cards.png",
+    px = 71,
+    py = 95
+}
+
+atlas_misc_cards_positions = {
+    ["hhj_ace"] = {x=0, y=0},
+}
+
 --- PLANETS ---
 
 atlas_planets = SMODS.Atlas {
