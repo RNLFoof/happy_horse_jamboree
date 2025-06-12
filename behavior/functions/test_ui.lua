@@ -3,7 +3,8 @@ assert(SMODS.load_file("behavior/functions/ui.lua"))()local Test =
 
 testing.Test;local TestBundle = 
 testing.TestBundle;local assert_eq = 
-testing.assert_eq;local assert_valid_ui = 
+testing.assert_eq;local assert_ne = 
+testing.assert_ne;local assert_valid_ui = 
 testing.assert_valid_ui;local _obj_0 = 
 
 G.steamodded_tests.tests
@@ -22,4 +23,7 @@ assert_valid_ui(ui.column())
 assert_valid_ui(ui.column({  }))
 assert_valid_ui(ui.column(ui.text("lol")))
 assert_valid_ui(ui.column({ ui.text("lol") }))return 
-true end }) }) })
+true end }) }), 
+
+
+Test("hhj_badge", { function()return assert_ne(ui.hhj_badge(), nil)end }) })

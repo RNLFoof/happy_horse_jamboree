@@ -1,4 +1,6 @@
-local _module_0 = {  }
+local _module_0 = {  }local useful_things = assert(SMODS.load_file("useful_things.lua"))()
+
+
 local _optional_config_wrapper;_optional_config_wrapper = function(config_or_additional_args, ...)return (...) ~= nil and { config_or_additional_args, ... } or { {  }, config_or_additional_args }end;_module_0["_optional_config_wrapper"] = _optional_config_wrapper
 local _container_node;_container_node = function(node_type, config_or_nodes, nodes)
 local config;config, nodes = unpack(_optional_config_wrapper(config_or_nodes, nodes))if #
@@ -57,4 +59,66 @@ G.C.WHITE }local _idx_0 =
 row({ n = G.UIT.T, config = 
 config })return 
 
-output end;_module_0["text"] = text;return _module_0;
+output end;_module_0["text"] = text
+
+local hhj_badge;hhj_badge = function()local badges = 
+
+
+
+{  }
+SMODS.create_mod_badges(G.P_CENTERS.j_hhj_horse_base, badges)
+assert(not useful_things.equals(badges, {  }))return 
+badges[1]end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_module_0["hhj_badge"] = hhj_badge;return _module_0;

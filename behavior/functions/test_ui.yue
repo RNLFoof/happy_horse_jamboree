@@ -4,6 +4,7 @@ ui      = assert(SMODS.load_file("behavior/functions/ui.lua"))()
 Test            = testing.Test
 TestBundle      = testing.TestBundle
 assert_eq       = testing.assert_eq
+assert_ne       = testing.assert_ne
 assert_valid_ui = testing.assert_valid_ui
 
 G.steamodded_tests.tests[] = TestBundle "ui"
@@ -23,3 +24,6 @@ G.steamodded_tests.tests[] = TestBundle "ui"
                 assert_valid_ui ui.column(ui.text("lol"))
                 assert_valid_ui ui.column({ui.text("lol")})
                 return true
+
+    * Test "hhj_badge"
+        * -> assert_ne(ui.hhj_badge(), nil)
