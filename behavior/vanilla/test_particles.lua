@@ -7,7 +7,7 @@ _obj_0[#_obj_0 + 1] = testing.TestBundle("particles", {
 testing.Test("init_after taking from both the provided and default config", { function()local dummy = 
 {  }
 
-particles.init_after(dummy, 0, 0, 0, 0, { hhj_config = { gravity_intensity = 
+particles.init_after(dummy, {  }, 0, 0, 0, 0, { hhj_config = { gravity_intensity = 
 7, fake_option_that_wont_be_overwritten = 
 6 } })
 
@@ -21,11 +21,11 @@ testing.assert_eq(dummy.hhj_config.gravity_direction, 270)end }),
 testing.Test("init_after on subconfig", { function()local dummy = 
 {  }
 
-particles.init_after(dummy, 0, 0, 0, 0, { hhj_config = { starting_range = { min_x = 
+particles.init_after(dummy, {  }, 0, 0, 0, 0, { hhj_config = { starting_range = { min_x = 
 
-69 } } })
+0 } } })
 
 
 
-testing.assert_eq(dummy.hhj_config.starting_range.min_x, 69)return 
+testing.assert_eq(dummy.hhj_config.starting_range.min_x, 0)return 
 testing.assert_eq(dummy.hhj_config.starting_range.max_x, G.CARD_W / 2)end }) })
