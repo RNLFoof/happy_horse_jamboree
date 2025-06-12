@@ -175,6 +175,10 @@ function spawn_a_nes()
             sound:setSample(i, samples[i])
         end
         QS:queue(sound)
+
+        -- New
+        QS:setVolume(G.SETTINGS.SOUND.volume*G.SETTINGS.SOUND.game_sounds_volume/(100*100))
+
         QS:play()
     end
     local function drawScreen()
