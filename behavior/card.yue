@@ -1,0 +1,18 @@
+useful_things = assert(SMODS.load_file("useful_things.lua"))()
+
+update_hhj_ace = (potential_ace) ->
+    unless potential_ace.children.front and potential_ace.base?.nominal == 11 and potential_ace.base?.suit == "Spades" then return
+
+    if G.STAGE == G.STAGES.MAIN_MENU
+        if not useful_things.config["HHJ Aces"]["In Main Menu"] then return
+    else
+        if not useful_things.config["HHJ Aces"]["Everywhere Else"] then return
+
+    potential_ace.children.front.atlas = atlas_misc_cards
+    potential_ace.children.front::set_sprite_pos(atlas_misc_cards_positions["hhj_ace"])
+
+
+useful_things.wrap_method(Card, "set_base", nil, (...) ->
+    @, card, initial = unpack({...})
+    update_hhj_ace(@)
+)
