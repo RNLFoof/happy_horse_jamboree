@@ -31,4 +31,8 @@ G.steamodded_tests.tests[] = testing.TestBundle("particles", {
             testing.assert_eq(dummy.hhj_config.starting_range.max_x, G.CARD_W/2)
     }),
 
+    testing.Test "no_crash_when_opening_arcana_pack"
+        * testing.create_state_steps()
+        * -> testing.open_arcana_pack()
+
 })

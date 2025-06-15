@@ -40,6 +40,10 @@ export init_after = (original_output, X, Y, W, H, config={}) =>
 useful_things.wrap_method(Particles, "init", nil, init_after)
 
 useful_things.wrap_method(Particles, "update", nil, (original_output, dt) =>
+    -- Seems to be possible for this to not be initialized - I assume it's from particles that are created before the injection? idk
+    if @hhj_config == nil
+        return
+    
     for particle in *@particles
         if particle.applied_initial_hhj_junk
             continue
@@ -93,6 +97,10 @@ useful_things.wrap_method(Particles, "update", nil, (original_output, dt) =>
 )
 
 useful_things.wrap_method(Particles, "move", nil, (original_output, dt) =>
+    -- Seems to be possible for this to not be initialized - I assume it's from particles that are created before the injection? idk
+    if @hhj_config == nil
+        return
+    
     if self.timer_type ~= 'REAL' then dt = dt*G.SPEEDFACTOR
 
     for particle in *@particles

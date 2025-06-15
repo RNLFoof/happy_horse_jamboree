@@ -39,7 +39,11 @@ error("starting_range." .. tostring(min) .. "(" .. tostring(self.hhj_config.star
 
 useful_things.wrap_method(Particles, "init", nil, init_after)
 
-useful_things.wrap_method(Particles, "update", nil, function(self, original_output, dt)local _list_0 = 
+useful_things.wrap_method(Particles, "update", nil, function(self, original_output, dt)if 
+
+self.hhj_config == nil then
+return end;local _list_0 = 
+
 self.particles;for _index_0 = 1, #_list_0 do local particle = _list_0[_index_0]local _continue_0 = 
 false;repeat if particle.applied_initial_hhj_junk then
 _continue_0 = true;break end
@@ -93,6 +97,10 @@ particle.fixed_scale = self.hhj_config.fixed_scale.min + (self.hhj_config.fixed_
 
 
 useful_things.wrap_method(Particles, "move", nil, function(self, original_output, dt)if 
+
+self.hhj_config == nil then
+return end;if 
+
 self.timer_type ~= 'REAL' then dt = dt * G.SPEEDFACTOR end;local _list_0 = 
 
 self.particles;for _index_0 = 1, #_list_0 do local particle = _list_0[_index_0]if 

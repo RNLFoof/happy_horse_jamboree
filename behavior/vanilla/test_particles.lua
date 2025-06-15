@@ -28,4 +28,9 @@ particles.init_after(dummy, {  }, 0, 0, 0, 0, { hhj_config = { starting_range = 
 
 
 testing.assert_eq(dummy.hhj_config.starting_range.min_x, 0)return 
-testing.assert_eq(dummy.hhj_config.starting_range.max_x, G.CARD_W / 2)end }) })
+testing.assert_eq(dummy.hhj_config.starting_range.max_x, G.CARD_W / 2)end }), 
+
+
+
+testing.Test("no_crash_when_opening_arcana_pack", { testing.create_state_steps(), function()return 
+testing.open_arcana_pack()end }) })
