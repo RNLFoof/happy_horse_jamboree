@@ -328,7 +328,6 @@ function CardArea:align_cards()
         positions = ""
         for _,card in ipairs(self.cards) do positions = positions .. (card.ability and card.ability.name or 'idk') end
         if positions ~= self.hhj_previousJokerPositions then
-            print(positions)
             force_notch_bar_update(G.jokers)
         end
         self.hhj_previousJokerPositions = positions
