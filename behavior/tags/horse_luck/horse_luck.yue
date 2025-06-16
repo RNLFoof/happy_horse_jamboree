@@ -9,3 +9,20 @@ SMODS.Tag
     pos: atlas_tags_positions["horse_luck"]
     no_collection: true
     in_pool: (args) => false
+    apply: (tag, context) =>
+        unless context.type == "store_joker_create"
+            return
+        card = SMODS.create_card
+            set: "Joker" 
+            area: context.area
+            key: "j_hhj_horse_base"
+            key_append: 'horse_luck'
+        create_shop_card_ui(card, 'Joker', context.area)
+        card.states.visible = false
+        tag::yep("HORSE LUCK", G.C.GREEN, ->
+            card::start_materialize()
+            card.ability.couponed = true
+            return true
+        )
+        tag.triggered = true
+        return card
