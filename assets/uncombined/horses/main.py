@@ -44,6 +44,10 @@ bonus_colors: Dict[str, Tuple[int, int, int]] = {
     "mult": basic_colors["red"],
 }
 
+g_c = {
+    "important": (255, 154, 0),
+    "blue": (0, 157, 255)
+}
 
 def negative_color(rgb):
     # This part is abouuuut what the actual game does?
@@ -787,6 +791,47 @@ def horse_configs():
                         )
 
 
+def add_tabs(image: Image.Image, tabs: Iterable[str]) -> Image:
+    @dataclass
+    class TabFlavor:
+        image_filename: str
+        colour: Tuple[int, int, int]
+
+        def get_uncolored_tab_image(self) -> Image.Image:
+            return Image.open(self.image_filename).convert("RGBA")
+
+        def color_tab_image(self, tab_image: Image.Image) -> Image.Image:
+            bands = []
+            for band_index, band_name in enumerate("RGB"):
+                band = tab_image.getchannel(band_name)
+                band = Image.eval(band, lambda n: round((n/255) * (self.colour[band_index]/255) * 255))
+                bands.append(band)
+            bands.append(tab_image.getchannel("A"))
+            return Image.merge("RGBA", bands)
+
+        def get_tab_image(self, downward_offset: int):
+            tab_image = self.color_tab_image(self.get_uncolored_tab_image())
+            new_image = Image.new("RGBA", tab_image.size)
+            new_image.paste(tab_image, (0, downward_offset))
+            return new_image
+
+    tab_flavors: Dict[str, TabFlavor] = {
+        "hand":  TabFlavor("tab_small.png", g_c["blue"]),
+        "jack":  TabFlavor("tab_small.png", g_c["important"]),
+        "chips": TabFlavor("tab_large.png", Hue.from_rgb(basic_colors["blue"]).rgb_tuple()),
+        "mult":  TabFlavor("tab_large.png", Hue.from_rgb(basic_colors["red"]).rgb_tuple()),
+        "money": TabFlavor("tab_large.png", Hue.from_rgb(basic_colors["yellow"]).rgb_tuple()),
+        "luck":  TabFlavor("tab_large.png", Hue.from_rgb(basic_colors["green"]).rgb_tuple()),
+    }
+
+    for tab_index, tab_flavor_name in enumerate(tabs):
+        tab_flavor = tab_flavors[tab_flavor_name]
+        tab_image = tab_flavor.get_tab_image(tab_index*9)
+        image.alpha_composite(tab_image)
+
+    return image
+
+
 def color_many_horses():
     for horse_config in horse_configs():
         global debug_image
@@ -813,6 +858,9 @@ def color_many_horses():
         accessory_key = horse_config.key.replace("neg", "")
         if accessory_key in accessories_maybe:
             apply_horse_accessories(horse, accessories_maybe[accessory_key], negative=horse_config.negative)
+
+        # Tabs
+        add_tabs(horse, ["jack" if horse_config.jack else "hand"] + horse_config.bonuses)
 
         # Debuggy
         if debug_mode:
