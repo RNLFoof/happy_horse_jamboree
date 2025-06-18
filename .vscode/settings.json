@@ -11,5 +11,34 @@
     
         "hhj_pool_filter",
         "hhj_pool_fallback"
-    ]
+    ],
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#551900",
+        "activityBar.background": "#551900",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#008026",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "commandCenter.border": "#e7e7e799",
+        "editorGroup.border": "#551900",
+        "panel.border": "#551900",
+        "sash.hoverBorder": "#551900",
+        "sideBar.border": "#551900",
+        "statusBar.background": "#220a00",
+        "statusBar.border": "#220a00",
+        "statusBar.debuggingBackground": "#001822",
+        "statusBar.debuggingBorder": "#001822",
+        "statusBar.debuggingForeground": "#e7e7e7",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#551900",
+        "statusBarItem.remoteBackground": "#220a00",
+        "statusBarItem.remoteForeground": "#e7e7e7",
+        "tab.activeBorder": "#551900",
+        "titleBar.activeBackground": "#220a00",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.border": "#220a00",
+        "titleBar.inactiveBackground": "#220a0099",
+        "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "peacock.color": "220a00"
 }
