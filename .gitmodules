@@ -1,3 +1,6 @@
 [submodule "libs/balatro_ui_map"]
 	path = libs/balatro_ui_map
 	url = https://github.com/RNLFoof/balatro_ui_map
+[submodule "libs/steamodded_test"]
+	path = libs/steamodded_test
+	url = https://github.com/RNLFoof/steamodded_test
