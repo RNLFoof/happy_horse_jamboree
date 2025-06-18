@@ -11,7 +11,7 @@ atlas_jokers_positions["placeholder"]["blue"], loc_txt = { name =
 "when a card is {C:attention}juiced up{},", 
 "{C:inactive,s:0.5}(shaking animation)", 
 "based on intensity", 
-"{C:inactive}(Currently {C:chips}+#1# {C:inactive}-> {C:chips}+#2# {C:inactive}Chips)" } }, loc_vars = function(self, info_queue, card)return { vars = { 
+"{C:inactive}(Currently {C:chips}#1# {C:inactive}→ {C:chips}+#2# {C:inactive}Chips)" } }, loc_vars = function(self, info_queue, card)return { vars = { 
 
 
 
