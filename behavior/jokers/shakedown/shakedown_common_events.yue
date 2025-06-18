@@ -1,0 +1,59 @@
+useful_things = assert(SMODS.load_file("useful_things.lua"))()
+
+-- uuuughhhhhh it's gonna be such a pain to do this without injecting anything. okay uhhhhh
+
+-- This method means that Shakedown won't accept shakes that are of the same intensity but not actually from juice_card_until - I think I'm willing to live with this
+
+-- I considered wrapping juice_card_until such that it always created an event like this, but that risked a scenario in which 
+-- eval_func passes for juice_card_until but not stalk_juice_card_until, and the flag never getting set back
+-- Doing it like this means that stalk_juice_card_until can run for extra cycles if it needs to in some nightmare scenario
+stalk_juice_card_until = (card, eval_func, delay, mid_chain) ->
+    if (not mid_chain) and card.ability.hhj_in_juice_card_until
+        return
+
+    G.E_MANAGER::add_event Event
+        trigger: "after"
+        delay: delay or 0.1
+        blocking: false 
+        blockable: false 
+        timer: "REAL"
+        func: () ->
+            if not eval_func(card)  -- grrrrrr!!!!
+                card.ability.hhj_in_juice_card_until = nil
+            else
+                card.ability.hhj_in_juice_card_until = true
+                stalk_juice_card_until(card, eval_func, delay, true)
+            return true
+
+-- Works
+-- ref = juice_card_until
+-- global juice_card_until = (...) -> 
+--     ref(card, eval_func, first, delay)
+
+-- Works
+-- ref = juice_card_until
+-- global juice_card_until = (...) -> 
+--     ref(...)
+
+-- Shakes violently
+-- ref = juice_card_until
+-- global juice_card_until = (...) -> 
+--     args = {...}
+--     ref(unpack args)
+
+-- ref = juice_card_until
+-- global juice_card_until = (...) -> 
+--     args = {...}
+--     ref(useful_things.nilproof_unpack(args))
+
+-- useful_things.wrap_method_with_manual_calling(_G, "juice_card_until", (original_method, args) ->
+--     original_method(unpack args)
+-- )
+
+
+-- So it's called juice_card_until
+-- but it actually *only* continues if the function passes!! It should be called juice_card_while or juice_card_until_not or something!!!!!
+useful_things.wrap_function("juice_card_until", 
+    (card, eval_func, first, delay) ->
+        stalk_juice_card_until(card, eval_func, delay, false)
+)

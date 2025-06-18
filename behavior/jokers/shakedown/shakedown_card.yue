@@ -4,6 +4,8 @@ adjust_add = (rot_amount) -> rot_amount * 2
 useful_things.wrap_method(Card, "juice_up", nil, (original_output, scale, rot_amount) =>
     if G.SETTINGS.paused
         return
+    if @ability.hhj_in_juice_card_until
+        return
     
     for joker in *SMODS.find_card("j_hhj_shakedown", false)
         -- if joker.key == "j_hhj_shakedown"add = scale * rot_amount
@@ -31,12 +33,12 @@ useful_things.wrap_method(Card, "juice_up", nil, (original_output, scale, rot_am
                 align:"cm"
             },
             definition: 
-              {n:G.UIT.ROOT, config: {
+                {n:G.UIT.ROOT, config: {
                 major:self,
                 draw_layer: draw_layer
                 align: 'cm', minw: (args.cover and args.cover.T.w or 0.001) + (args.cover_padding or 0), minh: (args.cover and args.cover.T.h or 0.001) + (args.cover_padding or 0), padding: 0.03, r: 0.1, emboss: args.emboss, colour: G.C.CLEAR}, nodes:{
-              }}, 
-          }
+                }}, 
+        }
 
         scale_variance = 0.2
         self.childParts2 = Particles(G.CARD_W/2, G.CARD_H/2, 0, 0, {

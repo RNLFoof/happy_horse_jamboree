@@ -3,6 +3,8 @@ local adjust_add;adjust_add = function(rot_amount)return rot_amount * 2 end;retu
 
 useful_things.wrap_method(Card, "juice_up", nil, function(self, original_output, scale, rot_amount)if 
 G.SETTINGS.paused then
+return end;if 
+self.ability.hhj_in_juice_card_until then
 return end;local _list_0 = 
 
 SMODS.find_card("j_hhj_shakedown", false)for _index_0 = 1, #_list_0 do local joker = _list_0[_index_0]
