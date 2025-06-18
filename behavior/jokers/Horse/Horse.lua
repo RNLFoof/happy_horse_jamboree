@@ -274,7 +274,7 @@ return end;return
 useful_things.field_replace_context(G, "hhj_allow_horses", true, function()return 
 useful_things.pool_filter_context((function(center)return center.config.is_horse end), "hhj_j_horse_chipschipschips", function()local new_horse_center = 
 useful_things.pseudorandom_center(get_current_pool("Joker", 0, false, "horse"), "horse")return 
-card:set_ability(new_horse_center)end)end)end })
+card:set_ability(new_horse_center)end)end)end })local _anon_func_1 = function(self)local _obj_0 = 
 
 
 
@@ -283,7 +283,6 @@ card:set_ability(new_horse_center)end)end)end })
 
 
 
-useful_things = assert(SMODS.load_file("useful_things.lua"))()local _anon_func_1 = function(self)local _obj_0 = 
 
 
 self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;useful_things.wrap_method(Card, "hover", function(...)local self = ...if _anon_func_1(self) then return neigh()end end)local ref = 

@@ -283,7 +283,6 @@ macro lua = (code) -> {
     type: "lua"
 }
 
-useful_things = assert(SMODS.load_file("useful_things.lua"))()
 useful_things.wrap_method(Card, "hover", (...) ->
     self = ...
     neigh() if self.config.center?.config?.is_horse
