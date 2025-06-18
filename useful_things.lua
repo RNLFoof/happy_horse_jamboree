@@ -35,32 +35,73 @@ keySet[key2] then return false end end;return
 true end;_module_0["equals"] = equals
 
 
+local pack;pack = function(...)return { n = select("#", ...), ... }end;_module_0["pack"] = pack
+
+
+local nilproof_unpack;nilproof_unpack = function(victim, index)if 
+index == nil then index = 1 end
+
+local max;if 
+victim.n ~= nil then
+max = victim.n else
+
+max = 0;for maybe_max, _ in 
+pairs(victim) do if 
+type(maybe_max) == "number" and maybe_max > max then
+max = maybe_max end end end;if 
+
+index <= max then return 
+victim[index], nilproof_unpack(victim, index + 1)end end;_module_0["nilproof_unpack"] = nilproof_unpack
+
+
 local wrap_method_with_manual_calling;wrap_method_with_manual_calling = function(class_, method_name, do_this)if 
 class_ == nil then error("CLASS IS NIL :(")end;if 
-class_[method_name] == nil then error("METHOD IS NIL :(")end;local function_wrapped_at = 
+class_[method_name] == nil then error("METHOD IS NIL :(")end;local method_wrapped_at = 
 debug.getinfo(2)local original_method = 
+
 class_[method_name]
 class_[method_name] = function(...)local will_it_let_me_do_this = 
-"Wrap defined at " .. tostring(function_wrapped_at.source) .. ":" .. tostring(function_wrapped_at.linedefined) .. "."local args = { 
-... }return 
-do_this(original_method, args)end end;_module_0["wrap_method_with_manual_calling"] = wrap_method_with_manual_calling;local _anon_func_0 = function(args)local _accum_0 = 
+"Wrap defined at " .. tostring(method_wrapped_at.source) .. ":" .. tostring(method_wrapped_at.linedefined) .. "."local args = 
+pack(...)return 
+do_this(original_method, args)end end;_module_0["wrap_method_with_manual_calling"] = wrap_method_with_manual_calling
+
+
+local wrap_method;wrap_method = function(class_, method_name, before, after)if before == nil then before = (function()return nil end)end;if after == nil then after = (function(self, original_outputs)return nilproof_unpack(original_outputs)end)end;local method_wrapped_at = 
+debug.getinfo(2)return 
+wrap_method_with_manual_calling(class_, method_name, function(original_method, args)local will_it_let_me_do_this = 
+"Wrap defined at " .. tostring(method_wrapped_at.source) .. ":" .. tostring(method_wrapped_at.linedefined) .. "."
+before(nilproof_unpack(args))local original_outputs = { 
+original_method(nilproof_unpack(args)) }local selfless_args = 
+
+{  }for index = 
+1, args.n do
+selfless_args[index] = args[index + 1]end
+selfless_args.n = args.n - 1;return 
 
 
 
 
 
+after(args[1], original_outputs, nilproof_unpack(selfless_args))end)end
+_module_0["wrap_method"] = wrap_method
+
+local wrap_function;wrap_function = function(function_name, before, after)if before == nil then before = (function()return nil end)end;if after == nil then after = (function(original_outputs)return nilproof_unpack(original_outputs)end)end;local function_wrapped_at = 
+debug.getinfo(2)return 
 
 
 
+wrap_method_with_manual_calling(_G, function_name, function(original_method, args)local will_it_let_me_do_this = 
+"Wrap defined at " .. tostring(function_wrapped_at.source) .. ":" .. tostring(function_wrapped_at.linedefined) .. "."
+before(nilproof_unpack(args))local original_outputs = { 
+original_method(nilproof_unpack(args)) }return 
 
 
 
-{  }local _len_0 = 1;for _index_0 = 2, #args do local x = args[_index_0]_accum_0[_len_0] = x;_len_0 = _len_0 + 1 end;return _accum_0 end;local wrap_method;wrap_method = function(class_, method_name, before, after)if before == nil then before = (function()return nil end)end;if after == nil then after = (function(self, original_outputs)return original_outputs end)end;local function_wrapped_at = debug.getinfo(2)return wrap_method_with_manual_calling(class_, method_name, function(original_method, args)local will_it_let_me_do_this = "Wrap defined at " .. tostring(function_wrapped_at.source) .. ":" .. tostring(function_wrapped_at.linedefined) .. "."before(unpack(args))local original_outputs = { original_method(unpack(args)) }return 
-after(args[1], original_outputs, unpack(_anon_func_0(args)))end)end
-_module_0["wrap_method"] = wrap_method;local _anon_func_1 = function(pairs, table)local _accum_0 = 
+after(original_outputs, nilproof_unpack(args))end)end
+_module_0["wrap_function"] = wrap_function;local _anon_func_0 = function(pairs, table)local _accum_0 = 
 
 
-{  }local _len_0 = 1;for x in pairs(table) do _accum_0[_len_0] = x;_len_0 = _len_0 + 1 end;return _accum_0 end;local table_is_list;table_is_list = function(table)return # (_anon_func_1(pairs, table)) == #table end;_module_0["table_is_list"] = table_is_list
+{  }local _len_0 = 1;for x in pairs(table) do _accum_0[_len_0] = x;_len_0 = _len_0 + 1 end;return _accum_0 end;local table_is_list;table_is_list = function(table)return # (_anon_func_0(pairs, table)) == #table end;_module_0["table_is_list"] = table_is_list
 
 local flatten;flatten = function(list)local output = 
 {  }for _index_0 = 

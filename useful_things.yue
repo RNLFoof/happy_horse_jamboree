@@ -34,28 +34,69 @@ export equals = (o1, o2, ignore_mt) ->
     
     return true
 
+-- Added in Lua 5.2 (Balatro uses Lua 5.1) https://www.lua.org/manual/5.2/manual.html#pdf-table.pack
+export pack = (...) -> { n: select("#", ...), ... }
+
+-- Based on implementation in https://www.lua.org/pil/5.1.html
+export nilproof_unpack = (victim, index) ->
+    index ??= 1
+
+    local max
+    if victim.n != nil  -- n defined if pack was used earlier
+        max = victim.n
+    else
+        max = 0
+        for maybe_max, _ in pairs(victim)
+            if type(maybe_max) == "number" and maybe_max > max
+                max = maybe_max
+
+    if index <= max
+        return victim[index], nilproof_unpack(victim, index + 1)
+
 -- Be careful with this, if you don't call the original mnethod manually, it won't be called at all
 export wrap_method_with_manual_calling = (class_, method_name, do_this) ->
     if class_ == nil then error("CLASS IS NIL :(")
     if class_[method_name] == nil then error("METHOD IS NIL :(")
-    function_wrapped_at = debug.getinfo(2)  -- This is so that it appears in the debug info. hard to track down otherwise
+    method_wrapped_at = debug.getinfo(2)  -- This is so that it appears in the debug info. hard to track down otherwise
+    
     original_method = class_[method_name]
     class_[method_name] = (...) ->
-        will_it_let_me_do_this = "Wrap defined at #{function_wrapped_at.source}:#{function_wrapped_at.linedefined}."
-        args = {...}
+        will_it_let_me_do_this = "Wrap defined at #{method_wrapped_at.source}:#{method_wrapped_at.linedefined}."
+        args = pack(...)
         do_this(original_method, args)
 
 
-export wrap_method = (class_, method_name, before = (-> nil), after = ((original_outputs)=>original_outputs)) ->
-    function_wrapped_at = debug.getinfo(2)  -- This is so that it appears in the debug info. hard to track down otherwise
+export wrap_method = (class_, method_name, before = (-> nil), after = ((original_outputs)=>nilproof_unpack(original_outputs))) ->
+    method_wrapped_at = debug.getinfo(2)
     wrap_method_with_manual_calling(class_, method_name, (original_method, args) ->
-        will_it_let_me_do_this = "Wrap defined at #{function_wrapped_at.source}:#{function_wrapped_at.linedefined}."
-        before(unpack args)
-        original_outputs = {original_method(unpack args)}
+        will_it_let_me_do_this = "Wrap defined at #{method_wrapped_at.source}:#{method_wrapped_at.linedefined}."
+        before(nilproof_unpack args)
+        original_outputs = {original_method(nilproof_unpack args)}
+
+        selfless_args = {}
+        for index = 1, args.n
+            selfless_args[index] = args[index + 1]
+        selfless_args.n = args.n - 1
+
         return after(
             args[1],  -- self, which is always first
             original_outputs,  -- This feels like it should be last, but it has to go here because the original args could have ended in ..., which prevents one last arg here 
-            unpack [x for x in *args[2,]]
+            nilproof_unpack selfless_args
+        )
+    )
+
+export wrap_function = (function_name, before = (-> nil), after = ((original_outputs)->nilproof_unpack(original_outputs))) ->
+    function_wrapped_at = debug.getinfo(2)  -- This is so that it appears in the debug info. hard to track down otherwise
+    
+    -- It's fine to be used wrap_method_with_manual_calling and not a hypothetical wrap_function_with_manual_calling
+    -- because wrap_method_with_manual_calling never explicitly uses self
+    wrap_method_with_manual_calling(_G, function_name, (original_method, args) ->
+        will_it_let_me_do_this = "Wrap defined at #{function_wrapped_at.source}:#{function_wrapped_at.linedefined}."
+        before(nilproof_unpack args)
+        original_outputs = {original_method(nilproof_unpack args)}
+        return after(
+            original_outputs,  -- This feels like it should be last, but it has to go here because the original args could have ended in ..., which prevents one last arg here 
+            nilproof_unpack args
         )
     )
 

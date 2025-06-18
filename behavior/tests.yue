@@ -2,55 +2,124 @@ testing = assert(SMODS.load_file("libs\\steamodded_test\\main.lua"))()
 useful_things = assert(SMODS.load_file("useful_things.lua"))()
 assert(SMODS.load_file("libs\\steamodded_test\\test_main.lua"))()
 
-G.steamodded_tests.tests[] = testing.TestBundle("useful_things", {
+TestBundle = testing.TestBundle
+Test = testing.Test
 
-    testing.Test("wrap_method", {
-        -> 
-            buildup = {}
-            obj = {
-                fun: ->
-                    buildup[] = "middle"
-            }
-            useful_things.wrap_method(obj, "fun", (-> buildup[] = "before"), (-> buildup[] = "after"))
-            obj.fun()
-            testing.assert_eq(table.concat(buildup, "_"), "before_middle_after")
-    }),
+G.steamodded_tests.tests[] = TestBundle "useful_things"
+    * TestBundle "wrap_method"
+        * TestBundle "manual_calling"
+            * Test "basic"
+                * -> 
+                    buildup = {}
+                    obj = {
+                        fun: (n) =>
+                            buildup[] = "#{n}"
+                    }
+                    useful_things.wrap_method_with_manual_calling(obj, "fun", (original_method, args) ->
+                        original_method(unpack args)
+                    )
+                    obj::fun(2)
+                    testing.assert_eq(table.concat(buildup, "_"), "2")
+            
+            * Test "nil_in_middle"
+                * -> 
+                    buildup = {}
+                    obj = {
+                        fun: (...) =>
+                            args = useful_things.pack(...)
+                            for i = 1, args.n
+                                buildup[] = "#{args[i]}"
+                    }
+                    useful_things.wrap_method_with_manual_calling(obj, "fun", (original_method, args) ->
+                        original_method(useful_things.nilproof_unpack(args))
+                    )
 
-    testing.TestBundle("flatten", {
-        testing.Test("strings", {
-            ->
+                    --[[
+                    I was trying to figure stuff out earlier but I got it :)
+
+                    -- Works
+                    okay = (...) -> print(...)
+                    okay(2,5,nil,6)
+                    
+                    -- Works
+                    okay2 = (...) => print(...)
+                    okay2({},2,5,nil,7)
+                    
+                    -- Works
+                    okay3 = {fun: (...) => print(...)}
+                    okay3.fun({},2,5,nil,8)
+                    
+                    -- I'm losing my fucking mind
+                    ]]
+
+                    obj::fun(1, 2, nil, 4)
+                    testing.assert_eq(table.concat(buildup, "_"), "1_2_nil_4")
+        
+        * Test "argless"
+            * -> 
+                buildup = {}
+                obj = {
+                    fun: ->
+                        buildup[] = "middle"
+                }
+                useful_things.wrap_method(obj, "fun", (-> buildup[] = "before"), (-> buildup[] = "after"))
+                obj.fun()
+                testing.assert_eq(table.concat(buildup, "_"), "before_middle_after")
+        
+        * Test "with_args"
+            * -> 
+                buildup = {}
+                obj = {
+                    fun: (nn) =>
+                        buildup[] = "#{nn*2}"
+                }
+                useful_things.wrap_method(obj, "fun", ((n) => buildup[] = "#{n*1}"), ((original_output, nnn) => buildup[] = "#{nnn*3}"))
+                obj::fun(2)
+                testing.assert_eq(table.concat(buildup, "_"), "2_4_6")
+            
+        * Test "nil_in_middle"
+            * -> 
+                buildup = {}
+                obj = {
+                    fun: (...) =>
+                        args = {...}
+                        for i = 1, 4
+                            buildup[] = "#{args[i]}"
+                }
+                useful_things.wrap_method(obj, "fun")
+                obj::fun(1, 2, nil, 4)
+                testing.assert_eq(table.concat(buildup, "_"), "1_2_nil_4")
+    
+    * TestBundle "flatten"
+        * Test "strings"
+            * ->
                 testing.assert_eq({"a", "b"}          |>                          table.concat, "ab" )
                 testing.assert_eq({"a", "b"}          |> useful_things.flatten |> table.concat, "ab" )
                 testing.assert_eq({"a", {"b"}}        |> useful_things.flatten |> table.concat, "ab" )
                 testing.assert_eq({"a", {"b", "c"}}   |> useful_things.flatten |> table.concat, "abc")
                 testing.assert_eq({"a", {"b", {"c"}}} |> useful_things.flatten |> table.concat, "abc")
-        }),
 
-        testing.Test("dicts", {
-            ->
+        * Test "dicts"
+            * ->
                 test_on = {"a", {"b": "c"}} |> useful_things.flatten
                 testing.assert_eq(test_on[1], "a")
                 testing.assert_eq(test_on[2]["b"], "c")
-        }),
-    }),
 
-    testing.Test("table_is_list", {
-        -> 
+    * Test "table_is_list"
+        * -> 
             assert(useful_things.table_is_list({"q", "w", "e"}))
             assert(not useful_things.table_is_list({"q": "q", "w": "w", "e": "e"}))
-    })
 
-    testing.Test("lerp", {
-        -> 
+    * Test "lerp"
+        * -> 
             testing.assert_eq(useful_things.lerp(0, 1, 0  ), 0)
             testing.assert_eq(useful_things.lerp(0, 1, 1  ), 1)
             testing.assert_eq(useful_things.lerp(0, 8, 1  ), 8)
             testing.assert_eq(useful_things.lerp(0, 8, 0.5), 4)
             testing.assert_eq(useful_things.lerp(4, 8, 0.5), 6)
-    }),
-
-    testing.Test("normalize", {
-        -> 
+    
+    * Test "normalize"
+        * -> 
             testing.assert_eq(useful_things.normalize(0, 0,   1), 0  )
             testing.assert_eq(useful_things.normalize(0, 1,   1), 1  )
             testing.assert_eq(useful_things.normalize(0, 0.5, 1), 0.5)
@@ -58,20 +127,18 @@ G.steamodded_tests.tests[] = testing.TestBundle("useful_things", {
             testing.assert_eq(useful_things.normalize(1, 3,   5), 0.5)
             testing.assert_eq(useful_things.normalize(1, 1,   5), 0  )
             testing.assert_eq(useful_things.normalize(1, 5,   5), 1  )
-    }),
-
-    testing.Test("field_replace_context", {
-        ->
+    
+    * Test "field_replace_context"
+        * ->
             object = {"a"}
             testing.assert_eq(object[1], "a")
             useful_things.field_replace_context(object, 1, "b", ->
                 testing.assert_eq(object[1], "b")
             )
             testing.assert_eq(object[1], "a")
-    })
-
-    testing.Test("field_replace_context_with_error", {
-        ->
+    
+    * Test "field_replace_context_with_error"
+        * ->
             object = {"a"}
             testing.assert_eq(object[1], "a")
             original_error_message = ":)"
@@ -84,10 +151,9 @@ G.steamodded_tests.tests[] = testing.TestBundle("useful_things", {
             testing.assert_eq(response, false)
             assert(error_message::endswith(original_error_message))
             testing.assert_eq(object[1], "a")
-    })
 
-    testing.Test("multi_field_replace_context", {
-        ->
+    * Test "multi_field_replace_context"
+        * ->
             object = {"a", "b", "c"}
             testing.assert_eq(object[1], "a")
             testing.assert_eq(object[2], "b")
@@ -107,14 +173,10 @@ G.steamodded_tests.tests[] = testing.TestBundle("useful_things", {
             testing.assert_eq(object[2], "b")
             testing.assert_eq(object[3], "c")
             assert(got_in)
-    })
-
-    testing.Test("judgement_after_filtering", {
-        ...testing.create_state_steps(),
-        -> 
+    
+    * Test "judgement_after_filtering"
+        * testing.create_state_steps()
+        * -> 
             judgement = SMODS.create_card({set: "Tarot", key: "c_judgement"})
             judgement::use_consumeable(judgement.area)
             true
-    }),
-
-})
