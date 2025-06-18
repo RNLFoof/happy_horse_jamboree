@@ -1,0 +1,3 @@
+[submodule "libs/balatro_ui_map"]
+	path = libs/balatro_ui_map
+	url = https://github.com/RNLFoof/balatro_ui_map
