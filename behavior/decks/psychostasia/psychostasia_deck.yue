@@ -1,0 +1,391 @@
+useful_things = assert(SMODS.load_file("useful_things.lua"))()
+
+hhj_psychostasia_atlas = atlas_decks
+
+hhj_psychostasia = SMODS.Back{
+    name: "Psychostasia Deck",
+    key: "hhj_psychostasia",
+    atlas: "atlas_decks",
+    pos: atlas_decks_positions["psychostasia"],
+    config: {hhj_psychostasia: true, joker_slot: 5},
+    loc_txt: {
+        name: "Psychostasia Deck",
+        text: {
+            "{C:attention}+5{} Joker slots",
+            "{C:green}Uncommon{}, {C:red}Rare{}, and {C:purple}Legendary{} Jokers",
+            "cost {C:green}2{}, {C:red}3{}, and {C:purple}4{} Joker slots",
+        },
+    },
+
+    loc_vars: () => 
+        return {
+            vars: {}
+        }
+
+    apply: () ->
+        G.E_MANAGER::add_event(Event({
+            func: () ->
+                G.GAME.starting_params.hhj_psychostasia = true
+                return true
+        }))
+
+    -- calculate: function(self, card, context)
+    --     if then
+    --         G.GAME.blind:debuff_card(card)
+    --     end
+    -- end,
+}
+
+psychostasia_enabled = () ->
+    return G.GAME.starting_params.hhj_psychostasia
+
+overburdened = () ->
+    return psychostasia_enabled() and #G.jokers.cards > G.jokers.config.card_limit
+
+big_guy = (card) ->
+    return psychostasia_enabled() and card.config.center.rarity and card.config.center.rarity >= 3
+
+force_notch_bar_update = (cardArea) ->
+    if cardArea == G.jokers and G.jokers.children.area_uibox then
+        G.jokers.children.area_uibox.definition.nodes[2].nodes[6] = nil
+
+-- alert_no_space but with a different message. that's it 
+alert_too_heavy = (card, area) ->
+    G.CONTROLLER.locks.no_space = true
+    attention_text({
+        scale: 0.9, text: "Too heavy!", hold: 0.9, align: 'cm',
+        cover: area, cover_padding: 0.1, cover_colour: adjust_alpha(G.C.BLACK, 0.7)
+    })
+    card::juice_up(0.3, 0.2)
+    for i = 1, #area.cards
+        area.cards[i]::juice_up(0.15)
+    G.E_MANAGER::add_event(
+        Event({
+            trigger: 'after'
+            delay: 0.06*G.SETTINGS.GAMESPEED
+            blockable: false
+            blocking: false
+            func: () ->
+                play_sound('tarot2', 0.76, 0.4)
+                return true
+        })
+    )
+    play_sound('tarot2', 1, 0.4)
+
+    G.E_MANAGER::add_event(
+        Event({
+            trigger: 'after'
+            delay: 0.5*G.SETTINGS.GAMESPEED
+            blockable: false
+            blocking: false
+            func: () ->
+                G.CONTROLLER.locks.no_space = nil
+                return true
+        })
+    )
+
+ref = G.FUNCS.check_for_buy_space
+G.FUNCS.check_for_buy_space = (card) ->
+    if G.GAME.starting_params.hhj_psychostasia and card.ability.set == 'Joker' and #G.jokers.cards + card.config.center.rarity > G.jokers.config.card_limit 
+        alert_too_heavy(card, G.jokers)
+        return false
+    return ref(card)
+
+card_scale = (card) ->
+    if card.config?.center?.rarity
+        return card.config.center.rarity * 0.5
+    return 1
+
+-- useful_things.wrap_method(Card, "draw", 
+--     (layer) =>
+--         if psychostasia_enabled()
+--             love.graphics.push()
+--             love.graphics.scale(card_scale(@))
+--     (original_output, layer) =>
+--         if psychostasia_enabled()
+--             love.graphics.pop()
+-- )
+
+useful_things.wrap_method(Card, "init", nil, 
+    (original_outputs, X, Y, W, H, card, center, params) => 
+        -- This seems to trigger before the deck is known when loading. Doing it as an event makes it trigger afterwards.
+        G.E_MANAGER::add_event(Event({
+            func: () ->
+                if G.GAME.starting_params.hhj_psychostasia
+                    if self.ability and self.ability.set == 'Joker'
+                        new_scale = self.config.center.rarity * 0.5
+                        if not big_guy(self)
+                            self.T.w = self.T.w * new_scale
+                            self.T.h = self.T.h * new_scale
+                        else
+                            self.T.h = G.CARD_W * new_scale
+                            self.T.w = self.T.h * G.CARD_W / G.CARD_H 
+                        self.VT.w = self.T.w
+                        self.VT.h = self.T.h
+                return true
+        }))
+        return original_outputs
+)
+
+ref = Card.add_to_deck
+Card.add_to_deck = () => 
+    if G.GAME.starting_params.hhj_psychostasia
+        if not self.added_to_deck
+            if self.ability and self.ability.set == 'Joker'
+                if not G.OVERLAY_MENU
+                    G.jokers.config.card_limit = G.jokers.config.card_limit - (self.config.center.rarity - 1)
+    ref(self)
+    
+    force_notch_bar_update(self)
+
+useful_things.wrap_method(Card, "remove_from_deck",
+    () => 
+        if psychostasia_enabled()
+
+            if self.added_to_deck
+                if self.ability and self.ability.set == 'Joker'
+                    if not G.OVERLAY_MENU
+                        G.jokers.config.card_limit = G.jokers.config.card_limit + (self.config.center.rarity - 1)
+    () =>
+        force_notch_bar_update(self)
+)
+
+-- CardArea
+
+rarity_or_default = (rarity) ->
+    if type(rarity) == "number" then return rarity else return 2
+
+get_effective_card_count = () ->
+    effective_card_count = 0
+    for _, card in ipairs(G.jokers.cards) do
+        effective_card_count = effective_card_count + rarity_or_default(card.config.center.rarity)
+    return effective_card_count
+
+get_effective_card_limit = () ->
+    return get_effective_card_count() + (G.jokers.config.card_limit-#G.jokers.cards) 
+
+ref = CardArea.draw
+CardArea.draw = () =>
+    notch_side = 0.25
+    notch_padding = 0.025 / 2 -- I wonder if this could be made to be one pixel regardless of screen size?
+    notch_emboss=0.1
+    notch_inactive_emboss_ratio=0.5
+    notch_r = 0.05
+    danger_color = G.C.HHJ_OVERBURDENED
+
+    local it
+    local it_goes_in_here
+    if (
+        G.GAME.starting_params.hhj_psychostasia and
+        @children and 
+        @children.area_uibox and 
+        @children.area_uibox.definition.nodes  and 
+        @children.area_uibox.definition.nodes[2] and 
+        @children.area_uibox.definition.nodes[2].nodes
+    )
+        it_goes_in_here = @children.area_uibox.definition.nodes[2] --[2].children
+        it = it_goes_in_here.nodes[6]
+
+    if self == G.jokers and it_goes_in_here and @children.area_uibox -- I have NO clue how it_goes_in_here can be set without self.children.area_uibox but here we are
+        if not it
+            the_actual_bar = {}
+            -- the_actual_bar[#the_actual_bar+1] = {
+            --         n=G.UIT.B,
+            --         config={align="cm", w=notch_padding, h=notch_padding}
+            -- }
+
+            effective_card_limit = get_effective_card_limit()
+
+            -- Filled notches
+            filled_notch_count = 0
+            for _, card in ipairs(self.cards) do
+                for _=1, rarity_or_default(card.config.center.rarity) do
+                    the_actual_bar[#the_actual_bar+1] = {
+                        n: G.UIT.C
+                        config: {
+                            minh: notch_side+notch_padding
+                        }
+                        nodes: {
+                            -- Needs to be a row in a column because uuhhhhh bad
+                            {
+                                n: G.UIT.R
+                                config: {
+                                    align: "cm"
+                                    minw: (
+                                        (
+                                            notch_side * rarity_or_default(card.config.center.rarity) +
+                                            notch_padding * (rarity_or_default(card.config.center.rarity) - 1)
+                                        ) / rarity_or_default(card.config.center.rarity)
+                                    )
+                                    minh: notch_side
+                                    colour: filled_notch_count<effective_card_limit and G.C.RARITY[card.config.center.rarity] or danger_color
+                                    emboss: notch_emboss
+                                    r: notch_r
+                                }
+                            }
+                        }
+                    }
+                    filled_notch_count = filled_notch_count + 1
+                the_actual_bar[#the_actual_bar+1] = {
+                    n: G.UIT.B,
+                    config:{
+                        w: notch_padding
+                        h: notch_padding
+                    }
+                }
+                --if #the_actual_bar >= 2 then break end
+
+            -- Empty notches
+            for _ = #self.cards+1, self.config.card_limit
+                the_actual_bar[#the_actual_bar+1] = {
+                    n: G.UIT.C, config: {minh: notch_side+notch_padding, mninw: notch_side+notch_emboss}, nodes: {
+                        --OH MY GOD WHY IS BALATRO'S UI SO BUGGY
+                        -- WHY IS THIS SHIT NECESSARY
+                        -- (without the extra layers, the alignment doesn't work)
+                        {n: G.UIT.R, nodes: {{n: G.UIT.C, config: {minw: notch_side, minh: notch_side+notch_emboss, align: "bm"},nodes: {
+
+                            -- {
+                            --         n: G.UIT.R,
+                            --         config: {minw: notch_side, minh: notch_emboss*(1-notch_inactive_emboss_ratio), colour: G.C.CLEAR}
+                            -- },
+                            { -- Needs to be a row in a column because uuhhhhh bad
+                                n: G.UIT.R,
+                                config: {
+                                    minw: notch_side,
+                                    minh: notch_side+notch_padding,
+                                    colour: G.C.UI.BACKGROUND_INACTIVE, 
+                                    emboss: notch_emboss*notch_inactive_emboss_ratio, 
+                                    r: 1,
+                                    --offset: {x: 0, y: 1}
+                                }
+                            },
+                        }}}}
+                    }
+                }
+                the_actual_bar[#the_actual_bar+1] = {
+                        n: G.UIT.B,
+                        config: {w: notch_padding, h: notch_padding}
+                }
+
+            -- Overburdened warning
+            if overburdened() then
+                the_actual_bar[#the_actual_bar+1] = {n: G.UIT.B, config: {w: 0.1/2, h: 0.1}}
+                the_actual_bar[#the_actual_bar+1] = {n: G.UIT.T, config: {text: "Overburdened! Jokers won't activate!", scale:  0.3, colour:  danger_color}}
+            
+            it_goes_in_here.nodes[6] = {n: G.UIT.C, config:  {colour: G.C.CLEAR}, nodes: {{
+                    n: G.UIT.R, config:  {colour:  G.C.CLEAR, minw: notch_side*1+notch_padding*9, minh: notch_side+notch_padding, align: "cm"},
+                    nodes: the_actual_bar
+                }}}
+            self.children.area_uibox = UIBox{definition: self.children.area_uibox.definition, config: self.children.area_uibox.config}
+        -- it_goes_in_here.hhj_psychostasia_bar:draw()
+    ref(self)
+
+-- local ref = CardArea.update
+-- CardArea.update = (dt) =>
+--     ref(self, dt)
+--     force_notch_bar_update(self)
+-- end
+
+useful_things.wrap_method(CardArea, "align_cards", nil,
+    (original_outputs) =>
+        if not psychostasia_enabled()
+            return
+        assert(G.GAME.starting_params.hhj_psychostasia)
+        
+        -- Aligns jokers while taking their size into account. Based on the actual joker alignment code
+        -- Checks for rarity because the consumable area is also type joker 
+        if self.config.type == 'joker' and #self.cards > 0 and self.cards[1].config.center.rarity
+            psychostasia_k = 0
+            ecc = get_effective_card_count()
+            previous_psychostasia_k = 0 -- Replaces k-1
+
+            for k, card in ipairs(self.cards)
+                psychostasia_k = psychostasia_k + card.config.center.rarity
+                -- self.card_width is the actual width that cards have, potentially modified per CardArea. I'm going to just assume it's normal 
+                -- This can't be set as just the card's actual width, because of wee joker and maybe others
+                width_of_this_card = card.config.center.rarity*0.5*self.card_w --
+                if not card.states.drag.is 
+                    card.T.r = 0.1*(-ecc/2 - 0.5 + psychostasia_k)/(ecc)+ (G.SETTINGS.reduced_motion and 0 or 1)*0.02*math.sin(2*G.TIMERS.REAL+card.T.x)
+
+                    if ecc > 2 or (ecc > 1 and self == G.consumeables) or (ecc > 1 and self.config.spread)
+                        
+                        card.T.x = self.T.x + (
+                            (self.T.w - self.card_w*0.5) *-- The card area's own X
+                            (
+                                (previous_psychostasia_k) / (ecc - 1)
+                            ) +
+                            -- Centers the card within the space allocated to it 
+                            0.5 * (width_of_this_card - card.T.w)
+                        )
+                    highlight_height = G.HIGHLIGHT_H/2
+                    if not card.highlighted 
+                        highlight_height = 0
+                    card.T.y = self.T.y + self.T.h/2 - card.T.h/2 - highlight_height + (G.SETTINGS.reduced_motion and 0 or 1) * 0.03 * math.sin(0.666*G.TIMERS.REAL+card.T.x)
+                    card.T.x += card.shadow_parrallax.x/30
+
+                previous_psychostasia_k = psychostasia_k
+
+            -- Sorting is what lets you change the positions of the cards
+            table.sort(self.cards, (a, b) -> return a.T.x + a.T.w/2 < b.T.x + b.T.w/2)
+            positions = ""
+            for _,card in ipairs(self.cards)
+                positions = positions .. (card.ability and card.ability.name or 'idk')
+            if positions ~= self.hhj_previousJokerPositions
+                force_notch_bar_update(G.jokers)
+            self.hhj_previousJokerPositions = positions
+        
+        -- Make the big guys turn sideways
+        for k, card in ipairs(self.cards)
+            -- It's a little scuffed, but it assumes that, if the card is roughly straight up (within an 8th of a rotation), then it needs to be sideways instead
+            -- This means the rest of the code can do whatever to it and it'll be accounted for
+            -- at the cost of this obviously being jank as hell 
+            if big_guy(card) and ((math.abs(card.T.r) % math.pi * 2) < math.pi/4 ) then
+                card.T.r = card.T.r + math.pi / 2
+                card.VT.r = card.T.r
+    
+        return original_outputs
+)
+
+
+
+useful_things.wrap_method(Card, "calculate_joker", nil,
+    (original_output, context) =>
+        -- Shows the overburdened text, but only if the joker would have displayed/done something anyway
+        if self.ability.set == "Joker" and overburdened() 
+            if original_output then
+                -- Based on the debuff behavior in card_eval_status_text in common_events
+                G.E_MANAGER::add_event(
+                    Event({
+                        trigger: 'before'
+                        delay: 0.4
+                        --blocking: true
+                        func: () ->
+                            attention_text({
+                                text: "Overburdened!",
+                                scale: 0.6,
+                                hold: 0.65 - 0.2,
+                                backdrop_colour: G.C.HHJ_OVERBURDENED,
+                                align: "bm",
+                                major: self,
+                                offset: {x: 0, y: 0.05*self.T.h}
+                            })
+                            play_sound("cancel", 0.8+1*0.2, 1)
+                            self::juice_up(0.6, 0.1)
+                            G.ROOM.jiggle += 0.7
+                            return true
+                    })
+                )
+            return nil
+        return original_output
+)
+
+
+local ref = Game.update
+Game.update = (dt) =>
+    ref(self, dt)
+    if not G.C.HHJ_OVERBURDENED then
+        self.C.HHJ_OVERBURDENED = {1,1,1,1}
+        dif = 1/8
+        G.C.HHJ_OVERBURDENED[1] = (1-dif)+dif*(1+math.sin(self.TIMERS.REAL*3))
+        G.C.HHJ_OVERBURDENED[2] = (1-3*dif)+dif*(1+math.sin(self.TIMERS.REAL*4.5))
+        G.C.HHJ_OVERBURDENED[3] = (1-5*dif)
