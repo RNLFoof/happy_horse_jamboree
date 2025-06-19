@@ -84,15 +84,15 @@ true end }))end;local ref =
 
 
 
-G.FUNCS.check_for_buy_space
-G.FUNCS.check_for_buy_space = function(card)if 
-G.GAME.starting_params.hhj_psychostasia and card.ability.set == 'Joker' and #G.jokers.cards + card.config.center.rarity > G.jokers.config.card_limit then
+G.FUNCS.check_for_buy_space;local _anon_func_0 = function(card)local _obj_0 = 
+
+card.edition;if _obj_0 ~= nil then return _obj_0.negative end;return nil end;G.FUNCS.check_for_buy_space = function(card)if G.GAME.starting_params.hhj_psychostasia and card.ability.set == 'Joker' and #G.jokers.cards + card.config.center.rarity > G.jokers.config.card_limit + (_anon_func_0(card) and 1 or 0) then
 alert_too_heavy(card, G.jokers)return 
 false end;return 
-ref(card)end;local _anon_func_0 = function(card)local _obj_0 = 
+ref(card)end;local _anon_func_1 = function(card)local _obj_0 = 
 
 
-card.config;if _obj_0 ~= nil then local _obj_1 = _obj_0.center;if _obj_1 ~= nil then return _obj_1.rarity end;return nil end;return nil end;local card_scale;card_scale = function(card)if _anon_func_0(card) then return 
+card.config;if _obj_0 ~= nil then local _obj_1 = _obj_0.center;if _obj_1 ~= nil then return _obj_1.rarity end;return nil end;return nil end;local card_scale;card_scale = function(card)if _anon_func_1(card) then return 
 card.config.center.rarity * 0.5 end;return 
 1 end
 
@@ -103,6 +103,7 @@ self.VT;_obj_0.scale = _obj_0.scale * card_scale(self)end end, function(self, or
 
 psychostasia_enabled() then local _obj_0 = 
 self.VT;_obj_0.scale = _obj_0.scale / card_scale(self)end end)
+
 
 
 

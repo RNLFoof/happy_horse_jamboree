@@ -86,7 +86,7 @@ alert_too_heavy = (card, area) ->
 
 ref = G.FUNCS.check_for_buy_space
 G.FUNCS.check_for_buy_space = (card) ->
-    if G.GAME.starting_params.hhj_psychostasia and card.ability.set == 'Joker' and #G.jokers.cards + card.config.center.rarity > G.jokers.config.card_limit 
+    if G.GAME.starting_params.hhj_psychostasia and card.ability.set == 'Joker' and #G.jokers.cards + card.config.center.rarity > G.jokers.config.card_limit + (card.edition?.negative and 1 or 0)
         alert_too_heavy(card, G.jokers)
         return false
     return ref(card)
