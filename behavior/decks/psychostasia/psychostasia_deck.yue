@@ -84,12 +84,13 @@ alert_too_heavy = (card, area) ->
         })
     )
 
-ref = G.FUNCS.check_for_buy_space
+reference = G.FUNCS.check_for_buy_space
 G.FUNCS.check_for_buy_space = (card) ->
-    if G.GAME.starting_params.hhj_psychostasia and card.ability.set == 'Joker' and #G.jokers.cards + card.config.center.rarity > G.jokers.config.card_limit + (card.edition?.negative and 1 or 0)
-        alert_too_heavy(card, G.jokers)
-        return false
-    return ref(card)
+    return reference(card)
+    -- if G.GAME.starting_params.hhj_psychostasia and card.ability.set == 'Joker' and #G.jokers.cards + card.config.center.rarity > G.jokers.config.card_limit
+    --     alert_too_heavy(card, G.jokers)
+    --     return false
+    -- return reference(card)
 
 card_scale = (card) ->
     if card.config?.center?.rarity
@@ -144,14 +145,14 @@ useful_things.wrap_method(Node, "collides_with_point",
 --         return original_outputs
 -- )
 
-ref = Card.add_to_deck
+reference2 = Card.add_to_deck
 Card.add_to_deck = () => 
     if G.GAME.starting_params.hhj_psychostasia
         if not @added_to_deck
             if @ability and @ability.set == 'Joker'
                 if not G.OVERLAY_MENU
                     G.jokers.config.card_limit = G.jokers.config.card_limit - (@config.center.rarity - 1)
-    ref(self)
+    reference2(self)
     
     force_notch_bar_update(self)
 
@@ -181,7 +182,7 @@ get_effective_card_count = () ->
 get_effective_card_limit = () ->
     return get_effective_card_count() + (G.jokers.config.card_limit-#G.jokers.cards) 
 
-ref = CardArea.draw
+reference3 = CardArea.draw
 CardArea.draw = () =>
     notch_side = 0.25
     notch_padding = 0.025 / 2 -- I wonder if this could be made to be one pixel regardless of screen size?
@@ -295,11 +296,11 @@ CardArea.draw = () =>
                 }}}
             @children.area_uibox = UIBox{definition: @children.area_uibox.definition, config: @children.area_uibox.config}
         -- it_goes_in_here.hhj_psychostasia_bar:draw()
-    ref(self)
+    reference3(self)
 
--- local ref = CardArea.update
+-- local reference = CardArea.update
 -- CardArea.update = (dt) =>
---     ref(self, dt)
+--     reference(self, dt)
 --     force_notch_bar_update(self)
 -- end
 
@@ -397,9 +398,9 @@ useful_things.wrap_method(Card, "calculate_joker", nil,
 )
 
 
-local ref = Game.update
+reference4 = Game.update
 Game.update = (dt) =>
-    ref(self, dt)
+    reference4(self, dt)
     if not G.C.HHJ_OVERBURDENED then
         @C.HHJ_OVERBURDENED = {1,1,1,1}
         dif = 1/8

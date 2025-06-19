@@ -80,19 +80,20 @@ false, blocking =
 false, func = function()
 
 G.CONTROLLER.locks.no_space = nil;return 
-true end }))end;local ref = 
+true end }))end;local reference = 
 
 
 
-G.FUNCS.check_for_buy_space;local _anon_func_0 = function(card)local _obj_0 = 
-
-card.edition;if _obj_0 ~= nil then return _obj_0.negative end;return nil end;G.FUNCS.check_for_buy_space = function(card)if G.GAME.starting_params.hhj_psychostasia and card.ability.set == 'Joker' and #G.jokers.cards + card.config.center.rarity > G.jokers.config.card_limit + (_anon_func_0(card) and 1 or 0) then
-alert_too_heavy(card, G.jokers)return 
-false end;return 
-ref(card)end;local _anon_func_1 = function(card)local _obj_0 = 
+G.FUNCS.check_for_buy_space
+G.FUNCS.check_for_buy_space = function(card)return 
+reference(card)end;local _anon_func_0 = function(card)local _obj_0 = 
 
 
-card.config;if _obj_0 ~= nil then local _obj_1 = _obj_0.center;if _obj_1 ~= nil then return _obj_1.rarity end;return nil end;return nil end;local card_scale;card_scale = function(card)if _anon_func_1(card) then return 
+
+
+
+
+card.config;if _obj_0 ~= nil then local _obj_1 = _obj_0.center;if _obj_1 ~= nil then return _obj_1.rarity end;return nil end;return nil end;local card_scale;card_scale = function(card)if _anon_func_0(card) then return 
 card.config.center.rarity * 0.5 end;return 
 1 end
 
@@ -120,7 +121,7 @@ self.VT;_obj_0.w = _obj_0.w / card_scale(self)local _obj_1 =
 self.VT;_obj_1.h = _obj_1.h / card_scale(self)local _obj_2 = 
 self.VT;_obj_2.x = _obj_2.x - ((self.VT.w - self.VT.w * card_scale(self)) / 2)local _obj_3 = 
 self.VT;_obj_3.y = _obj_3.y - ((self.VT.h - self.VT.h * card_scale(self)) / 2)end;return 
-useful_things.nilproof_unpack(original_output)end)
+useful_things.nilproof_unpack(original_output)end)local reference2 = 
 
 
 
@@ -144,14 +145,14 @@ useful_things.nilproof_unpack(original_output)end)
 
 
 
-ref = Card.add_to_deck
+Card.add_to_deck
 Card.add_to_deck = function(self)if 
 G.GAME.starting_params.hhj_psychostasia then if not 
 self.added_to_deck then if 
 self.ability and self.ability.set == 'Joker' then if not 
 G.OVERLAY_MENU then
 G.jokers.config.card_limit = G.jokers.config.card_limit - (self.config.center.rarity - 1)end end end end
-ref(self)return 
+reference2(self)return 
 
 force_notch_bar_update(self)end
 
@@ -179,9 +180,9 @@ effective_card_count = effective_card_count + rarity_or_default(card.config.cent
 effective_card_count end
 
 local get_effective_card_limit;get_effective_card_limit = function()return 
-get_effective_card_count() + (G.jokers.config.card_limit - #G.jokers.cards)end
+get_effective_card_count() + (G.jokers.config.card_limit - #G.jokers.cards)end;local reference3 = 
 
-ref = CardArea.draw
+CardArea.draw
 CardArea.draw = function(self)local notch_side = 
 0.25;local notch_padding = 
 0.025 / 2;local notch_emboss = 
@@ -295,7 +296,7 @@ the_actual_bar } } }
 
 self.children.area_uibox = UIBox({ definition = self.children.area_uibox.definition, config = self.children.area_uibox.config })end end;return 
 
-ref(self)end
+reference3(self)end
 
 
 
@@ -399,7 +400,7 @@ original_output end)local ref =
 
 Game.update
 Game.update = function(self, dt)
-ref(self, dt)if not 
+reference4(self, dt)if not 
 G.C.HHJ_OVERBURDENED then
 self.C.HHJ_OVERBURDENED = { 1, 1, 1, 1 }local dif = 
 1 / 8
