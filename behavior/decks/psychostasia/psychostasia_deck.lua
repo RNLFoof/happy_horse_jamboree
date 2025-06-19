@@ -97,6 +97,29 @@ card.config.center.rarity * 0.5 end;return
 1 end
 
 
+useful_things.wrap_method(Card, "draw", function(self, layer)if 
+psychostasia_enabled() then local _obj_0 = 
+self.VT;_obj_0.scale = _obj_0.scale * card_scale(self)end end, function(self, original_output, layer)if 
+
+psychostasia_enabled() then local _obj_0 = 
+self.VT;_obj_0.scale = _obj_0.scale / card_scale(self)end end)
+
+
+
+
+useful_things.wrap_method(Node, "collides_with_point", function(self, layer)if 
+psychostasia_enabled() and self.VT then local _obj_0 = 
+self.VT;_obj_0.x = _obj_0.x + ((self.VT.w - self.VT.w * card_scale(self)) / 2)local _obj_1 = 
+self.VT;_obj_1.y = _obj_1.y + ((self.VT.h - self.VT.h * card_scale(self)) / 2)local _obj_2 = 
+self.VT;_obj_2.w = _obj_2.w * card_scale(self)local _obj_3 = 
+self.VT;_obj_3.h = _obj_3.h * card_scale(self)end end, function(self, original_output, layer)if 
+
+psychostasia_enabled() and self.VT then local _obj_0 = 
+self.VT;_obj_0.w = _obj_0.w / card_scale(self)local _obj_1 = 
+self.VT;_obj_1.h = _obj_1.h / card_scale(self)local _obj_2 = 
+self.VT;_obj_2.x = _obj_2.x - ((self.VT.w - self.VT.w * card_scale(self)) / 2)local _obj_3 = 
+self.VT;_obj_3.y = _obj_3.y - ((self.VT.h - self.VT.h * card_scale(self)) / 2)end;return 
+useful_things.nilproof_unpack(original_output)end)
 
 
 
@@ -107,24 +130,17 @@ card.config.center.rarity * 0.5 end;return
 
 
 
-useful_things.wrap_method(Card, "init", nil, function(self, original_outputs, X, Y, W, H, card, center, params)
 
 
-G.E_MANAGER:add_event(Event({ func = function()if 
-G.GAME.starting_params.hhj_psychostasia then if 
-self.ability and self.ability.set == 'Joker' then local new_scale = 
-self.config.center.rarity * 0.5;if not 
-big_guy(self) then
-self.T.w = self.T.w * new_scale
-self.T.h = self.T.h * new_scale else
 
-self.T.h = G.CARD_W * new_scale
-self.T.w = self.T.h * G.CARD_W / G.CARD_H end
-self.VT.w = self.T.w
-self.VT.h = self.T.h end end;return 
-true end }))return 
 
-original_outputs end)
+
+
+
+
+
+
+
 
 
 ref = Card.add_to_deck

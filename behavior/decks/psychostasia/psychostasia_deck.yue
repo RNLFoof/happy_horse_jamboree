@@ -96,36 +96,53 @@ card_scale = (card) ->
         return card.config.center.rarity * 0.5
     return 1
 
--- useful_things.wrap_method(Card, "draw", 
---     (layer) =>
---         if psychostasia_enabled()
---             love.graphics.push()
---             love.graphics.scale(card_scale(@))
---     (original_output, layer) =>
---         if psychostasia_enabled()
---             love.graphics.pop()
--- )
-
-useful_things.wrap_method(Card, "init", nil, 
-    (original_outputs, X, Y, W, H, card, center, params) => 
-        -- This seems to trigger before the deck is known when loading. Doing it as an event makes it trigger afterwards.
-        G.E_MANAGER::add_event(Event({
-            func: () ->
-                if G.GAME.starting_params.hhj_psychostasia
-                    if @ability and @ability.set == 'Joker'
-                        new_scale = @config.center.rarity * 0.5
-                        if not big_guy(self)
-                            @T.w = @T.w * new_scale
-                            @T.h = @T.h * new_scale
-                        else
-                            @T.h = G.CARD_W * new_scale
-                            @T.w = @T.h * G.CARD_W / G.CARD_H 
-                        @VT.w = @T.w
-                        @VT.h = @T.h
-                return true
-        }))
-        return original_outputs
+useful_things.wrap_method(Card, "draw", 
+    (layer) =>
+        if psychostasia_enabled()
+            @VT.scale *= card_scale(@)
+    (original_output, layer) =>
+        if psychostasia_enabled()
+            @VT.scale /= card_scale(@)
 )
+
+-- These aren't done through scale since *apparently* this method doesn't check it???
+-- Pretty ｂｏｎｋｅｒｓ if you ask me
+useful_things.wrap_method(Node, "collides_with_point", 
+    (layer) =>
+        if psychostasia_enabled() and @VT
+            @VT.x += (@VT.w - @VT.w * card_scale(@)) / 2
+            @VT.y += (@VT.h - @VT.h * card_scale(@)) / 2
+            @VT.w *= card_scale(@)
+            @VT.h *= card_scale(@)
+    (original_output, layer) =>
+        if psychostasia_enabled() and @VT
+            @VT.w /= card_scale(@)
+            @VT.h /= card_scale(@)
+            @VT.x -= (@VT.w - @VT.w * card_scale(@)) / 2
+            @VT.y -= (@VT.h - @VT.h * card_scale(@)) / 2
+        return useful_things.nilproof_unpack(original_output)
+)
+
+-- useful_things.wrap_method(Card, "init", nil, 
+--     (original_outputs, X, Y, W, H, card, center, params) => 
+--         -- This seems to trigger before the deck is known when loading. Doing it as an event makes it trigger afterwards.
+--         G.E_MANAGER::add_event(Event({
+--             func: () ->
+--                 if G.GAME.starting_params.hhj_psychostasia
+--                     if @ability and @ability.set == 'Joker'
+--                         new_scale = @config.center.rarity * 0.5
+--                         if not big_guy(self)
+--                             @T.w = @T.w * new_scale
+--                             @T.h = @T.h * new_scale
+--                         else
+--                             @T.h = G.CARD_W * new_scale
+--                             @T.w = @T.h * G.CARD_W / G.CARD_H 
+--                         @VT.w = @T.w
+--                         @VT.h = @T.h
+--                 return true
+--         }))
+--         return original_outputs
+-- )
 
 ref = Card.add_to_deck
 Card.add_to_deck = () => 
