@@ -7,7 +7,11 @@ G.steamodded_tests.tests[] = TestBundle "shakedown"
         * -> testing.new_run()
         * -> testing.add_centers({"j_trading", "j_hhj_shakedown"})
         * -> testing.new_round()
-        * -> delay(5)
+        * -> delay(3)
         * ->
-            assert(SMODS.find_card("j_trading").ability.hhj_in_juice_card_until)
-            testing.assert_eq(SMODS.find_card("j_hhj_shakedown").ability.chips, 0)
+            assert(SMODS.find_card("j_trading")[1].ability.hhj_in_juice_card_until)
+            testing.assert_eq(SMODS.find_card("j_hhj_shakedown")[0].ability.chips, 0)
+        * testing.discard_something_steps()
+        * -> delay(3)
+        * ->
+            testing.assert_eq(SMODS.find_card("j_trading")[1].ability.hhj_in_juice_card_until, nil)
