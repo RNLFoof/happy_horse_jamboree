@@ -260,12 +260,16 @@ pac_man = SMODS.Joker
             input_to_add = switch card_id
                 when 14
                     Input(keys.A, 1)
+                    Input(keys.NOTHING, 1)
                 when 13
                     Input(keys.START, 1)
+                    Input(keys.NOTHING, 1)
                 when 12
                     Input(keys.SELECT, 1)
+                    Input(keys.NOTHING, 1)
                 when 11
                     Input(keys.B, 1)
+                    Input(keys.NOTHING, 1)
                 else
                     switch context.other_card.base.suit
                         when "Spades"

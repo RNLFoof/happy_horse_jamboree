@@ -259,13 +259,17 @@ nil;local card_id =
 context.other_card:get_id()if 
 
 14 == card_id then
-input_to_add = Input(keys.A, 1)elseif 
+Input(keys.A, 1)
+input_to_add = Input(keys.NOTHING, 1)elseif 
 13 == card_id then
-input_to_add = Input(keys.START, 1)elseif 
+Input(keys.START, 1)
+input_to_add = Input(keys.NOTHING, 1)elseif 
 12 == card_id then
-input_to_add = Input(keys.SELECT, 1)elseif 
+Input(keys.SELECT, 1)
+input_to_add = Input(keys.NOTHING, 1)elseif 
 11 == card_id then
-input_to_add = Input(keys.B, 1)else local _exp_0 = 
+Input(keys.B, 1)
+input_to_add = Input(keys.NOTHING, 1)else local _exp_0 = 
 
 context.other_card.base.suit;if 
 "Spades" == _exp_0 then
