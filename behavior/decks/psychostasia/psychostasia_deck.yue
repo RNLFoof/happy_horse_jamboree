@@ -109,6 +109,8 @@ CardArea.draw = () =>
     notch_r = 0.05
     danger_color = G.C.HHJ_OVERBURDENED
 
+    local it
+    local it
     if (
         G.GAME.starting_params.hhj_psychostasia and
         self.children and 

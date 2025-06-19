@@ -107,8 +107,10 @@ CardArea.draw = function(self)local notch_side =
 0.1;local notch_inactive_emboss_ratio = 
 0.5;local notch_r = 
 0.05;local danger_color = 
-G.C.HHJ_OVERBURDENED;if (
+G.C.HHJ_OVERBURDENED
 
+local it
+local it;if (
 G.GAME.starting_params.hhj_psychostasia and self.children and self.children.area_uibox and self.children.area_uibox.definition.nodes and self.children.area_uibox.definition.nodes[2] and self.children.area_uibox.definition.nodes[2].nodes) then local it_goes_in_here = 
 
 
@@ -117,8 +119,8 @@ G.GAME.starting_params.hhj_psychostasia and self.children and self.children.area
 
 
 
-self.children.area_uibox.definition.nodes[2]local it = 
-it_goes_in_here.nodes[6]end;if 
+self.children.area_uibox.definition.nodes[2]
+it = it_goes_in_here.nodes[6]end;if 
 
 self == G.jokers and it_goes_in_here and self.children.area_uibox then if not 
 it then local the_actual_bar = 
