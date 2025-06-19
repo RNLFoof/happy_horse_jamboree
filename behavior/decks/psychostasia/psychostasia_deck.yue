@@ -394,7 +394,7 @@ useful_things.wrap_method(Card, "calculate_joker", nil,
                     })
                 )
             return nil
-        return original_output
+        return useful_things.nilproof_unpack(original_output)
 )
 
 
