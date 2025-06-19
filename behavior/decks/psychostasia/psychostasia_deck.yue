@@ -112,16 +112,16 @@ useful_things.wrap_method(Card, "init", nil,
         G.E_MANAGER::add_event(Event({
             func: () ->
                 if G.GAME.starting_params.hhj_psychostasia
-                    if self.ability and self.ability.set == 'Joker'
-                        new_scale = self.config.center.rarity * 0.5
+                    if @ability and @ability.set == 'Joker'
+                        new_scale = @config.center.rarity * 0.5
                         if not big_guy(self)
-                            self.T.w = self.T.w * new_scale
-                            self.T.h = self.T.h * new_scale
+                            @T.w = @T.w * new_scale
+                            @T.h = @T.h * new_scale
                         else
-                            self.T.h = G.CARD_W * new_scale
-                            self.T.w = self.T.h * G.CARD_W / G.CARD_H 
-                        self.VT.w = self.T.w
-                        self.VT.h = self.T.h
+                            @T.h = G.CARD_W * new_scale
+                            @T.w = @T.h * G.CARD_W / G.CARD_H 
+                        @VT.w = @T.w
+                        @VT.h = @T.h
                 return true
         }))
         return original_outputs
@@ -130,10 +130,10 @@ useful_things.wrap_method(Card, "init", nil,
 ref = Card.add_to_deck
 Card.add_to_deck = () => 
     if G.GAME.starting_params.hhj_psychostasia
-        if not self.added_to_deck
-            if self.ability and self.ability.set == 'Joker'
+        if not @added_to_deck
+            if @ability and @ability.set == 'Joker'
                 if not G.OVERLAY_MENU
-                    G.jokers.config.card_limit = G.jokers.config.card_limit - (self.config.center.rarity - 1)
+                    G.jokers.config.card_limit = G.jokers.config.card_limit - (@config.center.rarity - 1)
     ref(self)
     
     force_notch_bar_update(self)
@@ -142,10 +142,10 @@ useful_things.wrap_method(Card, "remove_from_deck",
     () => 
         if psychostasia_enabled()
 
-            if self.added_to_deck
-                if self.ability and self.ability.set == 'Joker'
+            if @added_to_deck
+                if @ability and @ability.set == 'Joker'
                     if not G.OVERLAY_MENU
-                        G.jokers.config.card_limit = G.jokers.config.card_limit + (self.config.center.rarity - 1)
+                        G.jokers.config.card_limit = G.jokers.config.card_limit + (@config.center.rarity - 1)
     () =>
         force_notch_bar_update(self)
 )
@@ -186,7 +186,7 @@ CardArea.draw = () =>
         it_goes_in_here = @children.area_uibox.definition.nodes[2] --[2].children
         it = it_goes_in_here.nodes[6]
 
-    if self == G.jokers and it_goes_in_here and @children.area_uibox -- I have NO clue how it_goes_in_here can be set without self.children.area_uibox but here we are
+    if self == G.jokers and it_goes_in_here and @children.area_uibox -- I have NO clue how it_goes_in_here can be set without @children.area_uibox but here we are
         if not it
             the_actual_bar = {}
             -- the_actual_bar[#the_actual_bar+1] = {
@@ -198,7 +198,7 @@ CardArea.draw = () =>
 
             -- Filled notches
             filled_notch_count = 0
-            for _, card in ipairs(self.cards) do
+            for _, card in ipairs(@cards) do
                 for _=1, rarity_or_default(card.config.center.rarity) do
                     the_actual_bar[#the_actual_bar+1] = {
                         n: G.UIT.C
@@ -236,7 +236,7 @@ CardArea.draw = () =>
                 --if #the_actual_bar >= 2 then break end
 
             -- Empty notches
-            for _ = #self.cards+1, self.config.card_limit
+            for _ = #@cards+1, @config.card_limit
                 the_actual_bar[#the_actual_bar+1] = {
                     n: G.UIT.C, config: {minh: notch_side+notch_padding, mninw: notch_side+notch_emboss}, nodes: {
                         --OH MY GOD WHY IS BALATRO'S UI SO BUGGY
@@ -276,7 +276,7 @@ CardArea.draw = () =>
                     n: G.UIT.R, config:  {colour:  G.C.CLEAR, minw: notch_side*1+notch_padding*9, minh: notch_side+notch_padding, align: "cm"},
                     nodes: the_actual_bar
                 }}}
-            self.children.area_uibox = UIBox{definition: self.children.area_uibox.definition, config: self.children.area_uibox.config}
+            @children.area_uibox = UIBox{definition: @children.area_uibox.definition, config: @children.area_uibox.config}
         -- it_goes_in_here.hhj_psychostasia_bar:draw()
     ref(self)
 
@@ -294,23 +294,23 @@ useful_things.wrap_method(CardArea, "align_cards", nil,
         
         -- Aligns jokers while taking their size into account. Based on the actual joker alignment code
         -- Checks for rarity because the consumable area is also type joker 
-        if self.config.type == 'joker' and #self.cards > 0 and self.cards[1].config.center.rarity
+        if @config.type == 'joker' and #@cards > 0 and @cards[1].config.center.rarity
             psychostasia_k = 0
             ecc = get_effective_card_count()
             previous_psychostasia_k = 0 -- Replaces k-1
 
-            for k, card in ipairs(self.cards)
+            for k, card in ipairs(@cards)
                 psychostasia_k = psychostasia_k + card.config.center.rarity
-                -- self.card_width is the actual width that cards have, potentially modified per CardArea. I'm going to just assume it's normal 
+                -- @card_width is the actual width that cards have, potentially modified per CardArea. I'm going to just assume it's normal 
                 -- This can't be set as just the card's actual width, because of wee joker and maybe others
-                width_of_this_card = card.config.center.rarity*0.5*self.card_w --
+                width_of_this_card = card.config.center.rarity*0.5*@card_w --
                 if not card.states.drag.is 
                     card.T.r = 0.1*(-ecc/2 - 0.5 + psychostasia_k)/(ecc)+ (G.SETTINGS.reduced_motion and 0 or 1)*0.02*math.sin(2*G.TIMERS.REAL+card.T.x)
 
-                    if ecc > 2 or (ecc > 1 and self == G.consumeables) or (ecc > 1 and self.config.spread)
+                    if ecc > 2 or (ecc > 1 and self == G.consumeables) or (ecc > 1 and @config.spread)
                         
-                        card.T.x = self.T.x + (
-                            (self.T.w - self.card_w*0.5) *-- The card area's own X
+                        card.T.x = @T.x + (
+                            (@T.w - @card_w*0.5) *-- The card area's own X
                             (
                                 (previous_psychostasia_k) / (ecc - 1)
                             ) +
@@ -320,22 +320,22 @@ useful_things.wrap_method(CardArea, "align_cards", nil,
                     highlight_height = G.HIGHLIGHT_H/2
                     if not card.highlighted 
                         highlight_height = 0
-                    card.T.y = self.T.y + self.T.h/2 - card.T.h/2 - highlight_height + (G.SETTINGS.reduced_motion and 0 or 1) * 0.03 * math.sin(0.666*G.TIMERS.REAL+card.T.x)
+                    card.T.y = @T.y + @T.h/2 - card.T.h/2 - highlight_height + (G.SETTINGS.reduced_motion and 0 or 1) * 0.03 * math.sin(0.666*G.TIMERS.REAL+card.T.x)
                     card.T.x += card.shadow_parrallax.x/30
 
                 previous_psychostasia_k = psychostasia_k
 
             -- Sorting is what lets you change the positions of the cards
-            table.sort(self.cards, (a, b) -> return a.T.x + a.T.w/2 < b.T.x + b.T.w/2)
+            table.sort(@cards, (a, b) -> return a.T.x + a.T.w/2 < b.T.x + b.T.w/2)
             positions = ""
-            for _,card in ipairs(self.cards)
+            for _,card in ipairs(@cards)
                 positions = positions .. (card.ability and card.ability.name or 'idk')
-            if positions ~= self.hhj_previousJokerPositions
+            if positions ~= @hhj_previousJokerPositions
                 force_notch_bar_update(G.jokers)
-            self.hhj_previousJokerPositions = positions
+            @hhj_previousJokerPositions = positions
         
         -- Make the big guys turn sideways
-        for k, card in ipairs(self.cards)
+        for k, card in ipairs(@cards)
             -- It's a little scuffed, but it assumes that, if the card is roughly straight up (within an 8th of a rotation), then it needs to be sideways instead
             -- This means the rest of the code can do whatever to it and it'll be accounted for
             -- at the cost of this obviously being jank as hell 
@@ -351,7 +351,7 @@ useful_things.wrap_method(CardArea, "align_cards", nil,
 useful_things.wrap_method(Card, "calculate_joker", nil,
     (original_output, context) =>
         -- Shows the overburdened text, but only if the joker would have displayed/done something anyway
-        if self.ability.set == "Joker" and overburdened() 
+        if @ability.set == "Joker" and overburdened() 
             if original_output then
                 -- Based on the debuff behavior in card_eval_status_text in common_events
                 G.E_MANAGER::add_event(
@@ -367,7 +367,7 @@ useful_things.wrap_method(Card, "calculate_joker", nil,
                                 backdrop_colour: G.C.HHJ_OVERBURDENED,
                                 align: "bm",
                                 major: self,
-                                offset: {x: 0, y: 0.05*self.T.h}
+                                offset: {x: 0, y: 0.05*@T.h}
                             })
                             play_sound("cancel", 0.8+1*0.2, 1)
                             self::juice_up(0.6, 0.1)
@@ -384,8 +384,8 @@ local ref = Game.update
 Game.update = (dt) =>
     ref(self, dt)
     if not G.C.HHJ_OVERBURDENED then
-        self.C.HHJ_OVERBURDENED = {1,1,1,1}
+        @C.HHJ_OVERBURDENED = {1,1,1,1}
         dif = 1/8
-        G.C.HHJ_OVERBURDENED[1] = (1-dif)+dif*(1+math.sin(self.TIMERS.REAL*3))
-        G.C.HHJ_OVERBURDENED[2] = (1-3*dif)+dif*(1+math.sin(self.TIMERS.REAL*4.5))
+        G.C.HHJ_OVERBURDENED[1] = (1-dif)+dif*(1+math.sin(@TIMERS.REAL*3))
+        G.C.HHJ_OVERBURDENED[2] = (1-3*dif)+dif*(1+math.sin(@TIMERS.REAL*4.5))
         G.C.HHJ_OVERBURDENED[3] = (1-5*dif)
