@@ -1,13 +1,29 @@
 useful_things = assert(SMODS.load_file("useful_things.lua"))()
 adjust_add = (rot_amount) -> rot_amount * 2
 
+skip_these_methods = {"check_for_buy_space"}
 useful_things.wrap_method(Card, "juice_up", nil, (original_output, scale, rot_amount) =>
     if G.SETTINGS.paused
         return
     if @ability.hhj_in_juice_card_until
         return
-    
-    for joker in *SMODS.find_card("j_hhj_shakedown", false)
+    shakedowns = SMODS.find_card("j_hhj_shakedown", false)
+    if #shakedowns == 0
+        return
+
+    layer = 2
+    out = ""
+    while true
+        -- debug.getinfo is slow, but I think it's okay since this'll only get activated if you already have a shakedown
+        info = debug.getinfo(layer, "n")
+        if info == nil
+            break
+        out ..= "#{info.name} "
+        if useful_things.contains(skip_these_methods, info.name)
+            return
+        layer += 1
+
+    for joker in *shakedowns
         -- if joker.key == "j_hhj_shakedown"add = scale * rot_amount
         rot_amount = math.abs(rot_amount and rot_amount or 0.16)
         scale = scale and scale*0.4 or 0.11

@@ -1,13 +1,29 @@
 local useful_things = assert(SMODS.load_file("useful_things.lua"))()
-local adjust_add;adjust_add = function(rot_amount)return rot_amount * 2 end;return 
+local adjust_add;adjust_add = function(rot_amount)return rot_amount * 2 end;local skip_these_methods = { 
 
+"check_for_buy_space" }return 
 useful_things.wrap_method(Card, "juice_up", nil, function(self, original_output, scale, rot_amount)if 
 G.SETTINGS.paused then
 return end;if 
 self.ability.hhj_in_juice_card_until then
-return end;local _list_0 = 
+return end;local shakedowns = 
+SMODS.find_card("j_hhj_shakedown", false)if #
+shakedowns == 0 then
+return end;local layer = 
 
-SMODS.find_card("j_hhj_shakedown", false)for _index_0 = 1, #_list_0 do local joker = _list_0[_index_0]
+2;local out = 
+""while 
+true do local info = 
+
+debug.getinfo(layer, "n")if 
+info == nil then
+break end
+out = out .. tostring(info.name) .. " "if 
+useful_things.contains(skip_these_methods, info.name) then
+return end
+layer = layer + 1 end;for _index_0 = 
+
+1, #shakedowns do local joker = shakedowns[_index_0]
 
 rot_amount = math.abs(rot_amount and rot_amount or 0.16)
 scale = scale and scale * 0.4 or 0.11;local add = 
@@ -86,3 +102,7 @@ G.CARD_H * math.random(-5, 5) / 10 } })local sound_variant =
 
 
 
+
+pseudorandom_element({ 1 }, pseudoseed("stolen_sound"))
+play_sound("hhj_shakedown" .. tostring(sound_variant), useful_things.random_float(0.5, 1.5), 0.5)
+print("hhj_shakedown" .. tostring(sound_variant))end end)
