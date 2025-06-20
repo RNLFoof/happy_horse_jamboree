@@ -71,14 +71,17 @@ useful_things.round;local required_horse_name_count =
 "chips", 
 "luck", 
 "money", 
-"mult" }
+"mult" }local _anon_func_0 = function(horse)if 
 
 
-local neigh;neigh = function()return 
-play_sound('hhj_neigh', 0.9 + math.random() * 0.2, 1)end
+
+horse ~= nil then local _obj_0 = horse.ability;if _obj_0 ~= nil then return _obj_0.neigh_pitch end;return nil end;return nil end;local neigh;neigh = function(horse)if _anon_func_0(horse) then return 
+play_sound('hhj_neigh', horse.ability.neigh_pitch, 1)else return 
+
+play_sound('hhj_neigh', 0.9 + math.random() * 0.2, 1)end end
 
 local joker_isnt_negative;joker_isnt_negative = function(joker)return ((not joker.edition) or (not (joker.edition == "e_negative" or joker.edition.negative)))end
-local joker_is_negative;joker_is_negative = function(joker)return not joker_isnt_negative(joker)end;local _anon_func_0 = function(owned, pairs, shop)local _tab_0 = 
+local joker_is_negative;joker_is_negative = function(joker)return not joker_isnt_negative(joker)end;local _anon_func_1 = function(owned, pairs, shop)local _tab_0 = 
 
 
 
@@ -92,7 +95,7 @@ local joker_is_negative;joker_is_negative = function(joker)return not joker_isnt
 
 
 
-{  }local _idx_0 = 1;for _key_0, _value_0 in pairs(owned) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;local _idx_1 = 1;for _key_0, _value_0 in pairs(shop) do if _idx_1 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_1 = _idx_1 + 1 else _tab_0[_key_0] = _value_0 end end;return _tab_0 end;local update_horse_negatives;update_horse_negatives = function()local owned = G.jokers and G.jokers.cards or {  }local shop = G.shop and G.shop_jokers.cards or {  }local owns_a_non_negative = false;local non_negative_index = nil;for joker_index, owned_joker in ipairs(owned) do if owned_joker.ability.is_horse and joker_isnt_negative(owned_joker) then owns_a_non_negative = true;non_negative_index = joker_index;break end end;for joker_index, joker in ipairs(_anon_func_0(owned, pairs, shop)) do local _continue_0 = 
+{  }local _idx_0 = 1;for _key_0, _value_0 in pairs(owned) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;local _idx_1 = 1;for _key_0, _value_0 in pairs(shop) do if _idx_1 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_1 = _idx_1 + 1 else _tab_0[_key_0] = _value_0 end end;return _tab_0 end;local update_horse_negatives;update_horse_negatives = function()local owned = G.jokers and G.jokers.cards or {  }local shop = G.shop and G.shop_jokers.cards or {  }local owns_a_non_negative = false;local non_negative_index = nil;for joker_index, owned_joker in ipairs(owned) do if owned_joker.ability.is_horse and joker_isnt_negative(owned_joker) then owns_a_non_negative = true;non_negative_index = joker_index;break end end;for joker_index, joker in ipairs(_anon_func_1(owned, pairs, shop)) do local _continue_0 = 
 false;repeat if not joker.ability.is_horse then
 _continue_0 = true;break end;if 
 owns_a_non_negative and non_negative_index ~= joker_index and joker_isnt_negative(joker) then
@@ -102,14 +105,16 @@ joker:set_edition({ negative = false }, false)
 owns_a_non_negative = true end end;_continue_0 = true until true;if not _continue_0 then break end end end;local index = 
 
 
-0;local total_horse_count = 
+0;local hardcoded_total_horse_count = 
+40;local total_horse_count = 
 0;for bonus_1_index, bonus_1 in 
 ipairs(bonus_types) do for bonus_2_index, bonus_2 in 
 ipairs((function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = bonus_1_index, #bonus_types do local _ = bonus_types[_index_0]_accum_0[_len_0] = _;_len_0 = _len_0 + 1 end;return _accum_0 end)()) do for _, bonus_3 in 
 ipairs((function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = bonus_1_index + bonus_2_index - 1, #bonus_types do local _ = bonus_types[_index_0]_accum_0[_len_0] = _;_len_0 = _len_0 + 1 end;return _accum_0 end)()) do for _, jack in 
 ipairs({ false, true }) do
 index = index + 1
-total_horse_count = index;local bonuses_as_list = { 
+total_horse_count = index;local horse_progress = 
+index / hardcoded_total_horse_count;local bonuses_as_list = { 
 bonus_1, bonus_2, bonus_3 }local bonuses_for_this_horse = { chips = 
 
 round(8 / 1 * # (function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "chips" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end)()), mult = 
@@ -146,8 +151,9 @@ horse_name = horse_names[index]else
 horse_name = "Unnamed Horse (" .. tostring(index) .. ")"end;local jackstr = 
 
 jack and "jack" or ""local key = 
-bonus_1 .. bonus_2 .. bonus_3 .. jackstr;local horse_joker = 
+bonus_1 .. bonus_2 .. bonus_3 .. jackstr;local max_pitch_variance = 
 
+0.3;local horse_joker = 
 
 SMODS.Joker({ key = "hhj_horse_" .. key, atlas = 
 "atlas_horses", pos = 
@@ -159,7 +165,8 @@ useful_things.config["Show Horse Variants In Collection (requires restart)"], co
 true, key = 
 key, bonuses = 
 bonuses_for_this_horse, jack = 
-jack }, loc_txt = { name = 
+jack, neigh_pitch = 
+useful_things.lerp(1 + max_pitch_variance, 1 - max_pitch_variance, horse_progress) }, loc_txt = { name = 
 
 
 horse_name, text = 
@@ -231,7 +238,10 @@ money_earned }for key, value in
 
 pairs(output) do
 output[key] = value ~= 0 and value or nil end;return 
-output end end })end end end end;local scale = 
+output end end })end end end end;if 
+
+total_horse_count ~= hardcoded_total_horse_count then
+error("COUNT YOUR HORSES BETTER (total_horse_count, hardcoded_total_horse_count)", total_horse_count, hardcoded_total_horse_count)end;local scale = 
 
 "s:0.75"local base_horse_joker = 
 
@@ -274,7 +284,7 @@ return end;return
 useful_things.field_replace_context(G, "hhj_allow_horses", true, function()return 
 useful_things.pool_filter_context((function(center)return center.config.is_horse end), "hhj_j_horse_chipschipschips", function()local new_horse_center = 
 useful_things.pseudorandom_center(get_current_pool("Joker", 0, false, "horse"), "horse")return 
-card:set_ability(new_horse_center)end)end)end })local _anon_func_1 = function(self)local _obj_0 = 
+card:set_ability(new_horse_center)end)end)end })local _anon_func_2 = function(self)local _obj_0 = 
 
 
 
@@ -285,7 +295,7 @@ card:set_ability(new_horse_center)end)end)end })local _anon_func_1 = function(se
 
 
 
-self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;useful_things.wrap_method(Card, "hover", function(...)local self = ...if _anon_func_1(self) then return neigh()end end)local ref = 
+self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;useful_things.wrap_method(Card, "hover", function(...)local self = ...if _anon_func_2(self) then return neigh(self)end end)local ref = 
 
 
 
@@ -296,11 +306,11 @@ self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 
 
 
 
-Card.set_edition;local _anon_func_2 = function(self)local _obj_0 = 
+Card.set_edition;local _anon_func_3 = function(self)local _obj_0 = 
 
 
 
-self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;local wrapper;wrapper = function(self, edition, immediate, silent)ref(self, edition, immediate, silent)if _anon_func_2(self) ~= nil then local horse_joker = 
+self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;local wrapper;wrapper = function(self, edition, immediate, silent)ref(self, edition, immediate, silent)if _anon_func_3(self) ~= nil then local horse_joker = 
 self.config.center;local the_sprite_is_in_here = 
 self.children.center
 local change_pos_to;if (

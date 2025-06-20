@@ -74,8 +74,11 @@ bonus_types = {
     "mult"
 }
 
-neigh = ->
-    play_sound('hhj_neigh', 0.9 + math.random()*0.2, 1)
+neigh = (horse) ->
+    if horse?.ability?.neigh_pitch
+        play_sound('hhj_neigh', horse.ability.neigh_pitch, 1)
+    else
+        play_sound('hhj_neigh', 0.9 + math.random()*0.2, 1)
 
 joker_isnt_negative = (joker) -> ((not joker.edition) or (not (joker.edition == "e_negative" or joker.edition.negative)))
 joker_is_negative = (joker) -> not joker_isnt_negative(joker)
@@ -103,6 +106,7 @@ update_horse_negatives = ->
 
 
 index = 0
+hardcoded_total_horse_count = 40
 total_horse_count = 0
 for    bonus_1_index, bonus_1 in ipairs(bonus_types)                                                   do
  for   bonus_2_index, bonus_2 in ipairs([_ for _ in *bonus_types[bonus_1_index,                    ]]) do
@@ -110,6 +114,7 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
     for _,            jack    in ipairs({false, true}                                                ) do 
         index += 1
         total_horse_count = index
+        horse_progress = index / hardcoded_total_horse_count
         bonuses_as_list = {bonus_1, bonus_2, bonus_3}
         bonuses_for_this_horse = {
             chips:  round(8 / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "chips"]) -- This *was* 8, 17, 25, and was going to become 10, 15, 25, but a plain 8*n was more consistent and close enough
@@ -148,6 +153,7 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
         jackstr = jack and "jack" or ""
         key = bonus_1 .. bonus_2 .. bonus_3 .. jackstr
 
+        max_pitch_variance = 0.3
         horse_joker = SMODS.Joker
             key: "hhj_horse_" .. key
             atlas: "atlas_horses"
@@ -160,6 +166,7 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
                 key: key
                 bonuses: bonuses_for_this_horse
                 jack: jack
+                neigh_pitch: useful_things.lerp(1 + max_pitch_variance, 1 - max_pitch_variance, horse_progress)
             },
             loc_txt: {
                 name: horse_name,
@@ -233,6 +240,9 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
                         output[key] = value != 0 and value or nil
                     return output
 
+if total_horse_count != hardcoded_total_horse_count
+    error("COUNT YOUR HORSES BETTER (total_horse_count, hardcoded_total_horse_count)", total_horse_count, hardcoded_total_horse_count)
+
 scale = "s:0.75"
 base_horse_joker = SMODS.Joker
     key: "horse_base"
@@ -285,7 +295,7 @@ macro lua = (code) -> {
 
 useful_things.wrap_method(Card, "hover", (...) ->
     self = ...
-    neigh() if self.config.center?.config?.is_horse
+    neigh(self) if self.config.center?.config?.is_horse
 )
     
 
