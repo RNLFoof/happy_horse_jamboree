@@ -94,7 +94,10 @@ G.FUNCS.check_for_buy_space = (card) ->
 
 card_scale = (card) ->
     if card.config?.center?.rarity
-        return card.config.center.rarity * 0.5
+        new_scale = card.config.center.rarity * 0.5
+        if big_guy(card)
+            new_scale *= card.VT.w / card.VT.h
+        return new_scale
     return 1
 
 useful_things.wrap_method(Card, "draw", 

@@ -93,8 +93,11 @@ reference(card)end;local _anon_func_0 = function(card)local _obj_0 =
 
 
 
-card.config;if _obj_0 ~= nil then local _obj_1 = _obj_0.center;if _obj_1 ~= nil then return _obj_1.rarity end;return nil end;return nil end;local card_scale;card_scale = function(card)if _anon_func_0(card) then return 
-card.config.center.rarity * 0.5 end;return 
+card.config;if _obj_0 ~= nil then local _obj_1 = _obj_0.center;if _obj_1 ~= nil then return _obj_1.rarity end;return nil end;return nil end;local card_scale;card_scale = function(card)if _anon_func_0(card) then local new_scale = 
+card.config.center.rarity * 0.5;if 
+big_guy(card) then
+new_scale = new_scale * (card.VT.w / card.VT.h)end;return 
+new_scale end;return 
 1 end
 
 
