@@ -34,8 +34,8 @@ keySet[key2] then return false end end;return
 
 true end;_module_0["equals"] = equals
 
-local contains;contains = function(container, looking_for)local _list_0 = 
-contained;for _index_0 = 1, #_list_0 do local contained = _list_0[_index_0]if 
+local contains;contains = function(container, looking_for)for _index_0 = 
+1, #container do local contained = container[_index_0]if 
 equals(contained, looking_for) then return 
 true end end;return 
 false end;_module_0["contains"] = contains

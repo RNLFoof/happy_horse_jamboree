@@ -35,7 +35,7 @@ export equals = (o1, o2, ignore_mt) ->
     return true
 
 export contains = (container, looking_for) ->
-    for contained in *contained
+    for contained in *container
         if equals(contained, looking_for)
             return true
     return false
