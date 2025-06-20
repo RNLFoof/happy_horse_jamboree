@@ -82,6 +82,7 @@ G.C.CHIPS, align =
 joker, offset = { x = 
 
 G.CARD_W * math.random(-5, 5) / 10, y = 
-G.CARD_H * math.random(-5, 5) / 10 } })end end)
+G.CARD_H * math.random(-5, 5) / 10 } })local sound_variant = 
+
 
 

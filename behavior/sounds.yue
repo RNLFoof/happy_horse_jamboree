@@ -1,3 +1,13 @@
 SMODS.Sound
     key: "neigh"
     path: "neigh.mp3"
+
+SMODS.Sound
+    key: "chips1_backwards"
+    path: "chips1_backwards.ogg"
+
+-- These are all just their coresponding coin.ogg, slowed down 25% and pitched down 25%
+for index = 1, 7
+    SMODS.Sound
+        key: "shakedown#{index}"
+        path: "shakedown#{index}.ogg"

@@ -85,4 +85,9 @@ useful_things.wrap_method(Card, "juice_up", nil, (original_output, scale, rot_am
                 y: G.CARD_H * math.random(-5, 5) / 10,
             }
         })
+
+        -- 1 is played when money is added or removed
+        sound_variant = pseudorandom_element({1}, pseudoseed("stolen_sound")) -- ,2,3,4,5,6,7
+        play_sound("hhj_shakedown#{sound_variant}", useful_things.random_float(0.5, 1.5), 0.5)
+        print("hhj_shakedown#{sound_variant}")
 )
