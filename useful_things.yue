@@ -34,6 +34,12 @@ export equals = (o1, o2, ignore_mt) ->
     
     return true
 
+export contains = (container, looking_for) ->
+    for contained in *contained
+        if equals(contained, looking_for)
+            return true
+    return false
+
 -- Added in Lua 5.2 (Balatro uses Lua 5.1) https://www.lua.org/manual/5.2/manual.html#pdf-table.pack
 export pack = (...) -> { n: select("#", ...), ... }
 
