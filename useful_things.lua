@@ -25,7 +25,7 @@ o1 == o2 end end;local keySet =
 
 pairs(o1) do local value2 = 
 o2[key1]if 
-value2 == nil or _equals(value1, value2, ignore_mt) == false then return 
+value2 == nil or equals(value1, value2, ignore_mt) == false then return 
 false end
 keySet[key1] = true end;for key2, _ in 
 
