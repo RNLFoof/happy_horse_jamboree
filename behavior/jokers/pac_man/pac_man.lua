@@ -256,21 +256,19 @@ context.individual and context.cardarea == G.play then if
 context.other_card.ability.effect == 'Stone Card' then
 return end;local input_to_add = 
 nil;local card_id = 
-context.other_card:get_id()if 
+context.other_card:get_id()local add_a_nothing = 
+true;if 
 
 14 == card_id then
-Input(keys.A, 1)
-input_to_add = Input(keys.NOTHING, 1)elseif 
+input_to_add = Input(keys.A, 1)elseif 
 13 == card_id then
-Input(keys.START, 1)
-input_to_add = Input(keys.NOTHING, 1)elseif 
+input_to_add = Input(keys.START, 1)elseif 
 12 == card_id then
-Input(keys.SELECT, 1)
-input_to_add = Input(keys.NOTHING, 1)elseif 
+input_to_add = Input(keys.SELECT, 1)elseif 
 11 == card_id then
-Input(keys.B, 1)
-input_to_add = Input(keys.NOTHING, 1)else local _exp_0 = 
+input_to_add = Input(keys.B, 1)else
 
+add_a_nothing = false;local _exp_0 = 
 context.other_card.base.suit;if 
 "Spades" == _exp_0 then
 input_to_add = Input(keys.UP, card_id * frame_multiplier)elseif 
@@ -285,7 +283,9 @@ input_to_add = nil end end;if
 input_to_add then return 
 
 G.E_MANAGER:add_event(Event({ func = function()
-self:add_input(card, input_to_add)return 
+self:add_input(card, input_to_add)if 
+add_a_nothing then
+self:add_input(card, Input(keys.NOTHING, 1))end;return 
 true end }))end end end, add_input = function(self, card, input)do local _obj_0 = 
 
 

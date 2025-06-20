@@ -257,20 +257,18 @@ pac_man = SMODS.Joker
                 return
             input_to_add = nil
             card_id = context.other_card::get_id()
+            add_a_nothing = true
             input_to_add = switch card_id
                 when 14
                     Input(keys.A, 1)
-                    Input(keys.NOTHING, 1)
                 when 13
                     Input(keys.START, 1)
-                    Input(keys.NOTHING, 1)
                 when 12
                     Input(keys.SELECT, 1)
-                    Input(keys.NOTHING, 1)
                 when 11
                     Input(keys.B, 1)
-                    Input(keys.NOTHING, 1)
                 else
+                    add_a_nothing = false
                     switch context.other_card.base.suit
                         when "Spades"
                             Input(keys.UP, card_id*frame_multiplier)
@@ -286,6 +284,8 @@ pac_man = SMODS.Joker
                 G.E_MANAGER::add_event(Event
                     func: ->
                         self::add_input(card, input_to_add)
+                        if add_a_nothing
+                            self::add_input(card, Input(keys.NOTHING, 1))
                         true
                 )
     
