@@ -147,6 +147,12 @@ export flatten = (list) ->
 
 export for_each = (list, callable) -> [callable(item) for item in *list]
 
+export first = (list, check) ->
+    for item in *list
+        if check(item)
+            return item
+    return nil
+
 _traverse_default_key_not_found = (object, path, output_thus_far, step_index) ->
     entire_path = "ORIGINAL_OBJECT"
     path_until_error = "uhhhhhhhhhhhhh you probably shouldn't be seeing this :]"

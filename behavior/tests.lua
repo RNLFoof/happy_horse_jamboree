@@ -28,6 +28,15 @@ Test("unique_entries", { function()return testing.assert_eq(useful_things.unique
 Test("same_contents", { function()return assert(useful_things.same_contents({ 1, 2, 3 }, { 3, 2, 1 }))end }), 
 
 
+Test("first", { function()return 
+
+testing.assert_eq(useful_things.first({ 1, 2, 3, 4, 5 }, (function(item)return 
+item >= 3 end)), 
+
+
+3)end }), 
+
+
 TestBundle("wrap_method", { 
 TestBundle("manual_calling", { 
 Test("basic", { function()local buildup = 

@@ -26,6 +26,15 @@ G.steamodded_tests.tests[] = TestBundle "useful_things"
     
     * Test "same_contents"
         * -> assert(useful_things.same_contents({1,2,3}, {3,2,1}))
+
+    * Test "first"
+        * ->  testing.assert_eq(
+            useful_things.first(
+                {1,2,3,4,5},
+                ((item) -> item >= 3)
+            ),
+            3
+        )
     
     * TestBundle "wrap_method"
         * TestBundle "manual_calling"

@@ -147,6 +147,12 @@ output end;_module_0["flatten"] = flatten
 
 local for_each;for_each = function(list, callable)local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #list do local item = list[_index_0]_accum_0[_len_0] = callable(item)_len_0 = _len_0 + 1 end;return _accum_0 end;_module_0["for_each"] = for_each
 
+local first;first = function(list, check)for _index_0 = 
+1, #list do local item = list[_index_0]if 
+check(item) then return 
+item end end;return 
+nil end;_module_0["first"] = first
+
 local _traverse_default_key_not_found;_traverse_default_key_not_found = function(object, path, output_thus_far, step_index)local entire_path = 
 "ORIGINAL_OBJECT"local path_until_error = 
 "uhhhhhhhhhhhhh you probably shouldn't be seeing this :]"for internal_step_index, step in 
