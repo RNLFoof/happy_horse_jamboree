@@ -10,7 +10,7 @@ atlas_decks_positions["horse"], loc_txt = { name =
 
 "Horse Deck", text = { 
 
-"Cards from", 
+"{s:0.5,C:inactive}(most){}Cards from", 
 "{C:white,B:1,E:1}Happy Horse Jamboree{}", 
 "appear {C:attention}#1#x{} as often", 
 "{s:0.5,C:inactive}I mostly just wanted a faster way", 
@@ -39,6 +39,8 @@ G.GAME;if _obj_0 ~= nil then local _obj_1 = _obj_0.starting_params;if _obj_1 ~= 
 
 
 G.P_CENTERS[center]if _obj_0 ~= nil then local _obj_1 = _obj_0.mod;if _obj_1 ~= nil then return _obj_1.id end;return nil end;return nil end;return useful_things.wrap_method(_G, "get_current_pool", nil, function(self, original_outputs)local pool,pool_key = unpack(original_outputs)if _anon_func_0(G) then local add_to_pool = {  }for _index_0 = 1, #pool do local center = pool[_index_0]local _continue_0 = false;repeat if not (_anon_func_1(G, center) == "happy_horse_jamboree") then
+_continue_0 = true;break end;if 
+G.P_CENTERS[center].config.hhj_horse_deck_remove_multiplier then
 _continue_0 = true;break end;for _ = 
 1, extra_appearance_rate - 1 do
 add_to_pool[#add_to_pool + 1] = center end;_continue_0 = true until true;if not _continue_0 then break end end;local _tab_0 = 

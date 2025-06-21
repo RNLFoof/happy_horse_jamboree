@@ -166,7 +166,8 @@ true, key =
 key, bonuses = 
 bonuses_for_this_horse, jack = 
 jack, neigh_pitch = 
-useful_things.lerp(1 + max_pitch_variance, 1 - max_pitch_variance, horse_progress) }, loc_txt = { name = 
+useful_things.lerp(1 + max_pitch_variance, 1 - max_pitch_variance, horse_progress), hhj_horse_deck_remove_multiplier = 
+true }, loc_txt = { name = 
 
 
 horse_name, text = 
@@ -249,7 +250,10 @@ SMODS.Joker({ key = "horse_base", atlas =
 "atlas_horses", pos = 
 atlas_horses_positions["base"], rarity = 
 1, cost = 
-1, loc_txt = { name = 
+1, config = { hhj_horse_deck_remove_multiplier = 
+
+true }, loc_txt = { name = 
+
 
 "Horse", text = { 
 

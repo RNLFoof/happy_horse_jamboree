@@ -10,7 +10,7 @@ SMODS.Back
     loc_txt: {
         name: "Horse Deck"
         text: {
-            "Cards from"
+            "{s:0.5,C:inactive}(most){}Cards from"
             "{C:white,B:1,E:1}Happy Horse Jamboree{}"
             "appear {C:attention}#1#x{} as often"
             "{s:0.5,C:inactive}I mostly just wanted a faster way"
@@ -39,6 +39,8 @@ useful_things.wrap_method(_G, "get_current_pool", nil, (original_outputs) =>
         add_to_pool = {}
         for center in *pool
             unless G.P_CENTERS[center]?.mod?.id == "happy_horse_jamboree"
+                continue
+            if G.P_CENTERS[center].config.hhj_horse_deck_remove_multiplier
                 continue
             for _ = 1, extra_appearance_rate - 1
                 add_to_pool[] = center
