@@ -7,6 +7,27 @@ testing.Test;local _obj_0 =
 
 G.steamodded_tests.tests
 _obj_0[#_obj_0 + 1] = TestBundle("useful_things", { 
+Test("filter", { function()return 
+
+testing.assert_eq(useful_things.filter({ 1, 2, 3, 4, 5 }, (function(item)return 
+item >= 3 end)), { 
+
+3, 4, 5 })end }), 
+
+
+
+Test("length", { function()return testing.assert_eq(useful_things.length({ 1, 2, 3, 4, 5 }), 5)end }), 
+
+
+Test("count", { function()return testing.assert_eq(useful_things.count({ 1, 2, 2, 3, 3, 3 }, 3), 3)end }), 
+
+
+Test("unique_entries", { function()return testing.assert_eq(useful_things.unique_entries({ 1, 2, 2, 3, 3, 3 }), { 1, 2, 3 })end }), 
+
+
+Test("same_contents", { function()return assert(useful_things.same_contents({ 1, 2, 3 }, { 3, 2, 1 }))end }), 
+
+
 TestBundle("wrap_method", { 
 TestBundle("manual_calling", { 
 Test("basic", { function()local buildup = 

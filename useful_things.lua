@@ -40,6 +40,12 @@ equals(contained, looking_for) then return
 true end end;return 
 false end;_module_0["contains"] = contains
 
+local filter;filter = function(table, check)local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #table do local item = table[_index_0]if check(item) then _accum_0[_len_0] = item;_len_0 = _len_0 + 1 end end;return _accum_0 end;_module_0["filter"] = filter
+
+local length;length = function(table)return #table end;_module_0["length"] = length
+
+local count;count = function(table, value)return length(filter(table, function(item)return item == value end))end;_module_0["count"] = count
+
 
 local pack;pack = function(...)return { n = select("#", ...), ... }end;_module_0["pack"] = pack
 
@@ -108,6 +114,27 @@ _module_0["wrap_function"] = wrap_function;local _anon_func_0 = function(pairs, 
 
 
 {  }local _len_0 = 1;for x in pairs(table) do _accum_0[_len_0] = x;_len_0 = _len_0 + 1 end;return _accum_0 end;local table_is_list;table_is_list = function(table)return # (_anon_func_0(pairs, table)) == #table end;_module_0["table_is_list"] = table_is_list
+
+local unique_entries;unique_entries = function(table)if not 
+table_is_list(table) then error("table isn't a list :(", 2)end;local keys = 
+{  }local output = 
+{  }for _index_0 = 
+1, #table do local item = table[_index_0]local _continue_0 = 
+false;repeat if keys[item] ~= nil then
+_continue_0 = true;break end
+output[#output + 1] = item
+keys[item] = true;_continue_0 = true until true;if not _continue_0 then break end end;return 
+output end;_module_0["unique_entries"] = unique_entries;local _anon_func_1 = function(pairs, table1, table2)local _tab_0 = 
+
+
+
+
+
+
+{  }local _idx_0 = 1;for _key_0, _value_0 in pairs(table1) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;local _idx_1 = 1;for _key_0, _value_0 in pairs(table2) do if _idx_1 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_1 = _idx_1 + 1 else _tab_0[_key_0] = _value_0 end end;return _tab_0 end;local same_contents;same_contents = function(table1, table2)if not table_is_list(table1) then error("table1 isn't a list :(", 2)end;if not table_is_list(table2) then error("table2 isn't a list :(", 2)end;local buildup = {  }local _list_0 = _anon_func_1(pairs, table1, table2)for _index_0 = 1, #_list_0 do local item = _list_0[_index_0]
+buildup[item] = true end;do local _cond_0 = #
+
+table2;if not (#table1 == _cond_0) then return false else return _cond_0 == #buildup end end end;_module_0["same_contents"] = same_contents
 
 local flatten;flatten = function(list)local output = 
 {  }for _index_0 = 

@@ -40,6 +40,12 @@ export contains = (container, looking_for) ->
             return true
     return false
 
+export filter = (table, check) -> [item for item in *table when check(item)]
+
+export length = (table) -> #table
+
+export count = (table, value) -> table |> filter((item) -> item == value) |> length
+
 -- Added in Lua 5.2 (Balatro uses Lua 5.1) https://www.lua.org/manual/5.2/manual.html#pdf-table.pack
 export pack = (...) -> { n: select("#", ...), ... }
 
@@ -108,6 +114,27 @@ export wrap_function = (function_name, before = (-> nil), after = ((original_out
 
 
 export table_is_list = (table) -> #([x for x in pairs(table)]) == #table
+
+export unique_entries = (table) ->
+    if not table_is_list(table) then error("table isn't a list :(", 2)
+    keys = {}
+    output = {}
+    for item in *table
+        if keys[item] != nil
+            continue
+        output[] = item
+        keys[item] = true
+    return output
+
+export same_contents = (table1, table2) ->
+    if not table_is_list(table1) then error("table1 isn't a list :(", 2)
+    if not table_is_list(table2) then error("table2 isn't a list :(", 2)
+
+    buildup = {}
+    for item in *{...table1, ...table2}
+        buildup[item] = true
+    
+    return #table1 == #table2 == #buildup
 
 export flatten = (list) ->
     output = {}

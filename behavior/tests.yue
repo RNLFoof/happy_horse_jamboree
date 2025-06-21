@@ -6,6 +6,27 @@ TestBundle = testing.TestBundle
 Test = testing.Test
 
 G.steamodded_tests.tests[] = TestBundle "useful_things"
+    * Test "filter"
+        * ->  testing.assert_eq(
+            useful_things.filter(
+                {1,2,3,4,5},
+                ((item) -> item >= 3)
+            ),
+            {3, 4, 5}
+        )
+
+    * Test "length"
+        * -> testing.assert_eq(useful_things.length({1,2,3,4,5}), 5)
+    
+    * Test "count"
+        * -> testing.assert_eq(useful_things.count({1,2,2,3,3,3}, 3), 3)
+    
+    * Test "unique_entries"
+        * -> testing.assert_eq(useful_things.unique_entries({1,2,2,3,3,3}), {1,2,3})
+    
+    * Test "same_contents"
+        * -> assert(useful_things.same_contents({1,2,3}, {3,2,1}))
+    
     * TestBundle "wrap_method"
         * TestBundle "manual_calling"
             * Test "basic"
