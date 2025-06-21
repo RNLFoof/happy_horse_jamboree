@@ -1,6 +1,6 @@
 useful_things = assert(SMODS.load_file("useful_things.lua"))()
 
-extra_appearance_rate = 15/16
+extra_appearance_rate = 8
 
 SMODS.Back
     name: "Horse Deck"
@@ -12,13 +12,14 @@ SMODS.Back
         text: {
             "Cards from"
             "{C:white,B:1,E:1}Happy Horse Jamboree{}"
-            "appear significantly more often"
+            "appear {C:attention}#1#x{} as often"
             "{s:0.5,C:inactive}I mostly just wanted a faster way"
             "{s:0.5,C:inactive}to see how this stuff feels to play with"
         }
     }
     loc_vars: (info_queue, card) => {
         vars: {
+            extra_appearance_rate,
             colours: {
                 SMODS.Gradients.hhj_happy_horse_jamboree
             }
@@ -34,13 +35,14 @@ SMODS.Back
 useful_things.wrap_method(_G, "get_current_pool", nil, (original_outputs) =>
     pool, pool_key = unpack original_outputs
 
-    if (
-        G.GAME?.starting_params?.hhj_extra_appearance_rate and
-        pseudorandom(pseudoseed("horse_deck")) <= G.GAME.starting_params.hhj_extra_appearance_rate
-    )
-        pool = useful_things.filtered_pool(pool, ((center)->
-            center.mod?.id == "happy_horse_jamboree"
-        ), "UNFILTERED")
+    if G.GAME?.starting_params?.hhj_extra_appearance_rate
+        add_to_pool = {}
+        for center in *pool
+            unless G.P_CENTERS[center]?.mod?.id == "happy_horse_jamboree"
+                continue
+            for _ = 1, extra_appearance_rate - 1
+                add_to_pool[] = center
+        pool = {...pool, ...add_to_pool}
     
     return pool, pool_key
 )
