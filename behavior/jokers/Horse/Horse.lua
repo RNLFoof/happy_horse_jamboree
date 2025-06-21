@@ -241,7 +241,7 @@ output[key] = value ~= 0 and value or nil end;return
 output end end })end end end end;if 
 
 total_horse_count ~= hardcoded_total_horse_count then
-error("COUNT YOUR HORSES BETTER (total_horse_count, hardcoded_total_horse_count)", total_horse_count, hardcoded_total_horse_count)end;local scale = 
+error("COUNT YOUR HORSES BETTER (total_horse_count " .. tostring(total_horse_count) .. ", hardcoded_total_horse_count: " .. tostring(hardcoded_total_horse_count) .. ")")end;local scale = 
 
 "s:0.75"local base_horse_joker = 
 

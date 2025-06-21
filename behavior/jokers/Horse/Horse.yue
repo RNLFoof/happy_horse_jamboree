@@ -241,7 +241,7 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
                     return output
 
 if total_horse_count != hardcoded_total_horse_count
-    error("COUNT YOUR HORSES BETTER (total_horse_count, hardcoded_total_horse_count)", total_horse_count, hardcoded_total_horse_count)
+    error("COUNT YOUR HORSES BETTER (total_horse_count #{total_horse_count}, hardcoded_total_horse_count: #{hardcoded_total_horse_count})")
 
 scale = "s:0.75"
 base_horse_joker = SMODS.Joker
