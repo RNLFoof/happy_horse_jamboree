@@ -87,7 +87,7 @@ true, fixed_scale = { min =
 
 
 G.E_MANAGER:add_event(Event({ trigger = 'after', delay = 
-50, blocking = 
+5, blocking = 
 false, blockable = 
 false, func = function()
 
