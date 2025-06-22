@@ -1,7 +1,10 @@
 useful_things = assert(SMODS.load_file("useful_things.lua"))()
+shakedown = assert(SMODS.load_file("behavior/jokers/shakedown/shakedown.lua"))()
 adjust_add = (rot_amount) -> rot_amount * 1
 
+G.hhj_shakedown_rot_amounts = {}
 skip_these_methods = {"check_for_buy_space"}
+
 useful_things.wrap_method(Card, "juice_up", nil, (original_output, scale, rot_amount) =>
     if G.SETTINGS.paused
         return
@@ -22,6 +25,11 @@ useful_things.wrap_method(Card, "juice_up", nil, (original_output, scale, rot_am
         if useful_things.contains(skip_these_methods, info.name)
             return
         layer += 1
+    
+    G.hhj_shakedown_rot_amounts[] = rot_amount
+    print("hhj_shakedown_rot_amounts:", G.hhj_shakedown_rot_amounts)
+    G.hhj_shakedown_rot_amounts = useful_things.unique_entries(G.hhj_shakedown_rot_amounts)
+    print("hhj_shakedown_rot_amounts:", G.hhj_shakedown_rot_amounts)
 
     for joker in *shakedowns
         -- if joker.key == "j_hhj_shakedown"add = scale * rot_amount
@@ -87,23 +95,5 @@ useful_things.wrap_method(Card, "juice_up", nil, (original_output, scale, rot_am
                 true
         )
 
-        joker.ability.chips += add
-
-        attention_text({
-            text: "+#{add}",
-            scale: useful_things.lerp(0.1, 0.75, add), 
-            hold: 0.4,
-            backdrop_colour: G.C.CHIPS,
-            align: "cm",
-            major: joker,
-            offset: {
-                x: G.CARD_W * math.random(-5, 5) / 10,
-                y: G.CARD_H * math.random(-5, 5) / 10,
-            }
-        })
-
-        -- 1 is played when money is added or removed
-        sound_variant = pseudorandom_element({1}, pseudoseed("stolen_sound")) -- ,2,3,4,5,6,7
-        play_sound("hhj_shakedown#{sound_variant}", useful_things.random_float(0.5, 1.5), 0.5)
-        print("hhj_shakedown#{sound_variant}")
+        shakedown.aquire_gains(joker, add)
 )

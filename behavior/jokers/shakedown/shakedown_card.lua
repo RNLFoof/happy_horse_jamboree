@@ -1,7 +1,10 @@
-local useful_things = assert(SMODS.load_file("useful_things.lua"))()
-local adjust_add;adjust_add = function(rot_amount)return rot_amount * 1 end;local skip_these_methods = { 
+local useful_things = assert(SMODS.load_file("useful_things.lua"))()local shakedown = 
+assert(SMODS.load_file("behavior/jokers/shakedown/shakedown.lua"))()
+local adjust_add;adjust_add = function(rot_amount)return rot_amount * 1 end
 
+G.hhj_shakedown_rot_amounts = {  }local skip_these_methods = { 
 "check_for_buy_space" }return 
+
 useful_things.wrap_method(Card, "juice_up", nil, function(self, original_output, scale, rot_amount)if 
 G.SETTINGS.paused then
 return end;if 
@@ -21,7 +24,12 @@ break end
 out = out .. tostring(info.name) .. " "if 
 useful_things.contains(skip_these_methods, info.name) then
 return end
-layer = layer + 1 end;for _index_0 = 
+layer = layer + 1 end;do local _obj_0 = 
+
+G.hhj_shakedown_rot_amounts;_obj_0[#_obj_0 + 1] = rot_amount end
+print("hhj_shakedown_rot_amounts:", G.hhj_shakedown_rot_amounts)
+G.hhj_shakedown_rot_amounts = useful_things.unique_entries(G.hhj_shakedown_rot_amounts)
+print("hhj_shakedown_rot_amounts:", G.hhj_shakedown_rot_amounts)for _index_0 = 
 
 1, #shakedowns do local joker = shakedowns[_index_0]
 
@@ -84,25 +92,7 @@ false, blockable =
 false, func = function()
 
 attach_to:remove()return 
-true end }))local _obj_0 = 
+true end }))
 
 
-joker.ability;_obj_0.chips = _obj_0.chips + add
-
-
-attention_text({ text = "+" .. tostring(add), scale = 
-useful_things.lerp(0.1, 0.75, add), hold = 
-0.4, backdrop_colour = 
-G.C.CHIPS, align = 
-"cm", major = 
-joker, offset = { x = 
-
-G.CARD_W * math.random(-5, 5) / 10, y = 
-G.CARD_H * math.random(-5, 5) / 10 } })local sound_variant = 
-
-
-
-
-pseudorandom_element({ 1 }, pseudoseed("stolen_sound"))
-play_sound("hhj_shakedown" .. tostring(sound_variant), useful_things.random_float(0.5, 1.5), 0.5)
-print("hhj_shakedown" .. tostring(sound_variant))end end)
+shakedown.aquire_gains(joker, add)end end)
