@@ -1,5 +1,5 @@
 local useful_things = assert(SMODS.load_file("useful_things.lua"))()
-local adjust_add;adjust_add = function(rot_amount)return rot_amount * 2 end;local skip_these_methods = { 
+local adjust_add;adjust_add = function(rot_amount)return rot_amount * 1 end;local skip_these_methods = { 
 
 "check_for_buy_space" }return 
 useful_things.wrap_method(Card, "juice_up", nil, function(self, original_output, scale, rot_amount)if 
