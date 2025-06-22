@@ -53,7 +53,7 @@ pretend_youre_a_center = (center, and_do_this) ->
     center::draw_boundingrect()
     if center.shader_tab then love.graphics.setShader()
 
-score_to_chips = (score) -> math.floor(score / 10)
+score_to_chips = (score) -> math.floor(score / 5)
 
 pac_man = SMODS.Joker
     key: "pac_man"

@@ -53,7 +53,7 @@ add_to_drawhash(center)
 center:draw_boundingrect()if 
 center.shader_tab then return love.graphics.setShader()end end
 
-local score_to_chips;score_to_chips = function(score)return math.floor(score / 10)end;local pac_man = 
+local score_to_chips;score_to_chips = function(score)return math.floor(score / 5)end;local pac_man = 
 
 
 SMODS.Joker({ key = "pac_man", atlas = 
