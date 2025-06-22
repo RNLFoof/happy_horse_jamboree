@@ -26,10 +26,10 @@ useful_things.wrap_method(Card, "juice_up", nil, (original_output, scale, rot_am
             return
         layer += 1
     
-    G.hhj_shakedown_rot_amounts[] = rot_amount
-    print("hhj_shakedown_rot_amounts:", G.hhj_shakedown_rot_amounts)
-    G.hhj_shakedown_rot_amounts = useful_things.unique_entries(G.hhj_shakedown_rot_amounts)
-    print("hhj_shakedown_rot_amounts:", G.hhj_shakedown_rot_amounts)
+    -- G.hhj_shakedown_rot_amounts[] = rot_amount
+    -- print("hhj_shakedown_rot_amounts:", G.hhj_shakedown_rot_amounts)
+    -- G.hhj_shakedown_rot_amounts = useful_things.unique_entries(G.hhj_shakedown_rot_amounts)
+    -- print("hhj_shakedown_rot_amounts:", G.hhj_shakedown_rot_amounts)
 
     for joker in *shakedowns
         -- if joker.key == "j_hhj_shakedown"add = scale * rot_amount

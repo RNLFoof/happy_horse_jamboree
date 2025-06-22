@@ -24,12 +24,12 @@ break end
 out = out .. tostring(info.name) .. " "if 
 useful_things.contains(skip_these_methods, info.name) then
 return end
-layer = layer + 1 end;do local _obj_0 = 
+layer = layer + 1 end;for _index_0 = 
 
-G.hhj_shakedown_rot_amounts;_obj_0[#_obj_0 + 1] = rot_amount end
-print("hhj_shakedown_rot_amounts:", G.hhj_shakedown_rot_amounts)
-G.hhj_shakedown_rot_amounts = useful_things.unique_entries(G.hhj_shakedown_rot_amounts)
-print("hhj_shakedown_rot_amounts:", G.hhj_shakedown_rot_amounts)for _index_0 = 
+
+
+
+
 
 1, #shakedowns do local joker = shakedowns[_index_0]
 

@@ -1,6 +1,12 @@
 useful_things = assert(SMODS.load_file("useful_things.lua"))()
 
-gain_hold_time = 0.75
+gain_climb_time = 1/8
+gain_hold_time = 1 + 1/4
+
+reset_gain_display = (shakedown_joker) ->
+    shakedown_joker.doesnt_save.display_gains = 0
+    shakedown_joker.doesnt_save.goal_gains = 0
+    shakedown_joker.doesnt_save.gain_stack_depth = 0
 
 processed_chips = (chips) -> math.floor(chips)
 
@@ -8,7 +14,7 @@ export aquire_gains = (shakedown_joker, gains) ->
     if not shakedown_joker.doesnt_save
         return
     shakedown_joker.ability.chips += gains
-    shakedown_joker.doesnt_save.gains += gains
+    shakedown_joker.doesnt_save.goal_gains += gains
     shakedown_joker.doesnt_save.gain_stack_depth += 1
 
     attention_text({
@@ -24,11 +30,17 @@ export aquire_gains = (shakedown_joker, gains) ->
         }
     })
 
-    -- money1 is played when money is added or removed
-    sound_variant = pseudorandom_element({1}, pseudoseed("stolen_sound")) -- ,2,3,4,5,6,7
-    play_sound("hhj_shakedown#{sound_variant}", useful_things.random_float(0.5, 1.5), 0.5)
     -- print("hhj_shakedown#{sound_variant}")
     
+    G.E_MANAGER::add_event Event
+        trigger: 'ease'
+        delay: gain_climb_time * G.SETTINGS.GAMESPEED
+        blockable: false
+        blocking: false
+        ref_table: shakedown_joker.doesnt_save
+        ref_value: "display_gains"
+        ease_to: shakedown_joker.doesnt_save.goal_gains
+
     G.E_MANAGER::add_event Event
         trigger: 'after'
         delay: gain_hold_time * G.SETTINGS.GAMESPEED
@@ -38,8 +50,22 @@ export aquire_gains = (shakedown_joker, gains) ->
             shakedown_joker.doesnt_save.gain_stack_depth -= 1
             if shakedown_joker.doesnt_save.gain_stack_depth > 0
                 return true
-            shakedown_joker.doesnt_save.gains = 0
+            reset_gain_display(shakedown_joker)
+
+            -- money1 is played when money is added or removed
+            sound_variant = pseudorandom_element({1}, pseudoseed("stolen_sound")) -- ,2,3,4,5,6,7
+            play_sound("hhj_shakedown#{sound_variant}") -- , useful_things.random_float(0.5, 1.5), 0.5)
+
             return true
+
+    -- attention_text({
+    --     text: "+#{shakedown_joker.doesnt_save.display_gains}"
+    --     scale: 1,
+    --     hold: gain_hold_time * G.SETTINGS.GAMESPEED
+    --     cover: shakedown_joker
+    --     --cover_colour: col
+    --     align: 'cm'
+    -- })
 
 SMODS.Joker
     key: "shakedown"
@@ -63,10 +89,8 @@ SMODS.Joker
         card.ability.chips = 0
 
         card.doesnt_save = {
-            gains: 0
-            gain_stack_depth: 0
-            gain_hold_time: 1
         }
+        reset_gain_display(card)
     load: (card, card_table, other_card) =>
         @prepare_yourself(card)
     set_ability: (card, initial, delay_sprites) =>
@@ -78,5 +102,27 @@ SMODS.Joker
                 chips: processed_chips(card.ability.chips)
             }
     update: (card, dt) =>
+        if card.children.hhj_shakedown_tally
+            card.children.hhj_shakedown_tally::remove()
+            card.children.hhj_shakedown_tally = nil
+
         if card.doesnt_save?.gain_stack_depth and card.doesnt_save?.gain_stack_depth > 0
-            print(card.doesnt_save.gains, card.doesnt_save.gain_stack_depth)
+            ui_definition = create_popup_UIBox_tooltip({
+                -- title: "Gains"
+                text: {
+                    string.format("+%.2f", card.doesnt_save.display_gains),
+                    -- string.format("{C:blue}+%.2f", card.doesnt_save.display_gains),
+                    -- string.format("{C:inactive,s:0.5}Total: %.2f", card.doesnt_save.display_gains),
+                }
+            })
+            ui_definition.config.colour = G.C.UI.BACKGROUND_INACTIVE
+
+            card.children.hhj_shakedown_tally = UIBox{
+                definition: ui_definition
+                config: {align: "bm", offset: {x:0,y:-0.1}, parent: card}
+            }
+    -- draw: (card, layer) =>
+    --     center = card.children.center
+        -- prep_draw(center, 1)
+        -- love.graphics.print("+#{card.doesnt_save.display_gains}")
+        -- love.graphics.pop()
