@@ -102,6 +102,7 @@ card_scale = (card) ->
     if card.config?.center?.rarity
         new_scale = card.config.center.rarity * 0.5
         if big_guy(card)
+            card.VT.h ??= card.T.h  -- apparently this is an issue
             new_scale *= card.VT.w / card.VT.h
         return new_scale
     return 1
