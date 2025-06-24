@@ -1,17 +1,22 @@
-local useful_things = assert(SMODS.load_file("useful_things.lua"))()local hhj_psychostasia_atlas = 
+local useful_things = assert(SMODS.load_file("useful_things.lua"))()local ui = 
+assert(SMODS.load_file("behavior/functions/ui.lua"))()local row = 
 
-atlas_decks;local hhj_psychostasia = 
+ui.row;local column = 
+ui.column;local hhj_psychostasia_atlas = 
+
+atlas_decks;local extra_joker_slots = 
+3;local hhj_psychostasia = 
 
 
 SMODS.Back({ name = "Psychostasia Deck", key = 
 "hhj_psychostasia", atlas = 
 "atlas_decks", pos = 
 atlas_decks_positions["psychostasia"], config = { hhj_psychostasia = 
-true, joker_slot = 5 }, loc_txt = { name = 
+true, joker_slot = extra_joker_slots }, loc_txt = { name = 
 
 "Psychostasia Deck", text = { 
 
-"{C:attention}+5{} Joker slots", 
+"{C:attention}+" .. tostring(extra_joker_slots) .. "{} Joker slots", 
 "{C:green}Uncommon{}, {C:red}Rare{}, and {C:purple}Legendary{} Jokers", 
 "cost {C:green}2{}, {C:red}3{}, and {C:purple}4{} Joker slots" } }, loc_vars = function(self)return { vars = 
 
@@ -45,9 +50,10 @@ psychostasia_enabled() and #G.jokers.cards > G.jokers.config.card_limit end
 local big_guy;big_guy = function(card)return 
 psychostasia_enabled() and card.config.center.rarity and card.config.center.rarity >= 3 end
 
-local force_notch_bar_update;force_notch_bar_update = function(cardArea)if 
-cardArea == G.jokers and G.jokers.children.area_uibox then
-G.jokers.children.area_uibox.definition.nodes[2].nodes[6] = nil end end
+local force_notch_bar_update;force_notch_bar_update = function(cardArea)
+local config;do local _obj_0 = G.jokers;if _obj_0 ~= nil then do local _obj_1 = _obj_0.children;if _obj_1 ~= nil then do local _obj_2 = _obj_1.area_uibox;if _obj_2 ~= nil then do local _obj_3 = _obj_2.definition;if _obj_3 ~= nil then config = _obj_3.config end end end end end end end end;if 
+config then
+config.hhj_physchostasia_injected = nil end end
 
 
 local alert_too_heavy;alert_too_heavy = function(card, area)
@@ -185,18 +191,7 @@ effective_card_count end
 local get_effective_card_limit;get_effective_card_limit = function()return 
 get_effective_card_count() + (G.jokers.config.card_limit - #G.jokers.cards)end;local reference3 = 
 
-CardArea.draw
-CardArea.draw = function(self)local notch_side = 
-0.25;local notch_padding = 
-0.025 / 2;local notch_emboss = 
-0.1;local notch_inactive_emboss_ratio = 
-0.5;local notch_r = 
-0.05;local danger_color = 
-G.C.HHJ_OVERBURDENED
-
-local it
-local it_goes_in_here;if (
-G.GAME.starting_params.hhj_psychostasia and self.children and self.children.area_uibox and self.children.area_uibox.definition.nodes and self.children.area_uibox.definition.nodes[2] and self.children.area_uibox.definition.nodes[2].nodes) then
+CardArea.draw;local _anon_func_1 = function(self)local _obj_0 = 
 
 
 
@@ -204,79 +199,8 @@ G.GAME.starting_params.hhj_psychostasia and self.children and self.children.area
 
 
 
-it_goes_in_here = self.children.area_uibox.definition.nodes[2]
-it = it_goes_in_here.nodes[6]end;if 
 
-self == G.jokers and it_goes_in_here and self.children.area_uibox then if not 
-it then local the_actual_bar = 
-{  }local effective_card_limit = 
-
-
-
-
-
-get_effective_card_limit()local filled_notch_count = 
-
-
-0;for _, card in 
-ipairs(self.cards) do for _ = 
-1, rarity_or_default(card.config.center.rarity) do
-
-the_actual_bar[#the_actual_bar + 1] = { n = G.UIT.C, config = { minh = 
-
-notch_side + notch_padding }, nodes = { { n = 
-
-
-
-
-G.UIT.R, config = { align = 
-
-"cm", minw = ((
-notch_side * rarity_or_default(card.config.center.rarity) + notch_padding * (rarity_or_default(card.config.center.rarity) - 1)) / rarity_or_default(card.config.center.rarity)), minh = 
-
-
-
-
-
-notch_side, colour = 
-filled_notch_count < effective_card_limit and G.C.RARITY[card.config.center.rarity] or danger_color, emboss = 
-notch_emboss, r = 
-notch_r } } } }
-
-
-
-
-filled_notch_count = filled_notch_count + 1 end
-
-the_actual_bar[#the_actual_bar + 1] = { n = G.UIT.B, config = { w = 
-
-notch_padding, h = 
-notch_padding } }end;for _ = #
-
-
-
-
-
-self.cards + 1, self.config.card_limit do
-
-the_actual_bar[#the_actual_bar + 1] = { n = G.UIT.C, config = { minh = notch_side + notch_padding, mninw = notch_side + notch_emboss }, nodes = { { n = 
-
-
-
-G.UIT.R, nodes = { { n = G.UIT.C, config = { minw = notch_side, minh = notch_side + notch_emboss, align = "bm" }, nodes = { { n = 
-
-
-
-
-
-
-G.UIT.R, config = { minw = 
-
-notch_side, minh = 
-notch_side + notch_padding, colour = 
-G.C.UI.BACKGROUND_INACTIVE, emboss = 
-notch_emboss * notch_inactive_emboss_ratio, r = 
-1 } } } } } } } }
+self.children;if _obj_0 ~= nil then return _obj_0.area_uibox end;return nil end;local _anon_func_2 = function(self)local _obj_0 = self.children;if _obj_0 ~= nil then local _obj_1 = _obj_0.area_uibox;if _obj_1 ~= nil then local _obj_2 = _obj_1.definition;if _obj_2 ~= nil then local _obj_3 = _obj_2.config;if _obj_3 ~= nil then return _obj_3.hhj_physchostasia_injected end;return nil end;return nil end;return nil end;return nil end;local _anon_func_3 = function(self)local _obj_0 = 
 
 
 
@@ -284,20 +208,183 @@ notch_emboss * notch_inactive_emboss_ratio, r =
 
 
 
-the_actual_bar[#the_actual_bar + 1] = { n = G.UIT.B, config = { w = 
-notch_padding, h = notch_padding } }end;if 
 
 
 
-overburdened() then
-the_actual_bar[#the_actual_bar + 1] = { n = G.UIT.B, config = { w = 0.1 / 2, h = 0.1 } }
-the_actual_bar[#the_actual_bar + 1] = { n = G.UIT.T, config = { text = "Overburdened! Jokers won't activate!", scale = 0.3, colour = danger_color } }end
 
-it_goes_in_here.nodes[6] = { n = G.UIT.C, config = { colour = G.C.CLEAR }, nodes = { { n = 
-G.UIT.R, config = { colour = G.C.CLEAR, minw = notch_side * 1 + notch_padding * 9, minh = notch_side + notch_padding, align = "cm" }, nodes = 
-the_actual_bar } } }
 
-self.children.area_uibox = UIBox({ definition = self.children.area_uibox.definition, config = self.children.area_uibox.config })end end;return 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+self.children;if _obj_0 ~= nil then local _obj_1 = _obj_0.area_uibox;if _obj_1 ~= nil then local _obj_2 = _obj_1.definition;if _obj_2 ~= nil then return _obj_2.config end;return nil end;return nil end;return nil end;CardArea.draw = function(self)local notch_side = 0.25;local notch_padding = 0.025 / 2;local notch_emboss = 0.1;local notch_inactive_emboss_ratio = 0.5;local notch_r = 0.05;local danger_color = G.C.HHJ_OVERBURDENED;if self == G.jokers and _anon_func_1(self) and not _anon_func_2(self) then local effective_card_limit = get_effective_card_limit()local effective_card_count = get_effective_card_count()if overburdened() then the_actual_bar[#the_actual_bar + 1] = { n = G.UIT.B, config = { w = 0.1 / 2, h = 0.1 } }the_actual_bar[#the_actual_bar + 1] = { n = G.UIT.T, config = { text = "Overburdened! Jokers won't activate!", scale = 0.3, colour = danger_color } }end;local card_holding_area = self.children.area_uibox.definition.nodes[1]card_holding_area.config.colour = G.C.CLEAR;card_holding_area.config.padding = 0;card_holding_area.nodes = {  }for _ = 1, effective_card_limit do local _obj_0 = card_holding_area.nodes;_obj_0[#_obj_0 + 1] = column({ colour = { 0, 0, 0, 0.1 }, minw = self.T.w / effective_card_limit, minh = self.T.h, align = "cl", padding = 0, r = 0.1 }, {  })end;local tooltip = nil;if tostring(self.config.card_count) .. "/" .. tostring(self.config.card_limit) ~= tostring(effective_card_count) .. "/" .. tostring(effective_card_limit) then tooltip = { text = { "Internally it's " .. tostring(self.config.card_count) .. "/" .. tostring(self.config.card_limit) .. ",", "but I can't think of a scenario", "where you'd need to know this" } }end;local card_count = row({ debug_name = "new_card_count_row", align = 'cl' }, { { n = G.UIT.R, config = { align = 'cl', padding = 0.03, no_fill = true, tooltip = tooltip, debug_name = "actual_count" }, nodes = { { n = G.UIT.B, config = { w = 0.1, h = 0.1 } }, { n = G.UIT.T, config = { text = effective_card_count, scale = 0.3, colour = G.C.WHITE } }, { n = G.UIT.T, config = { text = '/', scale = 0.3, colour = G.C.WHITE } }, { n = G.UIT.T, config = { text = effective_card_limit, scale = 0.3, colour = G.C.WHITE } }, { n = G.UIT.B, config = { w = 0.1, h = 0.1 } } } } })self.children.area_uibox.definition.config.hhj_physchostasia_injected = true;self.children.area_uibox.definition.nodes[2] = card_count;local old = self.children.area_uibox;self.children.area_uibox = UIBox({ definition = self.children.area_uibox.definition, config = self.children.area_uibox.config })old:remove()print(_anon_func_3(self))end;return 
 
 reference3(self)end
 
