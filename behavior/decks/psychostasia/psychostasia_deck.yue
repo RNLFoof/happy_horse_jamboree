@@ -194,98 +194,11 @@ get_effective_card_limit = () ->
 
 reference3 = CardArea.draw
 CardArea.draw = () =>
-    notch_side = 0.25
-    notch_padding = 0.025 / 2 -- I wonder if this could be made to be one pixel regardless of screen size?
-    notch_emboss=0.1
-    notch_inactive_emboss_ratio=0.5
-    notch_r = 0.05
     danger_color = G.C.HHJ_OVERBURDENED
 
     if self == G.jokers and @children?.area_uibox and not @children?.area_uibox?.definition?.config?.hhj_physchostasia_injected -- I have NO clue how it_goes_in_here can be set without @children.area_uibox but here we are
-        -- print("Adding")
-        -- the_actual_bar = {}
-        -- the_actual_bar[#the_actual_bar+1] = {
-        --         n=G.UIT.B,
-        --         config={align="cm", w=notch_padding, h=notch_padding}
-        -- }
-
         effective_card_limit = get_effective_card_limit()
         effective_card_count = get_effective_card_count()
-
-        -- Filled notches
-        -- filled_notch_count = 0
-        -- for card in *@cards
-        --     for _=1, rarity_or_default(card.config.center.rarity)
-        --         -- Needs to be a row in a column because uuhhhhh bad
-        --         the_actual_bar[#the_actual_bar+1] = column(
-        --             {
-        --                 minh: notch_side+notch_padding
-        --             },
-        --             {
-        --                 row(
-        --                     {
-        --                         align: "cl"
-        --                         minw: (
-        --                             (
-        --                                 notch_side * rarity_or_default(card.config.center.rarity) +
-        --                                 notch_padding * (rarity_or_default(card.config.center.rarity) - 1)
-        --                             ) / rarity_or_default(card.config.center.rarity)
-        --                         )
-        --                         minh: notch_side
-        --                         colour: filled_notch_count<effective_card_limit and G.C.RARITY[card.config.center.rarity] or danger_color
-        --                         emboss: notch_emboss
-        --                         r: notch_r
-        --                     },
-        --                     {}
-        --                 )
-        --             }
-        --         )
-        --         filled_notch_count = filled_notch_count + 1
-        --     the_actual_bar[#the_actual_bar+1] = {
-        --         n: G.UIT.B,
-        --         config:{
-        --             w: notch_padding
-        --             h: notch_padding
-        --         }
-        --     }
-        --     --if #the_actual_bar >= 2 then break end
-
-        -- -- Empty notches
-        -- for _ = #@cards+1, @config.card_limit
-        --     the_actual_bar[#the_actual_bar+1] = {
-        --         n: G.UIT.C, config: {minh: notch_side+notch_padding, mninw: notch_side+notch_emboss}, nodes: {
-        --             --OH MY GOD WHY IS BALATRO'S UI SO BUGGY
-        --             -- WHY IS THIS SHIT NECESSARY
-        --             -- (without the extra layers, the alignment doesn't work)
-        --             {n: G.UIT.R, nodes: {{n: G.UIT.C, config: {minw: notch_side, minh: notch_side+notch_emboss, align: "bm"},nodes: {
-
-        --                 -- {
-        --                 --         n: G.UIT.R,
-        --                 --         config: {minw: notch_side, minh: notch_emboss*(1-notch_inactive_emboss_ratio), colour: G.C.CLEAR}
-        --                 -- },
-        --                 { -- Needs to be a row in a column because uuhhhhh bad
-        --                     n: G.UIT.R,
-        --                     config: {
-        --                         minw: notch_side,
-        --                         minh: notch_side+notch_padding,
-        --                         colour: G.C.UI.BACKGROUND_INACTIVE, 
-        --                         emboss: notch_emboss*notch_inactive_emboss_ratio, 
-        --                         r: 1,
-        --                         --offset: {x: 0, y: 1}
-        --                     }
-        --                 },
-        --             }}}}
-        --         }
-        --     }
-        --     the_actual_bar[#the_actual_bar+1] = {
-        --             n: G.UIT.B,
-        --             config: {w: notch_padding, h: notch_padding}
-        --     }
-
-        -- Overburdened warning
-        if overburdened() then
-            the_actual_bar[#the_actual_bar+1] = {n: G.UIT.B, config: {w: 0.1/2, h: 0.1}}
-            the_actual_bar[#the_actual_bar+1] = {n: G.UIT.T, config: {text: "Overburdened! Jokers won't activate!", scale:  0.3, colour: danger_color}}
         
         -- Segmented area
         card_holding_area = @children.area_uibox.definition.nodes[1]
@@ -380,6 +293,13 @@ CardArea.draw = () =>
                 -- )
             }
         )
+        
+        -- Overburdened warning
+        if overburdened() then
+            -- Make sure this works!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            card_count.nodes[] = {n: G.UIT.B, config: {w: 0.1/2, h: 0.1}}
+            card_count.nodes[] = {n: G.UIT.T, config: {text: "Overburdened! Jokers won't activate!", scale: 0.3, colour: danger_color}}
+
         @children.area_uibox.definition.config.hhj_physchostasia_injected = true
         @children.area_uibox.definition.nodes[2] = card_count
         old = @children.area_uibox
@@ -402,37 +322,29 @@ useful_things.wrap_method(CardArea, "align_cards", nil,
         assert(G.GAME.starting_params.hhj_psychostasia)
         
         -- Aligns jokers while taking their size into account. Based on the actual joker alignment code
-        -- Checks for rarity because the consumable area is also type joker 
-        if @config.type == 'joker' and #@cards > 0 and @cards[1].config.center.rarity
-            psychostasia_k = 0
+        if @ == G.jokers
+            segments_deep = 0
             ecc = get_effective_card_count()
-            previous_psychostasia_k = 0 -- Replaces k-1
+            effective_card_limit = get_effective_card_limit()
 
             for k, card in ipairs(@cards)
-                psychostasia_k = psychostasia_k + card.config.center.rarity
                 -- @card_width is the actual width that cards have, potentially modified per CardArea. I'm going to just assume it's normal 
                 -- This can't be set as just the card's actual width, because of wee joker and maybe others
-                width_of_this_card = card.config.center.rarity*0.5*@card_w --
+                segment_span = rarity_or_default(card.config.center.rarity)
+                width_of_this_card = @card_w * card_scale(card) --
                 if not card.states.drag.is 
-                    card.T.r = 0.1*(-ecc/2 - 0.5 + psychostasia_k)/(ecc)+ (G.SETTINGS.reduced_motion and 0 or 1)*0.02*math.sin(2*G.TIMERS.REAL+card.T.x)
+                    card.T.r = 0.1*(-ecc/2 - 0.5 + k)/(ecc)+ (G.SETTINGS.reduced_motion and 0 or 1)*0.02*math.sin(2*G.TIMERS.REAL+card.T.x)
 
-                    if ecc > 2 or (ecc > 1 and self == G.consumeables) or (ecc > 1 and @config.spread)
-                        
-                        card.T.x = @T.x + (
-                            (@T.w - @card_w*0.5) *-- The card area's own X
-                            (
-                                (previous_psychostasia_k) / (ecc - 1)
-                            ) +
-                            -- Centers the card within the space allocated to it 
-                            0.5 * (width_of_this_card - card.T.w)
-                        )
-                    highlight_height = G.HIGHLIGHT_H/2
-                    if not card.highlighted 
-                        highlight_height = 0
-                    card.T.y = @T.y + @T.h/2 - card.T.h/2 - highlight_height + (G.SETTINGS.reduced_motion and 0 or 1) * 0.03 * math.sin(0.666*G.TIMERS.REAL+card.T.x)
-                    card.T.x += card.shadow_parrallax.x/30
-
-                previous_psychostasia_k = psychostasia_k
+                    card.T.x = @T.x + ( -- The card area's own X
+                        (segments_deep + segment_span/2) / effective_card_limit * @T.w -
+                        @card_w / 2
+                    )
+                    -- highlight_height = G.HIGHLIGHT_H/2
+                    -- if not card.highlighted 
+                    --     highlight_height = 0
+                    -- card.T.y = @T.y + @T.h/2 - card.T.h/2 - highlight_height + (G.SETTINGS.reduced_motion and 0 or 1) * 0.03 * math.sin(0.666*G.TIMERS.REAL+card.T.x)
+                    -- card.T.x += card.shadow_parrallax.x/30
+                segments_deep += card.config.center.rarity
 
             -- Sorting is what lets you change the positions of the cards
             table.sort(@cards, (a, b) -> return a.T.x + a.T.w/2 < b.T.x + b.T.w/2)

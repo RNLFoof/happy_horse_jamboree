@@ -196,11 +196,6 @@ CardArea.draw;local _anon_func_1 = function(self)local _obj_0 =
 
 
 
-
-
-
-
-
 self.children;if _obj_0 ~= nil then return _obj_0.area_uibox end;return nil end;local _anon_func_2 = function(self)local _obj_0 = self.children;if _obj_0 ~= nil then local _obj_1 = _obj_0.area_uibox;if _obj_1 ~= nil then local _obj_2 = _obj_1.definition;if _obj_2 ~= nil then local _obj_3 = _obj_2.config;if _obj_3 ~= nil then return _obj_3.hhj_physchostasia_injected end;return nil end;return nil end;return nil end;return nil end;local _anon_func_3 = function(self)local _obj_0 = 
 
 
@@ -310,82 +305,7 @@ self.children;if _obj_0 ~= nil then return _obj_0.area_uibox end;return nil end;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-self.children;if _obj_0 ~= nil then local _obj_1 = _obj_0.area_uibox;if _obj_1 ~= nil then local _obj_2 = _obj_1.definition;if _obj_2 ~= nil then return _obj_2.config end;return nil end;return nil end;return nil end;CardArea.draw = function(self)local notch_side = 0.25;local notch_padding = 0.025 / 2;local notch_emboss = 0.1;local notch_inactive_emboss_ratio = 0.5;local notch_r = 0.05;local danger_color = G.C.HHJ_OVERBURDENED;if self == G.jokers and _anon_func_1(self) and not _anon_func_2(self) then local effective_card_limit = get_effective_card_limit()local effective_card_count = get_effective_card_count()if overburdened() then the_actual_bar[#the_actual_bar + 1] = { n = G.UIT.B, config = { w = 0.1 / 2, h = 0.1 } }the_actual_bar[#the_actual_bar + 1] = { n = G.UIT.T, config = { text = "Overburdened! Jokers won't activate!", scale = 0.3, colour = danger_color } }end;local card_holding_area = self.children.area_uibox.definition.nodes[1]card_holding_area.config.colour = G.C.CLEAR;card_holding_area.config.padding = 0;card_holding_area.nodes = {  }for _ = 1, effective_card_limit do local _obj_0 = card_holding_area.nodes;_obj_0[#_obj_0 + 1] = column({ colour = { 0, 0, 0, 0.1 }, minw = self.T.w / effective_card_limit, minh = self.T.h, align = "cl", padding = 0, r = 0.1 }, {  })end;local tooltip = nil;if tostring(self.config.card_count) .. "/" .. tostring(self.config.card_limit) ~= tostring(effective_card_count) .. "/" .. tostring(effective_card_limit) then tooltip = { text = { "Internally it's " .. tostring(self.config.card_count) .. "/" .. tostring(self.config.card_limit) .. ",", "but I can't think of a scenario", "where you'd need to know this" } }end;local card_count = row({ debug_name = "new_card_count_row", align = 'cl' }, { { n = G.UIT.R, config = { align = 'cl', padding = 0.03, no_fill = true, tooltip = tooltip, debug_name = "actual_count" }, nodes = { { n = G.UIT.B, config = { w = 0.1, h = 0.1 } }, { n = G.UIT.T, config = { text = effective_card_count, scale = 0.3, colour = G.C.WHITE } }, { n = G.UIT.T, config = { text = '/', scale = 0.3, colour = G.C.WHITE } }, { n = G.UIT.T, config = { text = effective_card_limit, scale = 0.3, colour = G.C.WHITE } }, { n = G.UIT.B, config = { w = 0.1, h = 0.1 } } } } })self.children.area_uibox.definition.config.hhj_physchostasia_injected = true;self.children.area_uibox.definition.nodes[2] = card_count;local old = self.children.area_uibox;self.children.area_uibox = UIBox({ definition = self.children.area_uibox.definition, config = self.children.area_uibox.config })old:remove()print(_anon_func_3(self))end;return 
+self.children;if _obj_0 ~= nil then local _obj_1 = _obj_0.area_uibox;if _obj_1 ~= nil then local _obj_2 = _obj_1.definition;if _obj_2 ~= nil then return _obj_2.config end;return nil end;return nil end;return nil end;CardArea.draw = function(self)local danger_color = G.C.HHJ_OVERBURDENED;if self == G.jokers and _anon_func_1(self) and not _anon_func_2(self) then local effective_card_limit = get_effective_card_limit()local effective_card_count = get_effective_card_count()local card_holding_area = self.children.area_uibox.definition.nodes[1]card_holding_area.config.colour = G.C.CLEAR;card_holding_area.config.padding = 0;card_holding_area.nodes = {  }for _ = 1, effective_card_limit do local _obj_0 = card_holding_area.nodes;_obj_0[#_obj_0 + 1] = column({ colour = { 0, 0, 0, 0.1 }, minw = self.T.w / effective_card_limit, minh = self.T.h, align = "cl", padding = 0, r = 0.1 }, {  })end;local tooltip = nil;if tostring(self.config.card_count) .. "/" .. tostring(self.config.card_limit) ~= tostring(effective_card_count) .. "/" .. tostring(effective_card_limit) then tooltip = { text = { "Internally it's " .. tostring(self.config.card_count) .. "/" .. tostring(self.config.card_limit) .. ",", "but I can't think of a scenario", "where you'd need to know this" } }end;local card_count = row({ debug_name = "new_card_count_row", align = 'cl' }, { { n = G.UIT.R, config = { align = 'cl', padding = 0.03, no_fill = true, tooltip = tooltip, debug_name = "actual_count" }, nodes = { { n = G.UIT.B, config = { w = 0.1, h = 0.1 } }, { n = G.UIT.T, config = { text = effective_card_count, scale = 0.3, colour = G.C.WHITE } }, { n = G.UIT.T, config = { text = '/', scale = 0.3, colour = G.C.WHITE } }, { n = G.UIT.T, config = { text = effective_card_limit, scale = 0.3, colour = G.C.WHITE } }, { n = G.UIT.B, config = { w = 0.1, h = 0.1 } } } } })if overburdened() then do local _obj_0 = card_count.nodes;_obj_0[#_obj_0 + 1] = { n = G.UIT.B, config = { w = 0.1 / 2, h = 0.1 } }end;local _obj_0 = card_count.nodes;_obj_0[#_obj_0 + 1] = { n = G.UIT.T, config = { text = "Overburdened! Jokers won't activate!", scale = 0.3, colour = danger_color } }end;self.children.area_uibox.definition.config.hhj_physchostasia_injected = true;self.children.area_uibox.definition.nodes[2] = card_count;local old = self.children.area_uibox;self.children.area_uibox = UIBox({ definition = self.children.area_uibox.definition, config = self.children.area_uibox.config })old:remove()print(_anon_func_3(self))end;return 
 
 reference3(self)end
 
@@ -402,23 +322,20 @@ return end
 assert(G.GAME.starting_params.hhj_psychostasia)if 
 
 
-
-self.config.type == 'joker' and #self.cards > 0 and self.cards[1].config.center.rarity then local psychostasia_k = 
+self == G.jokers then local segments_deep = 
 0;local ecc = 
-get_effective_card_count()local previous_psychostasia_k = 
-0;for k, card in 
+get_effective_card_count()local effective_card_limit = 
+get_effective_card_limit()for k, card in 
 
-ipairs(self.cards) do
-psychostasia_k = psychostasia_k + card.config.center.rarity;local width_of_this_card = 
+ipairs(self.cards) do local segment_span = 
 
 
-card.config.center.rarity * 0.5 * self.card_w;if not 
+rarity_or_default(card.config.center.rarity)local width_of_this_card = 
+self.card_w * card_scale(card)if not 
 card.states.drag.is then
-card.T.r = 0.1 * (-ecc / 2 - 0.5 + psychostasia_k) / (ecc) + (G.SETTINGS.reduced_motion and 0 or 1) * 0.02 * math.sin(2 * G.TIMERS.REAL + card.T.x)if 
+card.T.r = 0.1 * (-ecc / 2 - 0.5 + k) / (ecc) + (G.SETTINGS.reduced_motion and 0 or 1) * 0.02 * math.sin(2 * G.TIMERS.REAL + card.T.x)
 
-ecc > 2 or (ecc > 1 and self == G.consumeables) or (ecc > 1 and self.config.spread) then
-
-card.T.x = self.T.x + ((self.T.w - self.card_w * 0.5) * ((previous_psychostasia_k) / (ecc - 1)) + 0.5 * (width_of_this_card - card.T.w))end;local highlight_height = 
+card.T.x = self.T.x + ((segments_deep + segment_span / 2) / effective_card_limit * self.T.w - self.card_w / 2)end
 
 
 
@@ -426,13 +343,8 @@ card.T.x = self.T.x + ((self.T.w - self.card_w * 0.5) * ((previous_psychostasia_
 
 
 
-G.HIGHLIGHT_H / 2;if not 
-card.highlighted then
-highlight_height = 0 end
-card.T.y = self.T.y + self.T.h / 2 - card.T.h / 2 - highlight_height + (G.SETTINGS.reduced_motion and 0 or 1) * 0.03 * math.sin(0.666 * G.TIMERS.REAL + card.T.x)local _obj_0 = 
-card.T;_obj_0.x = _obj_0.x + (card.shadow_parrallax.x / 30)end
 
-previous_psychostasia_k = psychostasia_k end
+segments_deep = segments_deep + card.config.center.rarity end
 
 
 table.sort(self.cards, function(a, b)return a.T.x + a.T.w / 2 < b.T.x + b.T.w / 2 end)local positions = 
