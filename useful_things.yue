@@ -4,6 +4,9 @@ import "yue_macros" as {
 
 export config = SMODS.current_mod.config
 
+typecheck = assert(SMODS.load_file("libs/share/lua/5.1/typecheck/init.lua")())
+export argscheck = typecheck.argscheck
+
 --- https://stackoverflow.com/a/32660766
 ---@param o1 any|table First object to compare
 ---@param o2 any|table Second object to compare
@@ -34,7 +37,7 @@ export equals = (o1, o2, ignore_mt) ->
     
     return true
 
-export contains = (container, looking_for) ->
+export contains = (argscheck "contains (table, any) => bool") .. (container, looking_for) ->
     for contained in *container
         if equals(contained, looking_for)
             return true
@@ -42,7 +45,7 @@ export contains = (container, looking_for) ->
 
 export filter = (table, check) -> [item for item in *table when check(item)]
 
-export length = (table) -> #table
+export length = (argscheck "length (table) => int") .. (table) -> #table
 
 export count = (table, value) -> table |> filter((item) -> item == value) |> length
 

@@ -2,7 +2,10 @@ local _module_0 = {  }local config =
 
 
 
-SMODS.current_mod.config;_module_0["config"] = config
+SMODS.current_mod.config;_module_0["config"] = config;local typecheck = 
+
+assert(SMODS.load_file("libs/share/lua/5.1/typecheck/init.lua")())local argscheck = 
+typecheck.argscheck;_module_0["argscheck"] = argscheck
 
 
 
@@ -32,17 +35,17 @@ keySet[key1] = true end;for key2, _ in
 pairs(o2) do if not 
 keySet[key2] then return false end end;return 
 
-true end;_module_0["equals"] = equals
+true end;_module_0["equals"] = equals;local contains = (
 
-local contains;contains = function(container, looking_for)for _index_0 = 
+argscheck("contains (table, any) => bool")) .. function(container, looking_for)for _index_0 = 
 1, #container do local contained = container[_index_0]if 
 equals(contained, looking_for) then return 
 true end end;return 
 false end;_module_0["contains"] = contains
 
-local filter;filter = function(table, check)local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #table do local item = table[_index_0]if check(item) then _accum_0[_len_0] = item;_len_0 = _len_0 + 1 end end;return _accum_0 end;_module_0["filter"] = filter
+local filter;filter = function(table, check)local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #table do local item = table[_index_0]if check(item) then _accum_0[_len_0] = item;_len_0 = _len_0 + 1 end end;return _accum_0 end;_module_0["filter"] = filter;local length = (
 
-local length;length = function(table)return #table end;_module_0["length"] = length
+argscheck("length (table) => int")) .. function(table)return #table end;_module_0["length"] = length
 
 local count;count = function(table, value)return length(filter(table, function(item)return item == value end))end;_module_0["count"] = count
 
