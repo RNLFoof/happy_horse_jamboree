@@ -1,6 +1,6 @@
 useful_things = assert(SMODS.load_file("useful_things.lua"))()
 
-extra_appearance_rate = 8
+extra_appearance_rate = 16
 
 SMODS.Back
     name: "Horse Deck"

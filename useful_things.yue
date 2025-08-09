@@ -37,7 +37,7 @@ export equals = (o1, o2, ignore_mt) ->
     
     return true
 
-export contains = (argscheck "contains (table, any) => bool") .. (container, looking_for) ->
+export contains = (argscheck "contains (table, ?any) => bool") .. (container, looking_for) ->
     for contained in *container
         if equals(contained, looking_for)
             return true
@@ -293,8 +293,8 @@ export filtered_pool = (pool, filter=nil, fallback=nil) ->
     if unavalibilities >= #new_pool
         if fallback == "UNFILTERED"
             return original_pool
-        else if fallback
-            return {fallback}
+        elseif fallback
+            return fallback
         else
             filter_info = debug.getinfo(filter)
             error("The filter(defined at #{filter_info.source}) resulted in no valid centers, and a fallback wasn't provided :(")
@@ -346,11 +346,21 @@ export create_card_filtered = (kwargs={}) ->
 
 export pseudorandom_center_key = (pool, pool_key="") ->
     -- Stolen from create_card in common_events.lua
-    center = pseudorandom_element(pool, pseudoseed(pool_key))
-    local it = 1
-    while center == 'UNAVAILABLE' do
+    center_key = pseudorandom_element(pool, pseudoseed(pool_key))
+    it = 1
+    while center_key == 'UNAVAILABLE' do
         it = it + 1
-        center = pseudorandom_element(pool, pseudoseed(pool_key..'_resample'..it))
-    return center
+        center_key = pseudorandom_element(pool, pseudoseed(pool_key..'_resample'..it))
+    
+    if config["Debug"]["Extra Assertions"]
+        assert center_key != nil
+    
+    return center_key
 
-export pseudorandom_center = (pool, pool_key="") -> G.P_CENTERS[pseudorandom_center_key(pool, pool_key)]
+export pseudorandom_center = (pool, pool_key="") -> 
+    center = G.P_CENTERS[pseudorandom_center_key(pool, pool_key)]
+
+    if config["Debug"]["Extra Assertions"]
+        assert center != nil
+    
+    return center

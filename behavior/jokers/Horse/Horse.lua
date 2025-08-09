@@ -13,7 +13,7 @@ useful_things.round;local required_horse_name_count =
 "Potatoes", 
 "Cupcake", 
 "Slayer", 
-"Lucky", 
+
 "Special Week", 
 "Mr. Felony", 
 "Geronimo", 
@@ -65,8 +65,9 @@ useful_things.round;local required_horse_name_count =
 
 
 "lucluckmult"] = "Strawberry", [
-"luckluckluck"] = "Lucky" }local bonus_types = { 
+"luckluckluck"] = "Lucky" }local hardcoded_total_horse_count = 
 
+40;local bonus_types = { 
 
 "chips", 
 "luck", 
@@ -102,26 +103,23 @@ owns_a_non_negative and non_negative_index ~= joker_index and joker_isnt_negativ
 joker:set_edition({ negative = true }, false)else if 
 joker_is_negative(joker) and not owns_a_non_negative then
 joker:set_edition({ negative = false }, false)
-owns_a_non_negative = true end end;_continue_0 = true until true;if not _continue_0 then break end end end;local index = 
+owns_a_non_negative = true end end;_continue_0 = true until true;if not _continue_0 then break end end end
+
+local horse_key;horse_key = function(bonuses_as_list, jack)if jack == nil then jack = false end;local jackstr = 
+jack and "jack" or ""return 
+bonuses_as_list[1] .. bonuses_as_list[2] .. bonuses_as_list[3] .. jackstr end;local _anon_func_2 = function(bonuses_as_list)local _accum_0 = 
 
 
-0;local hardcoded_total_horse_count = 
-40;local total_horse_count = 
-0;for bonus_1_index, bonus_1 in 
-ipairs(bonus_types) do for bonus_2_index, bonus_2 in 
-ipairs((function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = bonus_1_index, #bonus_types do local _ = bonus_types[_index_0]_accum_0[_len_0] = _;_len_0 = _len_0 + 1 end;return _accum_0 end)()) do for _, bonus_3 in 
-ipairs((function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = bonus_1_index + bonus_2_index - 1, #bonus_types do local _ = bonus_types[_index_0]_accum_0[_len_0] = _;_len_0 = _len_0 + 1 end;return _accum_0 end)()) do for _, jack in 
-ipairs({ false, true }) do
-index = index + 1
-total_horse_count = index;local horse_progress = 
-index / hardcoded_total_horse_count;local bonuses_as_list = { 
-bonus_1, bonus_2, bonus_3 }local bonuses_for_this_horse = { chips = 
 
-round(8 / 1 * # (function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "chips" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end)()), mult = 
-round(4 / 1 * # (function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "mult" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end)()), money = 
-round(1 / 1 * # (function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "money" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end)()), luck = 
-round(1 / 1 * # (function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "luck" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end)()) }local horse_ability_description = { 
 
+
+
+
+
+{  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "chips" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end;local _anon_func_3 = function(bonuses_as_list)local _accum_0 = 
+{  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "mult" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end;local _anon_func_4 = function(bonuses_as_list)local _accum_0 = 
+{  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "money" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end;local _anon_func_5 = function(bonuses_as_list)local _accum_0 = 
+{  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "luck" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end;local add_a_horse;add_a_horse = function(name, index, bonuses_as_list, jack, kwargs)if kwargs == nil then kwargs = {  }end;if kwargs.joker_key_suffix == nil then kwargs.joker_key_suffix = horse_key(bonuses_as_list, jack)end;if kwargs.atlas_key == nil then kwargs.atlas_key = kwargs.joker_key_suffix end;kwargs.is_another_horse = false;local horse_progress = index / hardcoded_total_horse_count;local bonuses_for_this_horse = { chips = round(8 / 1 * #_anon_func_2(bonuses_as_list)), mult = round(4 / 1 * #_anon_func_3(bonuses_as_list)), money = round(1 / 1 * #_anon_func_4(bonuses_as_list)), luck = round(1 / 1 * #_anon_func_5(bonuses_as_list)) }local horse_ability_description = { 
 
 
 jack and "Per {C:attention}Jack{} scored:" or "Each {C:blue}Hand{} played:" }local scale = 
@@ -142,35 +140,27 @@ scale = "s:0.5"local _list_0 = {
 
 
 1, #_list_0 do local line = _list_0[_index_0]
-horse_ability_description[#horse_ability_description + 1] = line end
-
-local horse_name;if 
-index <= #horse_names then
-horse_name = horse_names[index]else
-
-horse_name = "Unnamed Horse (" .. tostring(index) .. ")"end;local jackstr = 
-
-jack and "jack" or ""local key = 
-bonus_1 .. bonus_2 .. bonus_3 .. jackstr;local max_pitch_variance = 
+horse_ability_description[#horse_ability_description + 1] = line end;local max_pitch_variance = 
 
 0.3;local horse_joker = 
 
-SMODS.Joker({ key = "hhj_horse_" .. key, atlas = 
+SMODS.Joker({ key = "hhj_horse_" .. kwargs.joker_key_suffix, atlas = 
 "atlas_horses", pos = 
-atlas_horses_positions[key], rarity = 
+atlas_horses_positions[kwargs.atlas_key], rarity = 
 1, cost = 
 1, no_collection = not 
 useful_things.config["Show Horse Variants In Collection (requires restart)"], config = { is_horse = 
 
-true, key = 
-key, bonuses = 
+true, is_another_horse = 
+kwargs.is_another_horse, key = 
+kwargs.joker_key_suffix, bonuses = 
 bonuses_for_this_horse, jack = 
 jack, neigh_pitch = 
 useful_things.lerp(1 + max_pitch_variance, 1 - max_pitch_variance, horse_progress), hhj_horse_deck_remove_multiplier = 
 true }, loc_txt = { name = 
 
 
-horse_name, text = 
+name, text = 
 horse_ability_description }, loc_vars = function(self, info_queue, card)if 
 
 
@@ -183,10 +173,9 @@ G.GAME and G.GAME.probabilities.normal or 1 } }
 info_queue[#info_queue + 1] = G.P_TAGS.tag_hhj_horse_luck end;return { vars = { 
 
 
-G.GAME and G.GAME.probabilities.normal or 1 } }end, set_ability = function(self, card, initial, delay_sprites)
+G.GAME and G.GAME.probabilities.normal or 1 } }end, set_ability = function(self, card, initial, delay_sprites)return 
 
 
-card.rarity = 1;return 
 update_horse_negatives()end, add_to_deck = function(self, card, from_defuff)if 
 
 from_defuff then
@@ -239,7 +228,34 @@ money_earned }for key, value in
 
 pairs(output) do
 output[key] = value ~= 0 and value or nil end;return 
-output end end })end end end end;if 
+output end end })end;local index = 
+
+0;local horse_name_index = 
+0;local total_horse_count = 
+0;for bonus_1_index, bonus_1 in 
+ipairs(bonus_types) do for bonus_2_index, bonus_2 in 
+ipairs((function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = bonus_1_index, #bonus_types do local _ = bonus_types[_index_0]_accum_0[_len_0] = _;_len_0 = _len_0 + 1 end;return _accum_0 end)()) do for _, bonus_3 in 
+ipairs((function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = bonus_1_index + bonus_2_index - 1, #bonus_types do local _ = bonus_types[_index_0]_accum_0[_len_0] = _;_len_0 = _len_0 + 1 end;return _accum_0 end)()) do for _, jack in 
+ipairs({ false, true }) do
+index = index + 1
+total_horse_count = index;local bonuses_as_list = { 
+bonus_1, bonus_2, bonus_3 }local horse_name = 
+
+set_horse_names[horse_key(bonuses_as_list, jack)]if 
+horse_name == nil then
+horse_name_index = horse_name_index + 1;if 
+horse_name_index <= #horse_names then
+horse_name = tostring(horse_names[horse_name_index]) .. " {s:0.5}(##" .. tostring(horse_name_index) .. ")"else
+
+horse_name = "Unnamed Horse (" .. tostring(horse_name_index) .. ")"end end
+
+add_a_horse(horse_name, index, bonuses_as_list, jack)end end end end
+
+
+add_a_horse("Another Horse", index + 1, {  }, false, { joker_key_suffix = "another", atlas_key = 
+"rainbow0", is_another_horse = 
+true })if 
+
 
 total_horse_count ~= hardcoded_total_horse_count then
 error("COUNT YOUR HORSES BETTER (total_horse_count " .. tostring(total_horse_count) .. ", hardcoded_total_horse_count: " .. tostring(hardcoded_total_horse_count) .. ")")end;local scale = 
@@ -286,9 +302,9 @@ card.area.config.collection then
 return end;return 
 
 useful_things.field_replace_context(G, "hhj_allow_horses", true, function()return 
-useful_things.pool_filter_context((function(center)return center.config.is_horse end), "hhj_j_horse_chipschipschips", function()local new_horse_center = 
+useful_things.pool_filter_context((function(center)return center.config.is_horse and not center.config.is_another_horse end), { "hhj_j_horse_another" }, function()local new_horse_center = 
 useful_things.pseudorandom_center(get_current_pool("Joker", 0, false, "horse"), "horse")return 
-card:set_ability(new_horse_center)end)end)end })local _anon_func_2 = function(self)local _obj_0 = 
+card:set_ability(new_horse_center)end)end)end })local _anon_func_6 = function(self)local _obj_0 = 
 
 
 
@@ -299,7 +315,7 @@ card:set_ability(new_horse_center)end)end)end })local _anon_func_2 = function(se
 
 
 
-self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;useful_things.wrap_method(Card, "hover", function(...)local self = ...if _anon_func_2(self) then return neigh(self)end end)local ref = 
+self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;useful_things.wrap_method(Card, "hover", function(...)local self = ...if _anon_func_6(self) then return neigh(self)end end)local ref = 
 
 
 
@@ -310,11 +326,11 @@ self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 
 
 
 
-Card.set_edition;local _anon_func_3 = function(self)local _obj_0 = 
+Card.set_edition;local _anon_func_7 = function(self)local _obj_0 = 
 
 
 
-self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;local wrapper;wrapper = function(self, edition, immediate, silent)ref(self, edition, immediate, silent)if _anon_func_3(self) ~= nil then local horse_joker = 
+self.config.center;if _obj_0 ~= nil then local _obj_1 = _obj_0.config;if _obj_1 ~= nil then return _obj_1.is_horse end;return nil end;return nil end;local wrapper;wrapper = function(self, edition, immediate, silent)ref(self, edition, immediate, silent)if _anon_func_7(self) ~= nil then local horse_joker = 
 self.config.center;local the_sprite_is_in_here = 
 self.children.center
 local change_pos_to;if (

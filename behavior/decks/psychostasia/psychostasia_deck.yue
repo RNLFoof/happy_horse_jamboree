@@ -47,9 +47,6 @@ psychostasia_enabled = () ->
 overburdened = () ->
     return psychostasia_enabled() and #G.jokers.cards > G.jokers.config.card_limit
 
-big_guy = (card) ->
-    return psychostasia_enabled() and card.config.center.rarity and card.config.center.rarity >= 3
-
 force_notch_bar_update = (cardArea) -> 
     config = G.jokers?.children?.area_uibox?.definition?.config
     if config
@@ -98,35 +95,71 @@ G.FUNCS.check_for_buy_space = (card) ->
     --     return false
     -- return reference(card)
 
+    
+rarity_or_default = (rarity) ->
+    if type(rarity) == "number" then return rarity else return 2
+
+get_effective_card_count = () ->
+    effective_card_count = 0
+    for _, card in ipairs(G.jokers.cards) do
+        effective_card_count = effective_card_count + rarity_or_default(card.config.center.rarity)
+    return effective_card_count
+
+get_effective_card_limit = () ->
+    return get_effective_card_count() + (G.jokers.config.card_limit-#G.jokers.cards) 
+
+card_scale_no_big_guy = (card) ->
+    return rarity_or_default(card.config?.center?.rarity) * (1 / get_effective_card_limit() * 5) -- * 0.95 -- 0.95 is the default card scale. thought about using this for gaps, but having it line up juust right makes more sense I think
+
+big_guy = (card) ->
+    -- I considered using this so that uncommon cards aren't sideways with the default 8 slots but they got so big that it just looked silly
+    -- extra_lenience = 1.35
+    return psychostasia_enabled() and card.config?.center?.set == "Joker" and card_scale_no_big_guy(card) * G.CARD_H > G.jokers.T.h -- * extra_lenience
+
 card_scale = (card) ->
-    if card.config?.center?.rarity
-        new_scale = card.config.center.rarity * 0.5
-        if big_guy(card)
-            card.VT.h ??= card.T.h  -- apparently this is an issue
-            new_scale *= card.VT.w / card.VT.h
-        return new_scale
-    return 1
+    new_scale = card_scale_no_big_guy(card)
+    if big_guy(card)
+        new_scale *= G.CARD_W / G.CARD_H 
+    return new_scale
+
+scale_card = (card, up) ->
+    if card.config?.center?.set != "Joker"
+        return
+    scale = card_scale(card)
+    add_mult = up and 1 or -1
+    -- card.VT.x += ((card.VT.w - card.VT.w * scale) / 2) * add_mult
+    -- card.VT.y += ((card.VT.h - card.VT.h * scale) / 2) * add_mult
+    if up
+        -- card.VT.w *= scale
+        -- card.VT.h *= scale
+        card.VT.scale *= scale
+    else
+        -- card.VT.w /= scale
+        -- card.VT.h /= scale
+        card.VT.scale /= scale
 
 useful_things.wrap_method(Card, "draw", 
     (layer) =>
-        if psychostasia_enabled()
-            @VT.scale *= card_scale(@)
+        if not psychostasia_enabled()
+            return
+        scale_card(@, true)
     (original_output, layer) =>
-        if psychostasia_enabled()
-            @VT.scale /= card_scale(@)
+        if not psychostasia_enabled()
+            return
+        scale_card(@, false)
 )
 
 -- These aren't done through scale since *apparently* this method doesn't check it???
 -- Pretty ｂｏｎｋｅｒｓ if you ask me
 useful_things.wrap_method(Node, "collides_with_point", 
     (layer) =>
-        if psychostasia_enabled() and @VT
+        if psychostasia_enabled() and @VT and @config?.center?.set == "Joker"
             @VT.x += (@VT.w - @VT.w * card_scale(@)) / 2
             @VT.y += (@VT.h - @VT.h * card_scale(@)) / 2
             @VT.w *= card_scale(@)
             @VT.h *= card_scale(@)
     (original_output, layer) =>
-        if psychostasia_enabled() and @VT
+        if psychostasia_enabled() and @VT and @config?.center?.set == "Joker"
             @VT.w /= card_scale(@)
             @VT.h /= card_scale(@)
             @VT.x -= (@VT.w - @VT.w * card_scale(@)) / 2
@@ -167,36 +200,26 @@ Card.add_to_deck = () =>
     force_notch_bar_update(self)
 
 useful_things.wrap_method(Card, "remove_from_deck",
-    () => 
-        if psychostasia_enabled()
-
-            if @added_to_deck
-                if @ability and @ability.set == 'Joker'
-                    if not G.OVERLAY_MENU
-                        G.jokers.config.card_limit = G.jokers.config.card_limit + (@config.center.rarity - 1)
     () =>
+        if not psychostasia_enabled()
+            return
+        if @added_to_deck
+            if @ability?.set == 'Joker'
+                if not G.OVERLAY_MENU
+                    G.jokers.config.card_limit = G.jokers.config.card_limit + (@config.center.rarity - 1)
+    () =>
+        if not psychostasia_enabled()
+            return
         force_notch_bar_update(self)
 )
 
 -- CardArea
 
-rarity_or_default = (rarity) ->
-    if type(rarity) == "number" then return rarity else return 2
-
-get_effective_card_count = () ->
-    effective_card_count = 0
-    for _, card in ipairs(G.jokers.cards) do
-        effective_card_count = effective_card_count + rarity_or_default(card.config.center.rarity)
-    return effective_card_count
-
-get_effective_card_limit = () ->
-    return get_effective_card_count() + (G.jokers.config.card_limit-#G.jokers.cards) 
-
 reference3 = CardArea.draw
 CardArea.draw = () =>
     danger_color = G.C.HHJ_OVERBURDENED
 
-    if self == G.jokers and @children?.area_uibox and not @children?.area_uibox?.definition?.config?.hhj_physchostasia_injected -- I have NO clue how it_goes_in_here can be set without @children.area_uibox but here we are
+    if psychostasia_enabled() and self == G.jokers and @children?.area_uibox and not @children?.area_uibox?.definition?.config?.hhj_physchostasia_injected
         effective_card_limit = get_effective_card_limit()
         effective_card_count = get_effective_card_count()
         
@@ -305,7 +328,6 @@ CardArea.draw = () =>
         old = @children.area_uibox
         @children.area_uibox = UIBox{definition: @children.area_uibox.definition, config: @children.area_uibox.config}
         old::remove()
-        print(@children?.area_uibox?.definition?.config)
         -- it_goes_in_here.hhj_psychostasia_bar:draw()
     reference3(self)
 
@@ -318,7 +340,7 @@ CardArea.draw = () =>
 useful_things.wrap_method(CardArea, "align_cards", nil,
     (original_outputs) =>
         if not psychostasia_enabled()
-            return
+            return useful_things.nilproof_unpack(original_outputs)
         assert(G.GAME.starting_params.hhj_psychostasia)
         
         -- Aligns jokers while taking their size into account. Based on the actual joker alignment code
@@ -333,7 +355,7 @@ useful_things.wrap_method(CardArea, "align_cards", nil,
                 segment_span = rarity_or_default(card.config.center.rarity)
                 width_of_this_card = @card_w * card_scale(card) --
                 if not card.states.drag.is 
-                    card.T.r = 0.1*(-ecc/2 - 0.5 + k)/(ecc)+ (G.SETTINGS.reduced_motion and 0 or 1)*0.02*math.sin(2*G.TIMERS.REAL+card.T.x)
+                    -- card.T.r = 0.1*(-ecc/2 - 0.5 + k)/(ecc)+ (G.SETTINGS.reduced_motion and 0 or 1)*0.02*math.sin(2*G.TIMERS.REAL+card.T.x)
 
                     card.T.x = @T.x + ( -- The card area's own X
                         (segments_deep + segment_span/2) / effective_card_limit * @T.w -
@@ -343,7 +365,9 @@ useful_things.wrap_method(CardArea, "align_cards", nil,
                     -- if not card.highlighted 
                     --     highlight_height = 0
                     -- card.T.y = @T.y + @T.h/2 - card.T.h/2 - highlight_height + (G.SETTINGS.reduced_motion and 0 or 1) * 0.03 * math.sin(0.666*G.TIMERS.REAL+card.T.x)
-                    -- card.T.x += card.shadow_parrallax.x/30
+                    card.T.x += card.shadow_parrallax.x/30
+                    -- if big_guy(card) or true
+                    --     card.VT.r += (math.pi / 2)
                 segments_deep += card.config.center.rarity
 
             -- Sorting is what lets you change the positions of the cards
@@ -356,15 +380,16 @@ useful_things.wrap_method(CardArea, "align_cards", nil,
             @hhj_previousJokerPositions = positions
         
         -- Make the big guys turn sideways
-        for k, card in ipairs(@cards)
+        for card in *@cards
             -- It's a little scuffed, but it assumes that, if the card is roughly straight up (within an 8th of a rotation), then it needs to be sideways instead
             -- This means the rest of the code can do whatever to it and it'll be accounted for
-            -- at the cost of this obviously being jank as hell 
-            if big_guy(card) and ((math.abs(card.T.r) % math.pi * 2) < math.pi/4 ) then
+            -- at the cost of this obviously being jank as hell
+            -- This can't be in the draw wrap!! I assume because drawing resets the rotation partway through
+            if big_guy(card) and ((math.abs(card.T.r) % math.pi * 2) < math.pi/4 )
                 card.T.r = card.T.r + math.pi / 2
                 card.VT.r = card.T.r
     
-        return original_outputs
+        return useful_things.nilproof_unpack(original_outputs)
 )
 
 

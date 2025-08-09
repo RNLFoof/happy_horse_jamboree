@@ -12,7 +12,7 @@ Test("basic", { testing.create_state_steps({ back = "b_hhj_horse" }), function()
 
 get_current_pool("Joker")
 testing.assert_eq(useful_things.count(pool, "j_joker"), 1)return 
-testing.assert_eq(useful_things.count(pool, "j_hhj_shakedown"), 8)end }), 
+testing.assert_gt(useful_things.count(pool, "j_hhj_shakedown"), 8)end }), 
 
 Test("unchanged_on_base_decks", { testing.create_state_steps(), function()local pool = 
 

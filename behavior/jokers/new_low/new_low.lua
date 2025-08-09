@@ -2,7 +2,7 @@ local new_low =
 SMODS.Joker({ key = "new_low", atlas = 
 "atlas_jokers", pos = 
 atlas_jokers_positions["placeholder"]["red"], rarity = 
-2, cost = 
+1, cost = 
 6, loc_txt = { name = 
 
 "New Low", text = { 

@@ -100,7 +100,9 @@ export config_structure = ConfigRoot
     * OptionBundle "HHJ Aces"
         * BooleanOption("In Main Menu", true)
         * BooleanOption("Everywhere Else", true)
-    * BooleanOption("Debug Mode", false)
+    * OptionBundle "Debug"
+        * BooleanOption("Visible UI Structure", false)
+        * BooleanOption("Extra Assertions", false)
     
 
 

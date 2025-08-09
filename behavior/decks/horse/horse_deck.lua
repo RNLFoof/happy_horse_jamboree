@@ -1,6 +1,6 @@
 local useful_things = assert(SMODS.load_file("useful_things.lua"))()local extra_appearance_rate = 
 
-8
+16
 
 
 SMODS.Back({ name = "Horse Deck", key = 

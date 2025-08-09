@@ -1,6 +1,11 @@
 testing = assert(SMODS.load_file("libs\\steamodded_test\\main.lua"))()
 useful_things = assert(SMODS.load_file("useful_things.lua"))()
 
+Test = testing.Test
+TestBundle = testing.TestBundle
+
+assert_eq = testing.assert_eq
+
 outside_influence = {}
 
 G.steamodded_tests.tests[] = testing.TestBundle("horses", {
@@ -102,6 +107,41 @@ G.steamodded_tests.tests[] = testing.TestBundle("horses", {
         -> testing.add_centers({"j_hhj_horse_base"})
         -> assert(G.jokers.cards[1].is_horse)
         -> testing.assert_ne(G.jokers.cards[1].config.center.key, "j_hhj_horse_base")
+    }),
+
+    TestBundle("another_horse", {
+        Test("every_horse_without_crash", {
+            ...testing.create_state_steps(),
+            -> testing.add_centers(["j_hhj_horse_base" for x = 1, 41])
+            -> true
+        })
+        Test("exactly_zero_final_horses", {
+            ...testing.create_state_steps(),
+            -> testing.add_centers(["j_hhj_horse_base" for x = 1, 40])
+            -> 
+                G.jokers.cards
+                    |> useful_things.filter((joker) -> joker.config.center.key == "j_hhj_horse_another")
+                    |> useful_things.length
+                    |> assert_eq(0)
+        })
+        Test("exactly_one_final_horse", {
+            ...testing.create_state_steps(),
+            -> testing.add_centers(["j_hhj_horse_base" for x = 1, 41])
+            -> 
+                G.jokers.cards
+                    |> useful_things.filter((joker) -> joker.config.center.key == "j_hhj_horse_another")
+                    |> useful_things.length
+                    |> assert_eq(1)
+        })
+        Test("exactly_five_final_horses", {
+            ...testing.create_state_steps(),
+            -> testing.add_centers(["j_hhj_horse_base" for x = 1, 45])
+            -> 
+                G.jokers.cards
+                    |> useful_things.filter((joker) -> joker.config.center.key == "j_hhj_horse_another")
+                    |> useful_things.length
+                    |> assert_eq(5)
+        })
     }),
 
     testing.Test("horse_negatives", {

@@ -5,45 +5,78 @@ required_horse_name_count = 40
 horse_names = {
     "Chestnut"
     "Peanut"
-    "Acorn"
+    -- cut for space "Acorn"
+
+    -- k51
     "Gertrude"
     "Slippy"
     "Crazy Horse"
     "Jimmy"
     "Potatoes"
-    "Cupcake"  -- Keep this on an odd number so that Cupcake and Slayer are a pair :)
-    "Slayer"
-    "Lucky"
-    "Special Week"
+    -- "Special Week"
     "Mr. Felony"
     "Geronimo"
+    "Tennessee Sam"
+    "The Chancellor"
+    "Stinky"
+    -- cut for space "Peanut Butter"
 
+    -- Nat
+    "Sprinkletoes"
+
+    -- Olive
+    "Salanji"
+    "Gungerly Smungus"
+    "Z-Diddly"
+    "Horsinard Horsington"
+
+    -- Welcomes
+    "Snout"
+
+    -- Gill
+    "Clarence"
+    "Spriggan"
+
+    -- Mel
+    "Bonnabelle"
+    "Nyquill"
+    "Speed 2"
+    "The Dreamer"
+    "American Pharaoh"
+    "Horsie"
+    "Parabellum"
+    "Cruise Control"
+
+    -- Dust
     "Hemmingway"
     "Whiskey"
     "Chipschipschips"
     "Daisy"
-    "Orchard"
-    "Old Tom"
-    "Sunrise"
-    "Shepard"
+    -- cut for space "Orchard"
+    -- cut for space "Old Tom"
+    -- cut for space "Sunrise"
+    -- cut for space "Shepard"
 
+    -- Reverie (?)
     "Pumpernickel"
-
+    
+    -- Juice
     "Bert"
 
-    "Sprinkletoes"
-
+    -- Beer
     "Old Ale"
-    "Kettle Sour"
+    -- cut for space "Kettle Sour"
 
-    "Clarence"
-    "Spriggan"
+    -- Fun berry :)
+    "Thimbleberry"
 
+    -- Drinks
     "Angel Face"
-    "Casino"
-    "Grasshopper"
+    -- cut for space "Casino"
+
+    -- "Grasshopper"
     "Moscow Mule"
-    "Rusty Nail"
+    -- cut for space "Rusty Nail"
 
     -- Stone fruit
     "Apricot"
@@ -55,8 +88,6 @@ horse_names = {
     "Butternut"
     "Macadamia"
 
-    "Thimbleberry"
-
     -- Fruit
     "Currant"
     "Clementine"
@@ -66,7 +97,11 @@ horse_names = {
 set_horse_names = {
     "lucluckmult": "Strawberry"
     "luckluckluck": "Lucky"
+    "chipsluckluck": "Cupcake"
+    "chipsluckluckjack": "Slayer"
+    "multmultmult": "The Red Menace"
 }
+hardcoded_total_horse_count = 40
 bonus_types = {
     "chips"
     "luck"
@@ -104,9 +139,133 @@ update_horse_negatives = ->
             joker::set_edition({negative: false}, false)
             owns_a_non_negative = true
 
+horse_key = (bonuses_as_list, jack=false) -> 
+    jackstr = jack and "jack" or ""
+    return bonuses_as_list[1] .. bonuses_as_list[2] .. bonuses_as_list[3] .. jackstr
+
+add_a_horse = (name, index, bonuses_as_list, jack, kwargs={}) ->
+    kwargs.joker_key_suffix ??= horse_key(bonuses_as_list, jack)
+    kwargs.atlas_key ??= kwargs.joker_key_suffix
+    kwargs.is_another_horse = false
+
+    horse_progress = index / hardcoded_total_horse_count
+    bonuses_for_this_horse = {
+        chips:  round(8 / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "chips"]) -- This *was* 8, 17, 25, and was going to become 10, 15, 25, but a plain 8*n was more consistent and close enough
+        mult:   round(4 / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "mult" ])
+        money:  round(1 / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "money"])
+        luck:   round(1 / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "luck" ])
+    }
+    horse_ability_description = {
+        jack and "Per {C:attention}Jack{} scored:" or "Each {C:blue}Hand{} played:"
+    }
+    scale = "s:0.75"
+    if bonuses_for_this_horse.chips > 0 then horse_ability_description[] = "{#{scale},C:chips}+#{           bonuses_for_this_horse.chips}{#{scale}} chips"
+    if bonuses_for_this_horse.mult  > 0 then horse_ability_description[] = "{#{scale},C:mult}+#{            bonuses_for_this_horse.mult }{#{scale}} Mult"
+    if bonuses_for_this_horse.money > 0 then horse_ability_description[] = "{#{scale},C:attention}#{        bonuses_for_this_horse.money}{#{scale},C:green} #1#/2{#{scale}} chance#{bonuses_for_this_horse.money>1 and 's' or ''} for {#{scale},C:money}$1{}"
+    if bonuses_for_this_horse.luck  > 0 then horse_ability_description[] = "{#{scale},C:green}HORSE LUCK X#{bonuses_for_this_horse.luck }{#{scale}}"
+    
+    scale = "s:0.5"
+    for line in *{
+        "{#{scale},C:inactive}Additional {C:attention,#{scale}}Horses{#{scale},C:inactive} may appear, are {C:dark_edition,#{scale}}negative{#{scale}},"
+        "{#{scale},C:inactive}and have varied abilities"
+
+        -- "{C:attention}Horse Jokers{} may appear multiple times"
+        -- "and have varied abilities"
+        -- "Exactly one existing {C:attention}Horse Joker{}"
+        -- "isn't {C:dark_edition}negative{} at all times"
+    } do
+        horse_ability_description[] = line
+
+    max_pitch_variance = 0.3
+    horse_joker = SMODS.Joker
+        key: "hhj_horse_" .. kwargs.joker_key_suffix
+        atlas: "atlas_horses"
+        pos: atlas_horses_positions[kwargs.atlas_key]
+        rarity: 1
+        cost: 1
+        no_collection: not useful_things.config["Show Horse Variants In Collection (requires restart)"]
+        config: {
+            is_horse: true
+            is_another_horse: kwargs.is_another_horse
+            key: kwargs.joker_key_suffix
+            bonuses: bonuses_for_this_horse
+            jack: jack
+            neigh_pitch: useful_things.lerp(1 + max_pitch_variance, 1 - max_pitch_variance, horse_progress)
+            hhj_horse_deck_remove_multiplier: true
+        },
+        loc_txt: {
+            name: name,
+            text: horse_ability_description
+        },
+        loc_vars: (info_queue, card) => 
+            if bonuses_for_this_horse.luck > 0
+                info_queue[] = {
+                    key: "horse_luck"
+                    set: "Other"
+                    vars: { G.GAME and G.GAME.probabilities.normal or 1 }
+                }
+                info_queue[] = G.P_TAGS.tag_hhj_horse_luck
+            
+            return vars: {
+                G.GAME and G.GAME.probabilities.normal or 1
+            }
+        set_ability: (card, initial, delay_sprites) =>
+            update_horse_negatives()
+        add_to_deck: (card, from_defuff) =>
+            if from_defuff
+                return
+            update_horse_negatives()
+        remove_from_deck: (card, from_defuff) =>
+            if from_defuff
+                return
+            update_horse_negatives()
+        in_pool: (args) => G.hhj_allow_horses
+        calculate: (card, context) =>
+            horse = card.ability
+            if (
+                -- Chips and mult are reset after "before" is finished, so they can't be added before then. It's because the hand can level up in that step
+                -- Could maybe implement a "after_before" step to address this?
+                -- Shouldn't be *that* hard, surely :]
+                
+                -- ((horse.jack == false) and context.before and context.cardarea == G.jokers) or
+                ((horse.jack == false) and context.joker_main and context.cardarea == G.jokers) or
+                ((horse.jack == true ) and context.individual and context.cardarea == G.play and context.other_card::get_id() == 11)
+            )
+                money_earned = 0
+                for _ = 1, horse.bonuses.money
+                    if pseudorandom('horse_money') < G.GAME.probabilities.normal / 2
+                        money_earned += 1
+                
+                for _ = 1, horse.bonuses.luck
+                    if pseudorandom('horse_luck') < G.GAME.probabilities.normal / 20
+                        G.E_MANAGER::add_event(Event
+                            func: () ->
+                                add_tag(Tag('tag_hhj_horse_luck'))
+                                play_sound('generic1', 0.9 + math.random()*0.1, 0.8)
+                                play_sound('holo1', 1.2 + math.random()*0.1, 0.4)
+                                neigh()
+                                return true
+                        )
+                        card_eval_status_text(card, 'extra', nil, nil, nil, {message: "HORSE LUCK", colour: G.C.GREEN})
+                
+                output = {
+                    -- card: self,
+                    chips: horse.bonuses.chips,
+                    mult: horse.bonuses.mult,
+                    dollars: money_earned,
+                    -- func:
+                    --     G.E_MANAGER\add_event(Event({
+                    --         func: () -> 
+                    --             card\juice_up(0.5, 0.5) if self.config.jack == true
+                    --             return true
+                    --     })) 
+                }
+                for key, value in pairs(output)
+                    output[key] = value != 0 and value or nil
+                return output
 
 index = 0
-hardcoded_total_horse_count = 40
+horse_name_index = 0
 total_horse_count = 0
 for    bonus_1_index, bonus_1 in ipairs(bonus_types)                                                   do
  for   bonus_2_index, bonus_2 in ipairs([_ for _ in *bonus_types[bonus_1_index,                    ]]) do
@@ -114,132 +273,23 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
     for _,            jack    in ipairs({false, true}                                                ) do 
         index += 1
         total_horse_count = index
-        horse_progress = index / hardcoded_total_horse_count
         bonuses_as_list = {bonus_1, bonus_2, bonus_3}
-        bonuses_for_this_horse = {
-            chips:  round(8 / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "chips"]) -- This *was* 8, 17, 25, and was going to become 10, 15, 25, but a plain 8*n was more consistent and close enough
-            mult:   round(4 / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "mult" ])
-            money:  round(1 / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "money"])
-            luck:   round(1 / 1 * #[bonus for bonus in *bonuses_as_list when bonus == "luck" ])
-        }
         
-        horse_ability_description = {
-            jack and "Per {C:attention}Jack{} scored:" or "Each {C:blue}Hand{} played:"
-        }
-        scale = "s:0.75"
-        if bonuses_for_this_horse.chips > 0 then horse_ability_description[] = "{#{scale},C:chips}+#{           bonuses_for_this_horse.chips}{#{scale}} chips"
-        if bonuses_for_this_horse.mult  > 0 then horse_ability_description[] = "{#{scale},C:mult}+#{            bonuses_for_this_horse.mult }{#{scale}} Mult"
-        if bonuses_for_this_horse.money > 0 then horse_ability_description[] = "{#{scale},C:attention}#{        bonuses_for_this_horse.money}{#{scale},C:green} #1#/2{#{scale}} chance#{bonuses_for_this_horse.money>1 and 's' or ''} for {#{scale},C:money}$1{}"
-        if bonuses_for_this_horse.luck  > 0 then horse_ability_description[] = "{#{scale},C:green}HORSE LUCK X#{bonuses_for_this_horse.luck }{#{scale}}"
-        
-        scale = "s:0.5"
-        for line in *{
-            "{#{scale},C:inactive}Additional {C:attention,#{scale}}Horses{#{scale},C:inactive} may appear, are {C:dark_edition,#{scale}}negative{#{scale}},"
-            "{#{scale},C:inactive}and have varied abilities"
+        horse_name = set_horse_names[horse_key(bonuses_as_list, jack)]
+        if horse_name == nil
+            horse_name_index += 1
+            if horse_name_index <= #horse_names
+                horse_name = "#{horse_names[horse_name_index]} {s:0.5}(###{horse_name_index})"
+            else
+                horse_name = "Unnamed Horse (#{horse_name_index})"
 
-            -- "{C:attention}Horse Jokers{} may appear multiple times"
-            -- "and have varied abilities"
-            -- "Exactly one existing {C:attention}Horse Joker{}"
-            -- "isn't {C:dark_edition}negative{} at all times"
-        } do
-            horse_ability_description[] = line
+        add_a_horse(horse_name, index, bonuses_as_list, jack)
 
-        local horse_name
-        if index <= #horse_names
-            horse_name = horse_names[index]
-        else
-            horse_name = "Unnamed Horse (#{index})"
-
-        jackstr = jack and "jack" or ""
-        key = bonus_1 .. bonus_2 .. bonus_3 .. jackstr
-
-        max_pitch_variance = 0.3
-        horse_joker = SMODS.Joker
-            key: "hhj_horse_" .. key
-            atlas: "atlas_horses"
-            pos: atlas_horses_positions[key]
-            rarity: 1
-            cost: 1
-            no_collection: not useful_things.config["Show Horse Variants In Collection (requires restart)"]
-            config: {
-                is_horse: true
-                key: key
-                bonuses: bonuses_for_this_horse
-                jack: jack
-                neigh_pitch: useful_things.lerp(1 + max_pitch_variance, 1 - max_pitch_variance, horse_progress)
-                hhj_horse_deck_remove_multiplier: true
-            },
-            loc_txt: {
-                name: horse_name,
-                text: horse_ability_description
-            },
-            loc_vars: (info_queue, card) => 
-                if bonuses_for_this_horse.luck > 0
-                    info_queue[] = {
-                        key: "horse_luck"
-                        set: "Other"
-                        vars: { G.GAME and G.GAME.probabilities.normal or 1 }
-                    }
-                    info_queue[] = G.P_TAGS.tag_hhj_horse_luck
-                
-                return vars: {
-                    G.GAME and G.GAME.probabilities.normal or 1
-                }
-            set_ability: (card, initial, delay_sprites) =>
-                card.rarity = 1 
-                update_horse_negatives()
-            add_to_deck: (card, from_defuff) =>
-                if from_defuff
-                    return
-                update_horse_negatives()
-            remove_from_deck: (card, from_defuff) =>
-                if from_defuff
-                    return
-                update_horse_negatives()
-            in_pool: (args) => G.hhj_allow_horses
-            calculate: (card, context) =>
-                horse = card.ability
-                if (
-                    -- Chips and mult are reset after "before" is finished, so they can't be added before then. It's because the hand can level up in that step
-                    -- Could maybe implement a "after_before" step to address this?
-                    -- Shouldn't be *that* hard, surely :]
-                    
-                    -- ((horse.jack == false) and context.before and context.cardarea == G.jokers) or
-                    ((horse.jack == false) and context.joker_main and context.cardarea == G.jokers) or
-                    ((horse.jack == true ) and context.individual and context.cardarea == G.play and context.other_card\get_id() == 11)
-                ) then
-                    money_earned = 0
-                    for _ = 1, horse.bonuses.money
-                        if pseudorandom('horse_money') < G.GAME.probabilities.normal / 2
-                            money_earned += 1
-                    
-                    for _ = 1, horse.bonuses.luck
-                        if pseudorandom('horse_luck') < G.GAME.probabilities.normal / 20
-                            G.E_MANAGER::add_event(Event
-                                func: () ->
-                                    add_tag(Tag('tag_hhj_horse_luck'))
-                                    play_sound('generic1', 0.9 + math.random()*0.1, 0.8)
-                                    play_sound('holo1', 1.2 + math.random()*0.1, 0.4)
-                                    neigh()
-                                    return true
-                            )
-                            card_eval_status_text(card, 'extra', nil, nil, nil, {message: "HORSE LUCK", colour: G.C.GREEN})
-                    
-                    output = {
-                        -- card: self,
-                        chips: horse.bonuses.chips,
-                        mult: horse.bonuses.mult,
-                        dollars: money_earned,
-                        -- func:
-                        --     G.E_MANAGER\add_event(Event({
-                        --         func: () -> 
-                        --             card\juice_up(0.5, 0.5) if self.config.jack == true
-                        --             return true
-                        --     })) 
-                    }
-                    for key, value in pairs(output)
-                        output[key] = value != 0 and value or nil
-                    return output
+add_a_horse("Another Horse", index+1, {}, false, {
+    joker_key_suffix: "another"
+    atlas_key: "rainbow0"
+    is_another_horse: true
+})
 
 if total_horse_count != hardcoded_total_horse_count
     error("COUNT YOUR HORSES BETTER (total_horse_count #{total_horse_count}, hardcoded_total_horse_count: #{hardcoded_total_horse_count})")
@@ -286,7 +336,7 @@ base_horse_joker = SMODS.Joker
             return
         
         useful_things.field_replace_context(G, "hhj_allow_horses", true, ->
-            useful_things.pool_filter_context(((center) -> center.config.is_horse), "hhj_j_horse_chipschipschips", ->
+            useful_things.pool_filter_context(((center) -> center.config.is_horse and not center.config.is_another_horse), {"hhj_j_horse_another"}, ->
                 new_horse_center = useful_things.pseudorandom_center(get_current_pool("Joker", 0, false, "horse"), "horse")
                 card::set_ability(new_horse_center)
             )

@@ -4,5 +4,8 @@ return {
         ["In Main Menu"] =  true,
         ["Everywhere Else"] =  true,
     },
-    ["Debug Mode"] =  false,
+    ["Debug"] = {
+        ["Visible UI Structure"] =  false,
+        ["Extra Assertions"] =  false,
+    },
 }

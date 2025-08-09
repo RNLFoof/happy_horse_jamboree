@@ -37,7 +37,7 @@ keySet[key2] then return false end end;return
 
 true end;_module_0["equals"] = equals;local contains = (
 
-argscheck("contains (table, any) => bool")) .. function(container, looking_for)for _index_0 = 
+argscheck("contains (table, ?any) => bool")) .. function(container, looking_for)for _index_0 = 
 1, #container do local contained = container[_index_0]if 
 equals(contained, looking_for) then return 
 true end end;return 
@@ -292,12 +292,12 @@ local new_pool;do local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #origi
 
 unavalibilities >= #new_pool then if 
 fallback == "UNFILTERED" then return 
-original_pool else if 
-fallback then return { 
-fallback }else local filter_info = 
+original_pool elseif 
+fallback then return 
+fallback else local filter_info = 
 
 debug.getinfo(filter)
-error("The filter(defined at " .. tostring(filter_info.source) .. ") resulted in no valid centers, and a fallback wasn't provided :(")end end end;return 
+error("The filter(defined at " .. tostring(filter_info.source) .. ") resulted in no valid centers, and a fallback wasn't provided :(")end end;return 
 
 new_pool end;_module_0["filtered_pool"] = filtered_pool
 
@@ -344,13 +344,23 @@ SMODS.create_card(kwargs)end)end
 
 _module_0["create_card_filtered"] = create_card_filtered
 
-local pseudorandom_center_key;pseudorandom_center_key = function(pool, pool_key)if pool_key == nil then pool_key = ""end;local center = 
+local pseudorandom_center_key;pseudorandom_center_key = function(pool, pool_key)if pool_key == nil then pool_key = ""end;local center_key = 
 
 pseudorandom_element(pool, pseudoseed(pool_key))local it = 
 1;while 
-center == 'UNAVAILABLE' do
+center_key == 'UNAVAILABLE' do
 it = it + 1
-center = pseudorandom_element(pool, pseudoseed(pool_key .. '_resample' .. it))end;return 
-center end;_module_0["pseudorandom_center_key"] = pseudorandom_center_key
+center_key = pseudorandom_element(pool, pseudoseed(pool_key .. '_resample' .. it))end;if 
 
-local pseudorandom_center;pseudorandom_center = function(pool, pool_key)if pool_key == nil then pool_key = ""end;return G.P_CENTERS[pseudorandom_center_key(pool, pool_key)]end;_module_0["pseudorandom_center"] = pseudorandom_center;return _module_0;
+config["Debug"]["Extra Assertions"] then
+assert(center_key ~= nil)end;return 
+
+center_key end;_module_0["pseudorandom_center_key"] = pseudorandom_center_key
+
+local pseudorandom_center;pseudorandom_center = function(pool, pool_key)if pool_key == nil then pool_key = ""end;local center = 
+G.P_CENTERS[pseudorandom_center_key(pool, pool_key)]if 
+
+config["Debug"]["Extra Assertions"] then
+assert(center ~= nil)end;return 
+
+center end;_module_0["pseudorandom_center"] = pseudorandom_center;return _module_0;

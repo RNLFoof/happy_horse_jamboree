@@ -47,9 +47,6 @@ G.GAME.starting_params.hhj_psychostasia end
 local overburdened;overburdened = function()return 
 psychostasia_enabled() and #G.jokers.cards > G.jokers.config.card_limit end
 
-local big_guy;big_guy = function(card)return 
-psychostasia_enabled() and card.config.center.rarity and card.config.center.rarity >= 3 end
-
 local force_notch_bar_update;force_notch_bar_update = function(cardArea)
 local config;do local _obj_0 = G.jokers;if _obj_0 ~= nil then do local _obj_1 = _obj_0.children;if _obj_1 ~= nil then do local _obj_2 = _obj_1.area_uibox;if _obj_2 ~= nil then do local _obj_3 = _obj_2.definition;if _obj_3 ~= nil then config = _obj_3.config end end end end end end end end;if 
 config then
@@ -92,41 +89,77 @@ true end }))end;local reference =
 
 G.FUNCS.check_for_buy_space
 G.FUNCS.check_for_buy_space = function(card)return 
-reference(card)end;local _anon_func_0 = function(card)local _obj_0 = 
+reference(card)end
 
 
 
 
 
 
-card.config;if _obj_0 ~= nil then local _obj_1 = _obj_0.center;if _obj_1 ~= nil then return _obj_1.rarity end;return nil end;return nil end;local card_scale;card_scale = function(card)if _anon_func_0(card) then local new_scale = 
-card.config.center.rarity * 0.5;if 
-big_guy(card) then local _obj_0 = 
-card.VT;if _obj_0.h == nil then _obj_0.h = card.T.h end
-new_scale = new_scale * (card.VT.w / card.VT.h)end;return 
-new_scale end;return 
-1 end
+local rarity_or_default;rarity_or_default = function(rarity)if 
+type(rarity) == "number" then return rarity else return 2 end end
+
+local get_effective_card_count;get_effective_card_count = function()local effective_card_count = 
+0;for _, card in 
+ipairs(G.jokers.cards) do
+effective_card_count = effective_card_count + rarity_or_default(card.config.center.rarity)end;return 
+effective_card_count end
+
+local get_effective_card_limit;get_effective_card_limit = function()return 
+get_effective_card_count() + (G.jokers.config.card_limit - #G.jokers.cards)end;local _anon_func_0 = function(card)local _obj_0 = 
 
 
-useful_things.wrap_method(Card, "draw", function(self, layer)if 
-psychostasia_enabled() then local _obj_0 = 
-self.VT;_obj_0.scale = _obj_0.scale * card_scale(self)end end, function(self, original_output, layer)if 
-
-psychostasia_enabled() then local _obj_0 = 
-self.VT;_obj_0.scale = _obj_0.scale / card_scale(self)end end)
-
+card.config;if _obj_0 ~= nil then local _obj_1 = _obj_0.center;if _obj_1 ~= nil then return _obj_1.rarity end;return nil end;return nil end;local card_scale_no_big_guy;card_scale_no_big_guy = function(card)return rarity_or_default(_anon_func_0(card)) * (1 / get_effective_card_limit() * 5)end;local _anon_func_1 = function(card)local _obj_0 = 
 
 
 
 
-useful_things.wrap_method(Node, "collides_with_point", function(self, layer)if 
-psychostasia_enabled() and self.VT then local _obj_0 = 
-self.VT;_obj_0.x = _obj_0.x + ((self.VT.w - self.VT.w * card_scale(self)) / 2)local _obj_1 = 
-self.VT;_obj_1.y = _obj_1.y + ((self.VT.h - self.VT.h * card_scale(self)) / 2)local _obj_2 = 
-self.VT;_obj_2.w = _obj_2.w * card_scale(self)local _obj_3 = 
-self.VT;_obj_3.h = _obj_3.h * card_scale(self)end end, function(self, original_output, layer)if 
+card.config;if _obj_0 ~= nil then local _obj_1 = _obj_0.center;if _obj_1 ~= nil then return _obj_1.set end;return nil end;return nil end;local big_guy;big_guy = function(card)return psychostasia_enabled() and _anon_func_1(card) == "Joker" and card_scale_no_big_guy(card) * G.CARD_H > G.jokers.T.h end
 
-psychostasia_enabled() and self.VT then local _obj_0 = 
+local card_scale;card_scale = function(card)local new_scale = 
+card_scale_no_big_guy(card)if 
+big_guy(card) then
+new_scale = new_scale * (G.CARD_W / G.CARD_H)end;return 
+new_scale end;local _anon_func_2 = function(card)local _obj_0 = 
+
+
+card.config;if _obj_0 ~= nil then local _obj_1 = _obj_0.center;if _obj_1 ~= nil then return _obj_1.set end;return nil end;return nil end;local scale_card;scale_card = function(card, up)if _anon_func_2(card) ~= "Joker" then
+return end;local scale = 
+card_scale(card)local add_mult = 
+up and 1 or -1;if 
+
+
+up then local _obj_0 = 
+
+
+card.VT;_obj_0.scale = _obj_0.scale * scale else local _obj_0 = 
+
+
+
+card.VT;_obj_0.scale = _obj_0.scale / scale end end
+
+
+useful_things.wrap_method(Card, "draw", function(self, layer)if not 
+psychostasia_enabled() then
+return end;return 
+scale_card(self, true)end, function(self, original_output, layer)if not 
+
+psychostasia_enabled() then
+return end;return 
+scale_card(self, false)end)local _anon_func_3 = function(self)local _obj_0 = 
+
+
+
+
+
+
+self.config;if _obj_0 ~= nil then local _obj_1 = _obj_0.center;if _obj_1 ~= nil then return _obj_1.set end;return nil end;return nil end;local _anon_func_4 = function(self)local _obj_0 = 
+
+
+
+
+
+self.config;if _obj_0 ~= nil then local _obj_1 = _obj_0.center;if _obj_1 ~= nil then return _obj_1.set end;return nil end;return nil end;useful_things.wrap_method(Node, "collides_with_point", function(self, layer)if psychostasia_enabled() and self.VT and _anon_func_3(self) == "Joker" then local _obj_0 = self.VT;_obj_0.x = _obj_0.x + ((self.VT.w - self.VT.w * card_scale(self)) / 2)local _obj_1 = self.VT;_obj_1.y = _obj_1.y + ((self.VT.h - self.VT.h * card_scale(self)) / 2)local _obj_2 = self.VT;_obj_2.w = _obj_2.w * card_scale(self)local _obj_3 = self.VT;_obj_3.h = _obj_3.h * card_scale(self)end end, function(self, original_output, layer)if psychostasia_enabled() and self.VT and _anon_func_4(self) == "Joker" then local _obj_0 = 
 self.VT;_obj_0.w = _obj_0.w / card_scale(self)local _obj_1 = 
 self.VT;_obj_1.h = _obj_1.h / card_scale(self)local _obj_2 = 
 self.VT;_obj_2.x = _obj_2.x - ((self.VT.w - self.VT.w * card_scale(self)) / 2)local _obj_3 = 
@@ -164,71 +197,110 @@ G.OVERLAY_MENU then
 G.jokers.config.card_limit = G.jokers.config.card_limit - (self.config.center.rarity - 1)end end end end
 reference2(self)return 
 
-force_notch_bar_update(self)end
+force_notch_bar_update(self)end;local _anon_func_5 = function(self)local _obj_0 = 
 
 
-useful_things.wrap_method(Card, "remove_from_deck", function(self)if 
-psychostasia_enabled() then if 
 
-self.added_to_deck then if 
-self.ability and self.ability.set == 'Joker' then if not 
+
+
+
+self.ability;if _obj_0 ~= nil then return _obj_0.set end;return nil end;useful_things.wrap_method(Card, "remove_from_deck", function(self)if not psychostasia_enabled() then return end;if self.added_to_deck then if _anon_func_5(self) == 'Joker' then if not 
 G.OVERLAY_MENU then
-G.jokers.config.card_limit = G.jokers.config.card_limit + (self.config.center.rarity - 1)end end end end end, function(self)return 
+G.jokers.config.card_limit = G.jokers.config.card_limit + (self.config.center.rarity - 1)end end end end, function(self)if not 
 
-force_notch_bar_update(self)end)
+psychostasia_enabled() then
+return end;return 
+force_notch_bar_update(self)end)local reference3 = 
 
 
 
 
-local rarity_or_default;rarity_or_default = function(rarity)if 
-type(rarity) == "number" then return rarity else return 2 end end
+CardArea.draw;local _anon_func_6 = function(self)local _obj_0 = 
 
-local get_effective_card_count;get_effective_card_count = function()local effective_card_count = 
-0;for _, card in 
-ipairs(G.jokers.cards) do
-effective_card_count = effective_card_count + rarity_or_default(card.config.center.rarity)end;return 
-effective_card_count end
 
-local get_effective_card_limit;get_effective_card_limit = function()return 
-get_effective_card_count() + (G.jokers.config.card_limit - #G.jokers.cards)end;local reference3 = 
 
-CardArea.draw;local _anon_func_1 = function(self)local _obj_0 = 
+self.children;if _obj_0 ~= nil then return _obj_0.area_uibox end;return nil end;local _anon_func_7 = function(self)local _obj_0 = self.children;if _obj_0 ~= nil then local _obj_1 = _obj_0.area_uibox;if _obj_1 ~= nil then local _obj_2 = _obj_1.definition;if _obj_2 ~= nil then local _obj_3 = _obj_2.config;if _obj_3 ~= nil then return _obj_3.hhj_physchostasia_injected end;return nil end;return nil end;return nil end;return nil end;CardArea.draw = function(self)local danger_color = G.C.HHJ_OVERBURDENED;if psychostasia_enabled() and self == G.jokers and _anon_func_6(self) and not _anon_func_7(self) then local effective_card_limit = 
+get_effective_card_limit()local effective_card_count = 
+get_effective_card_count()local card_holding_area = 
 
 
+self.children.area_uibox.definition.nodes[1]
+card_holding_area.config.colour = G.C.CLEAR
+card_holding_area.config.padding = 0
+card_holding_area.nodes = {  }for _ = 
+1, effective_card_limit do local _obj_0 = 
+card_holding_area.nodes
+_obj_0[#_obj_0 + 1] = column({ colour = { 0, 0, 0, 0.1 }, minw = 
+self.T.w / effective_card_limit, minh = 
+self.T.h, align = 
+"cl", padding = 
+0, r = 
+0.1 }, {  })end;local tooltip = 
 
-self.children;if _obj_0 ~= nil then return _obj_0.area_uibox end;return nil end;local _anon_func_2 = function(self)local _obj_0 = self.children;if _obj_0 ~= nil then local _obj_1 = _obj_0.area_uibox;if _obj_1 ~= nil then local _obj_2 = _obj_1.definition;if _obj_2 ~= nil then local _obj_3 = _obj_2.config;if _obj_3 ~= nil then return _obj_3.hhj_physchostasia_injected end;return nil end;return nil end;return nil end;return nil end;local _anon_func_3 = function(self)local _obj_0 = 
 
 
 
+nil;if 
+tostring(self.config.card_count) .. "/" .. tostring(self.config.card_limit) ~= tostring(effective_card_count) .. "/" .. tostring(effective_card_limit) then
 
+tooltip = { text = { 
+"Internally it's " .. tostring(self.config.card_count) .. "/" .. tostring(self.config.card_limit) .. ",", 
+"but I can't think of a scenario", 
+"where you'd need to know this" } }end;local card_count = 
 
 
 
 
+row({ debug_name = "new_card_count_row", align = 
+'cl' }, { { n = 
 
 
 
+G.UIT.R, config = { align = 
 
+'cl', padding = 
+0.03, no_fill = 
+true, tooltip = 
+tooltip, debug_name = 
+"actual_count" }, nodes = { { n = 
 
 
 
+G.UIT.B, config = { w = 
 
+0.1, h = 
+0.1 } }, { n = 
 
 
 
+G.UIT.T, config = { text = 
 
+effective_card_count, scale = 
+0.3, colour = 
+G.C.WHITE } }, { n = 
 
 
 
+G.UIT.T, config = { text = 
 
+'/', scale = 
+0.3, colour = 
+G.C.WHITE } }, { n = 
 
 
 
+G.UIT.T, config = { text = 
 
+effective_card_limit, scale = 
+0.3, colour = 
+G.C.WHITE } }, { n = 
 
 
 
+G.UIT.B, config = { w = 
 
+0.1, h = 
+0.1 } } } } })if 
 
 
 
@@ -246,66 +318,16 @@ self.children;if _obj_0 ~= nil then return _obj_0.area_uibox end;return nil end;
 
 
 
+overburdened() then do local _obj_0 = 
 
+card_count.nodes;_obj_0[#_obj_0 + 1] = { n = G.UIT.B, config = { w = 0.1 / 2, h = 0.1 } }end;local _obj_0 = 
+card_count.nodes;_obj_0[#_obj_0 + 1] = { n = G.UIT.T, config = { text = "Overburdened! Jokers won't activate!", scale = 0.3, colour = danger_color } }end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-self.children;if _obj_0 ~= nil then local _obj_1 = _obj_0.area_uibox;if _obj_1 ~= nil then local _obj_2 = _obj_1.definition;if _obj_2 ~= nil then return _obj_2.config end;return nil end;return nil end;return nil end;CardArea.draw = function(self)local danger_color = G.C.HHJ_OVERBURDENED;if self == G.jokers and _anon_func_1(self) and not _anon_func_2(self) then local effective_card_limit = get_effective_card_limit()local effective_card_count = get_effective_card_count()local card_holding_area = self.children.area_uibox.definition.nodes[1]card_holding_area.config.colour = G.C.CLEAR;card_holding_area.config.padding = 0;card_holding_area.nodes = {  }for _ = 1, effective_card_limit do local _obj_0 = card_holding_area.nodes;_obj_0[#_obj_0 + 1] = column({ colour = { 0, 0, 0, 0.1 }, minw = self.T.w / effective_card_limit, minh = self.T.h, align = "cl", padding = 0, r = 0.1 }, {  })end;local tooltip = nil;if tostring(self.config.card_count) .. "/" .. tostring(self.config.card_limit) ~= tostring(effective_card_count) .. "/" .. tostring(effective_card_limit) then tooltip = { text = { "Internally it's " .. tostring(self.config.card_count) .. "/" .. tostring(self.config.card_limit) .. ",", "but I can't think of a scenario", "where you'd need to know this" } }end;local card_count = row({ debug_name = "new_card_count_row", align = 'cl' }, { { n = G.UIT.R, config = { align = 'cl', padding = 0.03, no_fill = true, tooltip = tooltip, debug_name = "actual_count" }, nodes = { { n = G.UIT.B, config = { w = 0.1, h = 0.1 } }, { n = G.UIT.T, config = { text = effective_card_count, scale = 0.3, colour = G.C.WHITE } }, { n = G.UIT.T, config = { text = '/', scale = 0.3, colour = G.C.WHITE } }, { n = G.UIT.T, config = { text = effective_card_limit, scale = 0.3, colour = G.C.WHITE } }, { n = G.UIT.B, config = { w = 0.1, h = 0.1 } } } } })if overburdened() then do local _obj_0 = card_count.nodes;_obj_0[#_obj_0 + 1] = { n = G.UIT.B, config = { w = 0.1 / 2, h = 0.1 } }end;local _obj_0 = card_count.nodes;_obj_0[#_obj_0 + 1] = { n = G.UIT.T, config = { text = "Overburdened! Jokers won't activate!", scale = 0.3, colour = danger_color } }end;self.children.area_uibox.definition.config.hhj_physchostasia_injected = true;self.children.area_uibox.definition.nodes[2] = card_count;local old = self.children.area_uibox;self.children.area_uibox = UIBox({ definition = self.children.area_uibox.definition, config = self.children.area_uibox.config })old:remove()print(_anon_func_3(self))end;return 
+self.children.area_uibox.definition.config.hhj_physchostasia_injected = true
+self.children.area_uibox.definition.nodes[2] = card_count;local old = 
+self.children.area_uibox
+self.children.area_uibox = UIBox({ definition = self.children.area_uibox.definition, config = self.children.area_uibox.config })
+old:remove()end;return 
 
 reference3(self)end
 
@@ -317,8 +339,8 @@ reference3(self)end
 
 
 useful_things.wrap_method(CardArea, "align_cards", nil, function(self, original_outputs)if not 
-psychostasia_enabled() then
-return end
+psychostasia_enabled() then return 
+useful_things.nilproof_unpack(original_outputs)end
 assert(G.GAME.starting_params.hhj_psychostasia)if 
 
 
@@ -333,15 +355,17 @@ ipairs(self.cards) do local segment_span =
 rarity_or_default(card.config.center.rarity)local width_of_this_card = 
 self.card_w * card_scale(card)if not 
 card.states.drag.is then
-card.T.r = 0.1 * (-ecc / 2 - 0.5 + k) / (ecc) + (G.SETTINGS.reduced_motion and 0 or 1) * 0.02 * math.sin(2 * G.TIMERS.REAL + card.T.x)
-
-card.T.x = self.T.x + ((segments_deep + segment_span / 2) / effective_card_limit * self.T.w - self.card_w / 2)end
 
 
+card.T.x = self.T.x + ((segments_deep + segment_span / 2) / effective_card_limit * self.T.w - self.card_w / 2)local _obj_0 = 
 
 
 
 
+
+
+
+card.T;_obj_0.x = _obj_0.x + (card.shadow_parrallax.x / 30)end
 
 
 segments_deep = segments_deep + card.config.center.rarity end
@@ -353,10 +377,11 @@ ipairs(self.cards) do
 positions = positions .. (card.ability and card.ability.name or 'idk')end;if 
 positions ~= self.hhj_previousJokerPositions then
 force_notch_bar_update(G.jokers)end
-self.hhj_previousJokerPositions = positions end;for k, card in 
+self.hhj_previousJokerPositions = positions end;local _list_0 = 
 
 
-ipairs(self.cards) do if 
+self.cards;for _index_0 = 1, #_list_0 do local card = _list_0[_index_0]if 
+
 
 
 
@@ -364,7 +389,7 @@ big_guy(card) and ((math.abs(card.T.r) % math.pi * 2) < math.pi / 4) then
 card.T.r = card.T.r + math.pi / 2
 card.VT.r = card.T.r end end;return 
 
-original_outputs end)
+useful_things.nilproof_unpack(original_outputs)end)
 
 
 

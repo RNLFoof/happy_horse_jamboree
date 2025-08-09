@@ -100,7 +100,9 @@ ConfigRoot({ BooleanOption("Show Horse Variants In Collection (requires restart)
 
 OptionBundle("HHJ Aces", { BooleanOption("In Main Menu", true), 
 BooleanOption("Everywhere Else", true) }), 
-BooleanOption("Debug Mode", false) })_module_0["config_structure"] = config_structure
+
+OptionBundle("Debug", { BooleanOption("Visible UI Structure", false), 
+BooleanOption("Extra Assertions", false) }) })_module_0["config_structure"] = config_structure
 
 
 
