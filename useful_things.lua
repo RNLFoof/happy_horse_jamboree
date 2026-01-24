@@ -1,6 +1,7 @@
-local _module_0 = {  }local config = 
+local _module_0 = {  }local testing = 
 
 
+assert(SMODS.load_file("libs\\steamodded_test\\main.lua"))()local config = 
 
 SMODS.current_mod.config;_module_0["config"] = config;local typecheck = 
 
@@ -71,20 +72,34 @@ victim[index], nilproof_unpack(victim, index + 1)end end;_module_0["nilproof_unp
 
 local wrap_method_with_manual_calling;wrap_method_with_manual_calling = function(class_, method_name, do_this)if 
 class_ == nil then error("CLASS IS NIL :(")end;if 
-class_[method_name] == nil then error("METHOD IS NIL :(")end;local method_wrapped_at = 
-debug.getinfo(2)local original_method = 
+class_[method_name] == nil then error("METHOD IS NIL :(")end;local original_method = 
+
 
 class_[method_name]
-class_[method_name] = function(...)local will_it_let_me_do_this = 
-"Wrap defined at " .. tostring(method_wrapped_at.source) .. ":" .. tostring(method_wrapped_at.linedefined) .. "."local args = 
+class_[method_name] = function(...)local args = 
+
+
+
+
+
+
+
+
 pack(...)return 
 do_this(original_method, args)end end;_module_0["wrap_method_with_manual_calling"] = wrap_method_with_manual_calling
 
 
-local wrap_method;wrap_method = function(class_, method_name, before, after)if before == nil then before = (function()return nil end)end;if after == nil then after = (function(self, original_outputs)return nilproof_unpack(original_outputs)end)end;local method_wrapped_at = 
-debug.getinfo(2)return 
-wrap_method_with_manual_calling(class_, method_name, function(original_method, args)local will_it_let_me_do_this = 
-"Wrap defined at " .. tostring(method_wrapped_at.source) .. ":" .. tostring(method_wrapped_at.linedefined) .. "."
+local wrap_method;wrap_method = function(class_, method_name, before, after)if before == nil then before = (function()return nil end)end;if after == nil then after = (function(self, original_outputs)return nilproof_unpack(original_outputs)end)end;return 
+
+wrap_method_with_manual_calling(class_, method_name, function(original_method, args)
+
+
+
+
+
+
+
+
 before(nilproof_unpack(args))local original_outputs = { 
 original_method(nilproof_unpack(args)) }local selfless_args = 
 
@@ -100,21 +115,46 @@ selfless_args.n = args.n - 1;return
 after(args[1], original_outputs, nilproof_unpack(selfless_args))end)end
 _module_0["wrap_method"] = wrap_method
 
-local wrap_function;wrap_function = function(function_name, before, after)if before == nil then before = (function()return nil end)end;if after == nil then after = (function(original_outputs)return nilproof_unpack(original_outputs)end)end;local function_wrapped_at = 
-debug.getinfo(2)return 
+local wrap_function;wrap_function = function(function_name, before, after)if before == nil then before = (function()return nil end)end;if after == nil then after = (function(original_outputs)return nilproof_unpack(original_outputs)end)end;return 
 
 
 
-wrap_method_with_manual_calling(_G, function_name, function(original_method, args)local will_it_let_me_do_this = 
-"Wrap defined at " .. tostring(function_wrapped_at.source) .. ":" .. tostring(function_wrapped_at.linedefined) .. "."
+
+wrap_method_with_manual_calling(_G, function_name, function(original_method, args)
+
+
+
+
+
+
+
+
 before(nilproof_unpack(args))local original_outputs = { 
 original_method(nilproof_unpack(args)) }return 
 
 
 
 after(original_outputs, nilproof_unpack(args))end)end
-_module_0["wrap_function"] = wrap_function;local _anon_func_0 = function(pairs, table)local _accum_0 = 
+_module_0["wrap_function"] = wrap_function;local _colored_words = { [
 
+
+
+"Jokers?"] = "attention", [
+"Consumables?"] = "attention", [
+"Blinds?"] = "attention" }local format_text = (
+
+
+argscheck("format_text (table) => list")) .. function(text)return 
+
+text end;_module_0["format_text"] = format_text
+
+local deeper_type;deeper_type = function(object)local type_name = 
+type(output)if 
+type_name == "table" then local metatable = 
+getmetatable(self)if 
+metatable then return 
+metatable end end;return 
+type_name end;_module_0["deeper_type"] = deeper_type;local _anon_func_0 = function(pairs, table)local _accum_0 = 
 
 {  }local _len_0 = 1;for x in pairs(table) do _accum_0[_len_0] = x;_len_0 = _len_0 + 1 end;return _accum_0 end;local table_is_list;table_is_list = function(table)return # (_anon_func_0(pairs, table)) == #table end;_module_0["table_is_list"] = table_is_list
 
@@ -146,9 +186,15 @@ type(item) == "table" and table_is_list(item) then local _tab_0 =
 {  }local _idx_0 = 1;for _key_0, _value_0 in pairs(output) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;local _obj_0 = flatten(item)local _idx_1 = 1;for _key_0, _value_0 in pairs(_obj_0) do if _idx_1 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_1 = _idx_1 + 1 else _tab_0[_key_0] = _value_0 end end;output = _tab_0 else
 
 output[#output + 1] = item end end;return 
-output end;_module_0["flatten"] = flatten
+output end;_module_0["flatten"] = flatten;local for_each = (
 
-local for_each;for_each = function(list, callable)local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #list do local item = list[_index_0]_accum_0[_len_0] = callable(item)_len_0 = _len_0 + 1 end;return _accum_0 end;_module_0["for_each"] = for_each
+argscheck("for_each (list, callable) => list")) .. function(list, callable)local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #list do local item = list[_index_0]_accum_0[_len_0] = callable(item)_len_0 = _len_0 + 1 end;return _accum_0 end;_module_0["for_each"] = for_each;local keys = (
+
+argscheck("keys (table) => list")) .. function(table)local output = 
+{  }for k, v in 
+pairs(table) do
+output[#output + 1] = k end;return 
+output end;_module_0["keys"] = keys
 
 local first;first = function(list, check)for _index_0 = 
 1, #list do local item = list[_index_0]if 
@@ -227,7 +273,12 @@ result then
 error(error_message)end;return 
 output end
 
-local field_replace_context;field_replace_context = function(object, field_name, value, do_this)if do_this == nil then do_this = function()end end;local end_context = 
+local field_replace_context;field_replace_context = function(object, field_name, value, do_this)if do_this == nil then do_this = function()end end;if 
+config["Developer"]["Extra Assertions"] then
+testing.assert_type(object, "table")
+testing.assert_type(field_name, "string")
+testing.assert_type(do_this, "callable")end;local end_context = 
+
 field_replace_context_manual_end(object, field_name, value)return 
 safely_do_this_and_end(do_this, end_context)end;_module_0["field_replace_context"] = field_replace_context
 
@@ -252,7 +303,12 @@ field_operation_context(object, field_name, (function(x)return x + the_guy_you_a
 local field_multiplication_context;field_multiplication_context = function(object, field_name, multiplier, do_this)if do_this == nil then do_this = function()end end;return 
 field_operation_context(object, field_name, (function(x)return x * multiplier end), do_this)end;_module_0["field_multiplication_context"] = field_multiplication_context
 
-local pool_filter_context_manual_end;pool_filter_context_manual_end = function(filter, fallback, do_this)if do_this == nil then do_this = function()end end;return 
+local pool_filter_context_manual_end;pool_filter_context_manual_end = function(filter, fallback, do_this)if do_this == nil then do_this = function()end end;if 
+config["Developer"]["Extra Assertions"] then
+testing.assert_type(filter, "callable")
+testing.assert_type(fallback, "string")
+testing.do_this(do_this, "callable")end;return 
+
 
 
 safely_do_this_and_end(multi_field_replace_context_manual_end({ { G, "hhj_pool_filter", filter }, { 
@@ -260,14 +316,36 @@ G, "hhj_pool_fallback", fallback } }),
 
 do_this)end;_module_0["pool_filter_context_manual_end"] = pool_filter_context_manual_end
 
-local pool_filter_context;pool_filter_context = function(filter, fallback, do_this)if do_this == nil then do_this = function()end end;return 
+local pool_filter_context;pool_filter_context = function(filter, fallback, do_this)if do_this == nil then do_this = function()end end;if 
+config["Developer"]["Extra Assertions"] then
+testing.assert_type(filter, "callable")
+testing.assert_type(fallback, "list")
+testing.assert_type(do_this, "callable")end;return 
+
 field_replace_context(G, "hhj_pool_filter", filter, function()return 
 field_replace_context(G, "hhj_pool_fallback", fallback, function()return 
 do_this()end)end)end
 
-_module_0["pool_filter_context"] = pool_filter_context
+_module_0["pool_filter_context"] = pool_filter_context;local sort_and_return = (
 
-local filtered_pool;filtered_pool = function(pool, filter, fallback)if filter == nil then filter = nil end;if fallback == nil then fallback = nil end;local original_pool = 
+argscheck("sort_and_return (list) => list")) .. function(list)
+table.sort(list)
+print(list)return 
+list end;_module_0["sort_and_return"] = sort_and_return
+
+local get_center;get_center = function(center_key)local output = 
+G.P_CENTERS[center_key]if 
+output == nil then
+print(sort_and_return(keys(G.P_CENTERS)))
+error("No center with key '" .. tostring(center_key) .. "' found! All keys printed before this message was shown.")end;return 
+output end;_module_0["get_center"] = get_center;local filtered_pool = (
+
+argscheck("filtered_pool (list, ?callable, ?list) => list")) .. function(pool, filter, fallback)if filter == nil then filter = nil end;if fallback == nil then fallback = nil end;local original_pool = 
+
+
+
+
+
 pool;if not 
 filter then return 
 original_pool end;local unavalibilities = 
@@ -276,7 +354,7 @@ local its_unavaliable;its_unavaliable = function()
 unavalibilities = unavalibilities + 1;return 
 "UNAVAILABLE"end
 
-local new_pool;do local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #original_pool do local item = original_pool[_index_0]_accum_0[_len_0] = (item ~= "UNAVAILABLE" and filter(G.P_CENTERS[item])) and item or its_unavaliable()_len_0 = _len_0 + 1 end;new_pool = _accum_0 end;if 
+local new_pool;do local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #original_pool do local item = original_pool[_index_0]_accum_0[_len_0] = (item ~= "UNAVAILABLE" and filter(get_center(item))) and item or its_unavaliable()_len_0 = _len_0 + 1 end;new_pool = _accum_0 end;if 
 
 
 
@@ -352,7 +430,7 @@ center_key == 'UNAVAILABLE' do
 it = it + 1
 center_key = pseudorandom_element(pool, pseudoseed(pool_key .. '_resample' .. it))end;if 
 
-config["Debug"]["Extra Assertions"] then
+config["Developer"]["Extra Assertions"] then
 assert(center_key ~= nil)end;return 
 
 center_key end;_module_0["pseudorandom_center_key"] = pseudorandom_center_key
@@ -360,7 +438,7 @@ center_key end;_module_0["pseudorandom_center_key"] = pseudorandom_center_key
 local pseudorandom_center;pseudorandom_center = function(pool, pool_key)if pool_key == nil then pool_key = ""end;local center = 
 G.P_CENTERS[pseudorandom_center_key(pool, pool_key)]if 
 
-config["Debug"]["Extra Assertions"] then
+config["Developer"]["Extra Assertions"] then
 assert(center ~= nil)end;return 
 
 center end;_module_0["pseudorandom_center"] = pseudorandom_center;return _module_0;

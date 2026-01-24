@@ -42,7 +42,7 @@ hhj_psychostasia = SMODS.Back{
 }
 
 psychostasia_enabled = () ->
-    return G.GAME.starting_params.hhj_psychostasia
+    return G.GAME.starting_params.hhj_psychostasia and G.jokers -- If jokers is gone, it's probably after quitting to menu. This stops a crash
 
 overburdened = () ->
     return psychostasia_enabled() and #G.jokers.cards > G.jokers.config.card_limit
@@ -398,7 +398,7 @@ useful_things.wrap_method(Card, "calculate_joker", nil,
     (original_output, context) =>
         -- Shows the overburdened text, but only if the joker would have displayed/done something anyway
         if @ability.set == "Joker" and overburdened() 
-            if original_output then
+            if original_output and false -- HEY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! this is disabled
                 -- Based on the debuff behavior in card_eval_status_text in common_events
                 G.E_MANAGER::add_event(
                     Event({

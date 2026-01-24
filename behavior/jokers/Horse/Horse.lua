@@ -5,45 +5,78 @@ useful_things.round;local required_horse_name_count =
 
 "Chestnut", 
 "Peanut", 
-"Acorn", 
+
+
+
 "Gertrude", 
 "Slippy", 
 "Crazy Horse", 
 "Jimmy", 
 "Potatoes", 
-"Cupcake", 
-"Slayer", 
 
-"Special Week", 
 "Mr. Felony", 
 "Geronimo", 
+"Tennessee Sam", 
+"The Chancellor", 
+"Stinky", 
+
+
+
+"Sprinkletoes", 
+
+
+"Salanji", 
+"Gungerly Smungus", 
+"Z-Diddly", 
+"Horsinard Horsington", 
+
+
+"Snout", 
+
+
+"Clarence", 
+"Spriggan", 
+
+
+"Bonnabelle", 
+
+"Speed 2", 
+"The Dreamer", 
+"American Pharaoh", 
+"Horsie", 
+"Parabellum", 
+"Cruise Control", 
+
 
 "Hemmingway", 
 "Whiskey", 
 "Chipschipschips", 
 "Daisy", 
-"Orchard", 
-"Old Tom", 
-"Sunrise", 
-"Shepard", 
+
+
+
+
+
 
 "Pumpernickel", 
 
+
 "Bert", 
 
-"Sprinkletoes", 
 
 "Old Ale", 
-"Kettle Sour", 
 
-"Clarence", 
-"Spriggan", 
+
+
+"Thimbleberry", 
+
 
 "Angel Face", 
-"Casino", 
-"Grasshopper", 
+
+
+
 "Moscow Mule", 
-"Rusty Nail", 
+
 
 
 "Apricot", 
@@ -55,8 +88,6 @@ useful_things.round;local required_horse_name_count =
 "Butternut", 
 "Macadamia", 
 
-"Thimbleberry", 
-
 
 "Currant", 
 "Clementine", 
@@ -65,7 +96,10 @@ useful_things.round;local required_horse_name_count =
 
 
 "lucluckmult"] = "Strawberry", [
-"luckluckluck"] = "Lucky" }local hardcoded_total_horse_count = 
+"luckluckluck"] = "Lucky", [
+"chipsluckluck"] = "Cupcake", [
+"chipsluckluckjack"] = "Slayer", [
+"multmultmult"] = "The Red Menace" }local hardcoded_total_horse_count = 
 
 40;local bonus_types = { 
 
@@ -116,10 +150,12 @@ bonuses_as_list[1] .. bonuses_as_list[2] .. bonuses_as_list[3] .. jackstr end;lo
 
 
 
+
+
 {  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "chips" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end;local _anon_func_3 = function(bonuses_as_list)local _accum_0 = 
 {  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "mult" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end;local _anon_func_4 = function(bonuses_as_list)local _accum_0 = 
 {  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "money" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end;local _anon_func_5 = function(bonuses_as_list)local _accum_0 = 
-{  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "luck" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end;local add_a_horse;add_a_horse = function(name, index, bonuses_as_list, jack, kwargs)if kwargs == nil then kwargs = {  }end;if kwargs.joker_key_suffix == nil then kwargs.joker_key_suffix = horse_key(bonuses_as_list, jack)end;if kwargs.atlas_key == nil then kwargs.atlas_key = kwargs.joker_key_suffix end;kwargs.is_another_horse = false;local horse_progress = index / hardcoded_total_horse_count;local bonuses_for_this_horse = { chips = round(8 / 1 * #_anon_func_2(bonuses_as_list)), mult = round(4 / 1 * #_anon_func_3(bonuses_as_list)), money = round(1 / 1 * #_anon_func_4(bonuses_as_list)), luck = round(1 / 1 * #_anon_func_5(bonuses_as_list)) }local horse_ability_description = { 
+{  }local _len_0 = 1;for _index_0 = 1, #bonuses_as_list do local bonus = bonuses_as_list[_index_0]if bonus == "luck" then _accum_0[_len_0] = bonus;_len_0 = _len_0 + 1 end end;return _accum_0 end;local add_a_horse;add_a_horse = function(name, index, bonuses_as_list, jack, kwargs)if kwargs == nil then kwargs = {  }end;if kwargs.joker_key_suffix == nil then kwargs.joker_key_suffix = horse_key(bonuses_as_list, jack)end;if kwargs.atlas_key == nil then kwargs.atlas_key = kwargs.joker_key_suffix end;if kwargs.is_another_horse == nil then kwargs.is_another_horse = false end;local allow_duplicates = kwargs.is_another_horse;local horse_progress = index / hardcoded_total_horse_count;local bonuses_for_this_horse = { chips = round(8 / 1 * #_anon_func_2(bonuses_as_list)), mult = round(4 / 1 * #_anon_func_3(bonuses_as_list)), money = round(1 / 1 * #_anon_func_4(bonuses_as_list)), luck = round(1 / 1 * #_anon_func_5(bonuses_as_list)) }local horse_ability_description = { 
 
 
 jack and "Per {C:attention}Jack{} scored:" or "Each {C:blue}Hand{} played:" }local scale = 
@@ -185,7 +221,7 @@ update_horse_negatives()end, remove_from_deck = function(self, card, from_defuff
 from_defuff then
 return end;return 
 update_horse_negatives()end, in_pool = function(self, args)return 
-G.hhj_allow_horses end, calculate = function(self, card, context)local horse = 
+G.hhj_allow_horses, { allow_duplicates = allow_duplicates }end, calculate = function(self, card, context)local horse = 
 
 card.ability;if (((
 horse.jack == false) and context.joker_main and context.cardarea == G.jokers) or ((horse.jack == true) and context.individual and context.cardarea == G.play and context.other_card:get_id() == 11)) then local money_earned = 
@@ -228,7 +264,25 @@ money_earned }for key, value in
 
 pairs(output) do
 output[key] = value ~= 0 and value or nil end;return 
-output end end })end;local index = 
+output end end })end
+
+
+local get_horse_name
+
+
+
+
+get_horse_name = function(horse_name_index, total_horse_count, bonuses_as_list, jack)local horse_name = 
+set_horse_names[horse_key(bonuses_as_list, jack)]if 
+horse_name == nil then
+horse_name_index = horse_name_index + 1;if 
+horse_name_index <= #horse_names then
+horse_name = tostring(horse_names[horse_name_index])else
+
+horse_name = "Unnamed Horse"end end
+horse_name = horse_name .. " {s:0.5}(##" .. tostring(total_horse_count) .. ")"return 
+horse_name_index, horse_name end;local index = 
+
 
 0;local horse_name_index = 
 0;local total_horse_count = 
@@ -239,15 +293,8 @@ ipairs((function()local _accum_0 = {  }local _len_0 = 1;for _index_0 = bonus_1_i
 ipairs({ false, true }) do
 index = index + 1
 total_horse_count = index;local bonuses_as_list = { 
-bonus_1, bonus_2, bonus_3 }local horse_name = 
-
-set_horse_names[horse_key(bonuses_as_list, jack)]if 
-horse_name == nil then
-horse_name_index = horse_name_index + 1;if 
-horse_name_index <= #horse_names then
-horse_name = tostring(horse_names[horse_name_index]) .. " {s:0.5}(##" .. tostring(horse_name_index) .. ")"else
-
-horse_name = "Unnamed Horse (" .. tostring(horse_name_index) .. ")"end end
+bonus_1, bonus_2, bonus_3 }
+local horse_name;horse_name_index, horse_name = get_horse_name(horse_name_index, total_horse_count, bonuses_as_list, jack)
 
 add_a_horse(horse_name, index, bonuses_as_list, jack)end end end end
 
@@ -302,7 +349,7 @@ card.area.config.collection then
 return end;return 
 
 useful_things.field_replace_context(G, "hhj_allow_horses", true, function()return 
-useful_things.pool_filter_context((function(center)return center.config.is_horse and not center.config.is_another_horse end), { "hhj_j_horse_another" }, function()local new_horse_center = 
+useful_things.pool_filter_context((function(center)return center.config.is_horse and not center.config.is_another_horse end), { "j_hhj_horse_another" }, function()local new_horse_center = 
 useful_things.pseudorandom_center(get_current_pool("Joker", 0, false, "horse"), "horse")return 
 card:set_ability(new_horse_center)end)end)end })local _anon_func_6 = function(self)local _obj_0 = 
 

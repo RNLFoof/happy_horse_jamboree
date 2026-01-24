@@ -1,0 +1,7 @@
+testing = assert(SMODS.load_file("libs\\steamodded_test\\main.lua"))()
+TestBundle = testing.TestBundle
+Test = testing.Test
+
+G.steamodded_tests.tests[] = TestBundle "horse_luck"
+    * Test "no_reload_exploit" 
+        * -> false

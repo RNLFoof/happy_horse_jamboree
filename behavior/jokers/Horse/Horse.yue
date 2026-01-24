@@ -39,7 +39,7 @@ horse_names = {
 
     -- Mel
     "Bonnabelle"
-    "Nyquill"
+    -- I don't like the "putting the horse to sleep" implication "Nyquill"
     "Speed 2"
     "The Dreamer"
     "American Pharaoh"
@@ -146,7 +146,9 @@ horse_key = (bonuses_as_list, jack=false) ->
 add_a_horse = (name, index, bonuses_as_list, jack, kwargs={}) ->
     kwargs.joker_key_suffix ??= horse_key(bonuses_as_list, jack)
     kwargs.atlas_key ??= kwargs.joker_key_suffix
-    kwargs.is_another_horse = false
+    kwargs.is_another_horse ??= false
+
+    allow_duplicates = kwargs.is_another_horse
 
     horse_progress = index / hardcoded_total_horse_count
     bonuses_for_this_horse = {
@@ -219,7 +221,7 @@ add_a_horse = (name, index, bonuses_as_list, jack, kwargs={}) ->
             if from_defuff
                 return
             update_horse_negatives()
-        in_pool: (args) => G.hhj_allow_horses
+        in_pool: (args) => G.hhj_allow_horses, {allow_duplicates: allow_duplicates}
         calculate: (card, context) =>
             horse = card.ability
             if (
@@ -264,6 +266,24 @@ add_a_horse = (name, index, bonuses_as_list, jack, kwargs={}) ->
                     output[key] = value != 0 and value or nil
                 return output
 
+-- Just to keep the format consistent, really
+get_horse_name = (
+    horse_name_index, -- int
+    total_horse_count, -- int
+    bonuses_as_list, -- {string, string, string}
+    jack -- bool
+) -> 
+    horse_name = set_horse_names[horse_key(bonuses_as_list, jack)]
+    if horse_name == nil
+        horse_name_index += 1
+        if horse_name_index <= #horse_names
+            horse_name = "#{horse_names[horse_name_index]}"
+        else
+            horse_name = "Unnamed Horse"
+    horse_name ..= " {s:0.5}(###{total_horse_count})"
+    return horse_name_index, horse_name
+
+
 index = 0
 horse_name_index = 0
 total_horse_count = 0
@@ -274,14 +294,7 @@ for    bonus_1_index, bonus_1 in ipairs(bonus_types)                            
         index += 1
         total_horse_count = index
         bonuses_as_list = {bonus_1, bonus_2, bonus_3}
-        
-        horse_name = set_horse_names[horse_key(bonuses_as_list, jack)]
-        if horse_name == nil
-            horse_name_index += 1
-            if horse_name_index <= #horse_names
-                horse_name = "#{horse_names[horse_name_index]} {s:0.5}(###{horse_name_index})"
-            else
-                horse_name = "Unnamed Horse (#{horse_name_index})"
+        horse_name_index, horse_name = get_horse_name(horse_name_index, total_horse_count, bonuses_as_list, jack)
 
         add_a_horse(horse_name, index, bonuses_as_list, jack)
 
@@ -336,7 +349,7 @@ base_horse_joker = SMODS.Joker
             return
         
         useful_things.field_replace_context(G, "hhj_allow_horses", true, ->
-            useful_things.pool_filter_context(((center) -> center.config.is_horse and not center.config.is_another_horse), {"hhj_j_horse_another"}, ->
+            useful_things.pool_filter_context(((center) -> center.config.is_horse and not center.config.is_another_horse), {"j_hhj_horse_another"}, ->
                 new_horse_center = useful_things.pseudorandom_center(get_current_pool("Joker", 0, false, "horse"), "horse")
                 card::set_ability(new_horse_center)
             )

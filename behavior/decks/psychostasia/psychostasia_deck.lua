@@ -42,7 +42,7 @@ true end }))end })
 
 
 local psychostasia_enabled;psychostasia_enabled = function()return 
-G.GAME.starting_params.hhj_psychostasia end
+G.GAME.starting_params.hhj_psychostasia and G.jokers end
 
 local overburdened;overburdened = function()return 
 psychostasia_enabled() and #G.jokers.cards > G.jokers.config.card_limit end
@@ -398,7 +398,7 @@ useful_things.nilproof_unpack(original_outputs)end)
 useful_things.wrap_method(Card, "calculate_joker", nil, function(self, original_output, context)if 
 
 self.ability.set == "Joker" and overburdened() then if 
-original_output then
+original_output and false then
 
 
 

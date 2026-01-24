@@ -3,7 +3,8 @@ SMODS.Joker({ key = "new_low", atlas =
 "atlas_jokers", pos = 
 atlas_jokers_positions["placeholder"]["red"], rarity = 
 1, cost = 
-6, loc_txt = { name = 
+2, perishable_compat = 
+false, loc_txt = { name = 
 
 "New Low", text = { 
 

@@ -21,7 +21,7 @@ config.align == nil then config.align = "cm"end;if
 config.padding == nil then config.padding = 0.1 end;if 
 config.colour == nil then config.colour = G.C.CLEAR end;if 
 
-useful_things.config["Debug"]["Visible UI Structure"] then
+useful_things.config["Developer"]["Visible UI Structure"] then
 config.padding = 0.1
 config.outline_colour = node_type_name == "column" and G.C.RED or G.C.BLUE
 config.outline = 0.2;if 

@@ -1,6 +1,7 @@
 import "yue_macros" as {
     $
 }
+testing = assert(SMODS.load_file("libs\\steamodded_test\\main.lua"))()
 
 export config = SMODS.current_mod.config
 
@@ -72,19 +73,33 @@ export nilproof_unpack = (victim, index) ->
 export wrap_method_with_manual_calling = (class_, method_name, do_this) ->
     if class_ == nil then error("CLASS IS NIL :(")
     if class_[method_name] == nil then error("METHOD IS NIL :(")
-    method_wrapped_at = debug.getinfo(2)  -- This is so that it appears in the debug info. hard to track down otherwise
+    -- method_wrapped_at = debug.getinfo(4)  -- This is so that it appears in the debug info. hard to track down otherwise
     
     original_method = class_[method_name]
     class_[method_name] = (...) ->
-        will_it_let_me_do_this = "Wrap defined at #{method_wrapped_at.source}:#{method_wrapped_at.linedefined}."
+        -- will_it_let_me_do_this = "wrap_method_with_manual_calling! Wrap defined at"
+        -- n = 1
+        -- while true
+        --     if debug.getinfo(n) == nil
+        --         break
+        --     will_it_let_me_do_this ..= " -> (#{n}) #{debug.getinfo(n).source}:#{debug.getinfo(n).linedefined}"
+        --     n += 1
+        
         args = pack(...)
         do_this(original_method, args)
 
 
 export wrap_method = (class_, method_name, before = (-> nil), after = ((original_outputs)=>nilproof_unpack(original_outputs))) ->
-    method_wrapped_at = debug.getinfo(2)
+    -- method_wrapped_at = debug.getinfo(4)
     wrap_method_with_manual_calling(class_, method_name, (original_method, args) ->
-        will_it_let_me_do_this = "Wrap defined at #{method_wrapped_at.source}:#{method_wrapped_at.linedefined}."
+        -- will_it_let_me_do_this = "wrap_method! Wrap defined at"
+        -- n = 1
+        -- while true
+        --     if debug.getinfo(n) == nil
+        --         break
+        --     will_it_let_me_do_this ..= " -> (#{n}) #{debug.getinfo(n).source}:#{debug.getinfo(n).linedefined}"
+        --     n += 1
+        
         before(nilproof_unpack args)
         original_outputs = {original_method(nilproof_unpack args)}
 
@@ -101,12 +116,19 @@ export wrap_method = (class_, method_name, before = (-> nil), after = ((original
     )
 
 export wrap_function = (function_name, before = (-> nil), after = ((original_outputs)->nilproof_unpack(original_outputs))) ->
-    function_wrapped_at = debug.getinfo(2)  -- This is so that it appears in the debug info. hard to track down otherwise
+    -- function_wrapped_at = debug.getinfo(4)  -- This is so that it appears in the debug info. hard to track down otherwise
     
     -- It's fine to be used wrap_method_with_manual_calling and not a hypothetical wrap_function_with_manual_calling
     -- because wrap_method_with_manual_calling never explicitly uses self
     wrap_method_with_manual_calling(_G, function_name, (original_method, args) ->
-        will_it_let_me_do_this = "Wrap defined at #{function_wrapped_at.source}:#{function_wrapped_at.linedefined}."
+        -- will_it_let_me_do_this = "wrap_function! Wrap defined at"
+        -- n = 1
+        -- while true
+        --     if debug.getinfo(n) == nil
+        --         break
+        --     will_it_let_me_do_this ..= " -> (#{n}) #{debug.getinfo(n).source}:#{debug.getinfo(n).linedefined}"
+        --     n += 1
+        
         before(nilproof_unpack args)
         original_outputs = {original_method(nilproof_unpack args)}
         return after(
@@ -115,6 +137,24 @@ export wrap_function = (function_name, before = (-> nil), after = ((original_out
         )
     )
 
+
+_colored_words = {
+    "Jokers?": "attention"
+    "Consumables?": "attention"
+    "Blinds?": "attention"
+}
+
+export format_text = (argscheck "format_text (table) => list") .. (text) ->
+    --- dik i dont want to finish this
+    return text
+
+export deeper_type = (object) ->
+    type_name = type(output)
+    if type_name == "table"
+        metatable = getmetatable(self)
+        if metatable
+            return metatable
+    return type_name
 
 export table_is_list = (table) -> #([x for x in pairs(table)]) == #table
 
@@ -148,7 +188,13 @@ export flatten = (list) ->
             output[] = item
     return output
 
-export for_each = (list, callable) -> [callable(item) for item in *list]
+export for_each = (argscheck "for_each (list, callable) => list") .. (list, callable) -> [callable(item) for item in *list]
+
+export keys = (argscheck "keys (table) => list") .. (table) ->
+    output = {}
+    for k,v in pairs(table)
+        output[] = k
+    return output
 
 export first = (list, check) ->
     for item in *list
@@ -228,6 +274,11 @@ safely_do_this_and_end = (do_this, end_context) ->
     return output
 
 export field_replace_context = (object, field_name, value, do_this = ->) ->
+    if config["Developer"]["Extra Assertions"]
+        testing.assert_type(object, "table")
+        testing.assert_type(field_name, "string")
+        testing.assert_type(do_this, "callable")
+        
     end_context = field_replace_context_manual_end(object, field_name, value)
     return safely_do_this_and_end(do_this, end_context)
 
@@ -253,6 +304,11 @@ export field_multiplication_context = (object, field_name, multiplier, do_this =
     field_operation_context(object, field_name, ((x) -> x*multiplier), do_this)
 
 export pool_filter_context_manual_end = (filter, fallback, do_this = ->) ->
+    if config["Developer"]["Extra Assertions"]
+        testing.assert_type(filter, "callable")
+        testing.assert_type(fallback, "string")
+        testing.do_this(do_this, "callable")
+
     return safely_do_this_and_end(
         multi_field_replace_context_manual_end({
             {G, "hhj_pool_filter", filter},
@@ -261,13 +317,35 @@ export pool_filter_context_manual_end = (filter, fallback, do_this = ->) ->
     do_this)
 
 export pool_filter_context = (filter, fallback, do_this = ->) ->
+    if config["Developer"]["Extra Assertions"]
+        testing.assert_type(filter, "callable")
+        testing.assert_type(fallback, "list")
+        testing.assert_type(do_this, "callable")
+
     return field_replace_context(G, "hhj_pool_filter", filter, ->
         return field_replace_context(G, "hhj_pool_fallback", fallback, ->
             return do_this()
         )
     )
 
-export filtered_pool = (pool, filter=nil, fallback=nil) ->
+export sort_and_return = (argscheck "sort_and_return (list) => list") .. (list)->
+    table.sort(list)
+    print(list)
+    return list
+
+export get_center = (center_key) ->
+    output = G.P_CENTERS[center_key]
+    if output == nil
+        print(G.P_CENTERS |> keys |> sort_and_return)
+        error("No center with key '#{center_key}' found! All keys printed before this message was shown.")
+    return output
+
+export filtered_pool = (argscheck "filtered_pool (list, ?callable, ?list) => list") .. (pool, filter=nil, fallback=nil) ->
+    -- if config["Developer"]["Extra Assertions"]
+    --     testing.assert_type(pool, "list")
+    --     testing.assert_type(filter, "callable?")
+    --     testing.assert_type(fallback, "table?")
+
     original_pool = pool
     if not filter
         return original_pool
@@ -280,7 +358,7 @@ export filtered_pool = (pool, filter=nil, fallback=nil) ->
         [
             (
                 item != "UNAVAILABLE"
-                and filter(G.P_CENTERS[item])
+                and filter(get_center(item))
             )
             and item
             or its_unavaliable()
@@ -298,7 +376,7 @@ export filtered_pool = (pool, filter=nil, fallback=nil) ->
         else
             filter_info = debug.getinfo(filter)
             error("The filter(defined at #{filter_info.source}) resulted in no valid centers, and a fallback wasn't provided :(")
-    
+
     return new_pool
 
 wrap_method(_G, "get_current_pool", nil, (original_outputs, args) =>
@@ -352,7 +430,7 @@ export pseudorandom_center_key = (pool, pool_key="") ->
         it = it + 1
         center_key = pseudorandom_element(pool, pseudoseed(pool_key..'_resample'..it))
     
-    if config["Debug"]["Extra Assertions"]
+    if config["Developer"]["Extra Assertions"]
         assert center_key != nil
     
     return center_key
@@ -360,7 +438,7 @@ export pseudorandom_center_key = (pool, pool_key="") ->
 export pseudorandom_center = (pool, pool_key="") -> 
     center = G.P_CENTERS[pseudorandom_center_key(pool, pool_key)]
 
-    if config["Debug"]["Extra Assertions"]
+    if config["Developer"]["Extra Assertions"]
         assert center != nil
     
     return center

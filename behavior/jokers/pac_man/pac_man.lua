@@ -62,7 +62,8 @@ SMODS.Joker({ key = "pac_man", atlas =
 
 
 "atlas_single_card", pos = 
-atlas_single_card_positions["single_card"], loc_txt = { name = 
+atlas_single_card_positions["single_card"], perishable_compat = 
+false, loc_txt = { name = 
 
 
 "Pac-Man", text = { 

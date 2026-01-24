@@ -21,7 +21,7 @@ _row_or_column = (config, nodes, node_type, opposite_node_type_function, node_ty
     config.padding ??= 0.1
     config.colour  ??= G.C.CLEAR
 
-    if useful_things.config["Debug"]["Visible UI Structure"] then
+    if useful_things.config["Developer"]["Visible UI Structure"] then
         config.padding        = 0.1
         config.outline_colour = node_type_name == "column" and G.C.RED or G.C.BLUE
         config.outline        = 0.2

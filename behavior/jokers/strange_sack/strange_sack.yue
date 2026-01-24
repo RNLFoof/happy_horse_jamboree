@@ -1,0 +1,87 @@
+useful_things = assert(SMODS.load_file("useful_things.lua"))()
+ui = assert(SMODS.load_file("behavior/functions/ui.lua"))()
+
+SMODS.Joker
+    key: "strange_sack"
+    atlas: "atlas_jokers"
+    pos: atlas_jokers_positions["placeholder"]["yellow"]
+    rarity: 2
+    cost: 5   -- Maybe 6? It's kinda like Cartomancer
+    perishable_compat: false
+    loc_txt: 
+        name: "Strange Sack"
+        text: useful_things.format_text({
+            "When consumable area is full"
+            "destroys one held consumable,"
+            "create a previously destroyed"
+            "consumable when Blind is selected"
+        })
+    generate_ui: (info_queue, card, desc_nodes, specific_vars, full_UI_table) =>
+        SMODS.Joker.generate_ui(self, info_queue, card, desc_nodes, specific_vars, full_UI_table)
+        
+        items_gui = {}
+        for item in *card.ability.extra.contains
+            items_gui[] = ui.column(
+                {
+                    align: "m"
+                    colour: G.C.GREEN
+                    r: 0.05
+                    padding: 0.05
+                    scale: 0.03
+                },
+                {
+                    ui.text(
+                        {
+                            colour: G.C.UI.TEXT_LIGHT
+                            scale: 0.3
+                            shadow: true
+                        }, 
+                        " #{G.P_CENTERS[item].name} "
+                    )
+                }
+            )
+
+        desc_nodes[] = {
+            ui.column(
+                {
+                    align: "bm"
+                    padding: 0.02
+                    scale: 0.03
+                },
+                items_gui
+            )
+        }
+            
+    config: 
+        extra: 
+            contains: {}
+    calculate: (card, context) =>
+        if context.setting_blind
+            card_eval_status_text(card, 'extra', nil, nil, nil, {message: "dump"})
+            if #card.ability.extra.contains > 0
+                SMODS.add_card({
+                    key: card.ability.extra.contains[#card.ability.extra.contains]
+                })
+                card.ability.extra.contains[#card.ability.extra.contains] = nil
+
+        if context.card_added
+            G.E_MANAGER::add_event(
+                Event({
+                    trigger: 'after'
+                    delay: 0
+                    blockable: true
+                    blocking: true
+                    func: () ->
+                        if context.card.area == G.consumeables
+                            card_eval_status_text(card, 'extra', nil, nil, nil, {message: "get"})
+                            if G.consumeables.config.card_limit == G.consumeables.config.card_count
+                                temp_hand = {}
+                                for card in *G.consumeables.cards
+                                    temp_hand[] = card
+                                table.sort(temp_hand, (a, b) -> a.sort_id < b.sort_id)
+                                pseudoshuffle(temp_hand, pseudoseed('hhj_strange_sack'))
+                                card.ability.extra.contains[] = temp_hand[1].config.center_key
+                                SMODS.destroy_cards(temp_hand[1])
+                        return true
+                })
+            )

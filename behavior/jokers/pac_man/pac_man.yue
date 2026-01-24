@@ -63,6 +63,7 @@ pac_man = SMODS.Joker
     -- But, if this one card *is* the whole atlas, then it *is* normalized within the context within the context of that one card 
     atlas: "atlas_single_card"
     pos: atlas_single_card_positions["single_card"]
+    perishable_compat: false
 
     loc_txt:
         name: "Pac-Man"

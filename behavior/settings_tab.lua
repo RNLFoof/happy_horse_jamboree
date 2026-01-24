@@ -8,12 +8,23 @@ useful_things.for_each;local flatten =
 useful_things.flatten;local config = 
 
 SMODS.current_mod.config
+print(config)
 
 local indent;indent = function(string, indent_count)if indent_count == nil then indent_count = 1 end;return ("    "):rep(indent_count) .. string end
 local indent_all;indent_all = function(list_of_strings, indent_count)if indent_count == nil then indent_count = 1 end;local _accum_0 = {  }local _len_0 = 1;for _index_0 = 1, #list_of_strings do local string = list_of_strings[_index_0]_accum_0[_len_0] = indent(string, indent_count)_len_0 = _len_0 + 1 end;return _accum_0 end
 local print_and_out;print_and_out = function(o)return 
 
 o end
+
+G.FUNCS.hhj_update_config = function(args)
+
+
+
+
+
+
+
+args.to_val[args.to_key] = args.from_val[args.from_key]end
 
 local ConfigPart;do local _class_0;local _base_0 = { as_config_file = function(self)return 
 
@@ -91,9 +102,21 @@ local Option;do local _class_0;local _parent_0 = ConfigPart;local _base_0 = { _c
 tostring(self:_lines_start()) .. " " .. tostring(self.default) .. tostring(self:_lines_end()) }end }for _key_0, _val_0 in pairs(_parent_0.__base) do if _base_0[_key_0] == nil and _key_0:match("^__") and not (_key_0 == "__index" and _val_0 == _parent_0.__base) then _base_0[_key_0] = _val_0 end end;if _base_0.__index == nil then _base_0.__index = _base_0 end;setmetatable(_base_0, _parent_0.__base)_class_0 = setmetatable({ __init = function(self, name, default)self.name = name;self.default = default;return _class_0.__parent.__init(self, self.name)end, __base = _base_0, __name = "Option", __parent = _parent_0 }, { __index = function(cls, name)local val = rawget(_base_0, name)if val == nil then local parent = rawget(cls, "__parent")if parent then return parent[name]end else return val end end, __call = function(cls, ...)local _self_0 = setmetatable({  }, _base_0)cls.__init(_self_0, ...)return _self_0 end })_base_0.__class = _class_0;if _parent_0.__inherited then _parent_0.__inherited(_parent_0, _class_0)end;Option = _class_0 end;local _anon_func_1 = function(pairs, self)local _tab_0 = { label = 
 
 
-self.name, scale = self:_scale(), label_scale = self:_text_scale() }local _obj_0 = self:_ref()local _idx_0 = 1;for _key_0, _value_0 in pairs(_obj_0) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;return _tab_0 end;local BooleanOption;do local _class_0;local _parent_0 = Option;local _base_0 = { as_nodes = function(self)return { create_toggle(_anon_func_1(pairs, self)) }end }for _key_0, _val_0 in pairs(_parent_0.__base) do if _base_0[_key_0] == nil and _key_0:match("^__") and not (_key_0 == "__index" and _val_0 == _parent_0.__base) then _base_0[_key_0] = _val_0 end end;if _base_0.__index == nil then _base_0.__index = _base_0 end;setmetatable(_base_0, _parent_0.__base)_class_0 = setmetatable({ __init = function(self, ...)return _class_0.__parent.__init(self, ...)end, __base = _base_0, __name = "BooleanOption", __parent = _parent_0 }, { __index = function(cls, name)local val = rawget(_base_0, name)if val == nil then local parent = rawget(cls, "__parent")if parent then return parent[name]end else return val end end, __call = function(cls, ...)local _self_0 = setmetatable({  }, _base_0)cls.__init(_self_0, ...)return _self_0 end })_base_0.__class = _class_0;if _parent_0.__inherited then _parent_0.__inherited(_parent_0, _class_0)end;BooleanOption = _class_0 end;local config_structure = 
+self.name, scale = self:_scale(), label_scale = self:_text_scale() }local _obj_0 = self:_ref()local _idx_0 = 1;for _key_0, _value_0 in pairs(_obj_0) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;return _tab_0 end;local BooleanOption;do local _class_0;local _parent_0 = Option;local _base_0 = { as_nodes = function(self)return { create_toggle(_anon_func_1(pairs, self)) }end }for _key_0, _val_0 in pairs(_parent_0.__base) do if _base_0[_key_0] == nil and _key_0:match("^__") and not (_key_0 == "__index" and _val_0 == _parent_0.__base) then _base_0[_key_0] = _val_0 end end;if _base_0.__index == nil then _base_0.__index = _base_0 end;setmetatable(_base_0, _parent_0.__base)_class_0 = setmetatable({ __init = function(self, ...)return _class_0.__parent.__init(self, ...)end, __base = _base_0, __name = "BooleanOption", __parent = _parent_0 }, { __index = function(cls, name)local val = rawget(_base_0, name)if val == nil then local parent = rawget(cls, "__parent")if parent then return parent[name]end else return val end end, __call = function(cls, ...)local _self_0 = setmetatable({  }, _base_0)cls.__init(_self_0, ...)return _self_0 end })_base_0.__class = _class_0;if _parent_0.__inherited then _parent_0.__inherited(_parent_0, _class_0)end;BooleanOption = _class_0 end
+
+local CycleOption;do local _class_0;local _parent_0 = Option;local _base_0 = { as_nodes = function(self)
 
 
+local args;do local _tab_0 = { label = 
+self.name, options = 
+self.options, scale = 
+self:_scale(), text_scale = 
+self:_text_scale(), opt_callback = 
+hhj_update_config }local _obj_0 = 
+self:_ref()local _idx_0 = 1;for _key_0, _value_0 in pairs(_obj_0) do if _idx_0 == _key_0 then _tab_0[#_tab_0 + 1] = _value_0;_idx_0 = _idx_0 + 1 else _tab_0[_key_0] = _value_0 end end;args = _tab_0 end
+
+print(args)return 
+create_option_cycle(args)end }for _key_0, _val_0 in pairs(_parent_0.__base) do if _base_0[_key_0] == nil and _key_0:match("^__") and not (_key_0 == "__index" and _val_0 == _parent_0.__base) then _base_0[_key_0] = _val_0 end end;if _base_0.__index == nil then _base_0.__index = _base_0 end;setmetatable(_base_0, _parent_0.__base)_class_0 = setmetatable({ __init = function(self, name, default, options)self.name = name;self.default = default;self.options = options;return _class_0.__parent.__init(self, self.name, self.default)end, __base = _base_0, __name = "CycleOption", __parent = _parent_0 }, { __index = function(cls, name)local val = rawget(_base_0, name)if val == nil then local parent = rawget(cls, "__parent")if parent then return parent[name]end else return val end end, __call = function(cls, ...)local _self_0 = setmetatable({  }, _base_0)cls.__init(_self_0, ...)return _self_0 end })_base_0.__class = _class_0;if _parent_0.__inherited then _parent_0.__inherited(_parent_0, _class_0)end;CycleOption = _class_0 end;local config_structure = 
 
 
 ConfigRoot({ BooleanOption("Show Horse Variants In Collection (requires restart)", false), 
@@ -101,7 +124,8 @@ ConfigRoot({ BooleanOption("Show Horse Variants In Collection (requires restart)
 OptionBundle("HHJ Aces", { BooleanOption("In Main Menu", true), 
 BooleanOption("Everywhere Else", true) }), 
 
-OptionBundle("Debug", { BooleanOption("Visible UI Structure", false), 
+OptionBundle("Developer", { CycleOption("Feature Visibility", 1, { "Release", "Beta", "Alpha" }), 
+BooleanOption("Visible UI Structure", false), 
 BooleanOption("Extra Assertions", false) }) })_module_0["config_structure"] = config_structure
 
 

@@ -8,12 +8,23 @@ for_each = useful_things.for_each
 flatten  = useful_things.flatten
 
 config = SMODS.current_mod.config
+print(config)
 
 indent = (string, indent_count=1) -> "    "::rep(indent_count) .. string
 indent_all = (list_of_strings, indent_count=1) -> [indent(string, indent_count) for string in *list_of_strings]
 print_and_out = (o) ->
     -- print(o)
     o
+
+G.FUNCS.hhj_update_config = (args) ->
+    --[[        
+    from_val = from_val,
+    to_val = to_val,
+    from_key = from_key,
+    to_key = to_key,
+    cycle_config = e.config.ref_table
+    ]]
+    args.to_val[args.to_key] = args.from_val[args.from_key]
 
 class ConfigPart
     new: (@name) =>
@@ -27,7 +38,7 @@ class ConfigPart
     _lines_end: => ","
     _path_with_self: => {...@_path_without_self, @name}
     _config_file_lines: => error("Not implemented!")
-    _ref_value: => @name
+    _ref_value: => @name  -- ref_value is really more of a ref_key, but that's what the Balatro source says, so.....
     _ref: => {ref_table: @_ref_table(), ref_value: @_ref_value()}
     
     _ref_table: => 
@@ -93,14 +104,27 @@ class Option extends ConfigPart
 class BooleanOption extends Option
     as_nodes: => {create_toggle({label: @name, scale: @_scale(), label_scale: @_text_scale(), ...@_ref()})}
 
-
+class CycleOption extends Option
+    new: (@name, @default, @options) => super(@name, @default)
+    as_nodes: => 
+        args = {
+            label: @name
+            options: @options
+            scale: @_scale()
+            text_scale: @_text_scale()
+            opt_callback: hhj_update_config
+            ...@_ref()
+        }
+        print(args)
+        create_option_cycle(args)
 
 export config_structure = ConfigRoot
     * BooleanOption("Show Horse Variants In Collection (requires restart)", false)
     * OptionBundle "HHJ Aces"
         * BooleanOption("In Main Menu", true)
         * BooleanOption("Everywhere Else", true)
-    * OptionBundle "Debug"
+    * OptionBundle "Developer"
+        * CycleOption("Feature Visibility", 1, {"Release", "Beta", "Alpha"})
         * BooleanOption("Visible UI Structure", false)
         * BooleanOption("Extra Assertions", false)
     
