@@ -1,5 +1,6 @@
 /scripts
 /build
+/node_modules
 /.vs
 /.releases
 /assets/uncombined/horses/*/*

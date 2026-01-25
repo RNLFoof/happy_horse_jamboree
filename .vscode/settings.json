@@ -1,6 +1,7 @@
 {
     "files.readonlyInclude": {
-        "*lua": true
+        "*lua": true,
+        "build/**": true
     },
     "Lua.diagnostics.globals": [
         // Buncha crap from Balatro
