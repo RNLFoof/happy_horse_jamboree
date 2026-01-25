@@ -1,4 +1,5 @@
 /scripts
+/build
 /.vs
 /.releases
 /assets/uncombined/horses/*/*

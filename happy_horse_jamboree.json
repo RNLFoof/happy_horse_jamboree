@@ -5,7 +5,7 @@
 	"author": ["Dust", "Reverie", "Jupiter Icy Moons Explorer"],
 	"description": ":)",
 	"prefix": "hhj",
-	"main_file": "main.lua",
+	"main_file": "build/main.lua",
 	"priority": 1,
 	"badge_colour": "5729e0",
 	"version": "0.0.1",
